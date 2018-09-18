@@ -1,0 +1,57 @@
+<ion-header>
+    <ion-toolbar color="warning">
+        <ion-buttons slot="start">
+            <ion-menu-button color="dark"></ion-menu-button>
+        </ion-buttons>
+        <ion-title>
+            Scan to Pay
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-card>
+
+        <ion-card-content>
+            <ion-img src="/assets/img/scan.gif"></ion-img>
+            <form>
+                <ion-item>
+                    <ion-label>
+                        Pay From
+                    </ion-label>
+                    <ion-select [(ngModel)]="data" (ionChange)="optionsFn(data);" name="debitAccount" required="true">
+                        <ion-select-option value='123412344243'>
+                            Card 1
+                        </ion-select-option>
+                        <ion-select-option value='5678657865785687'>
+                            Card 2
+                        </ion-select-option>
+                    </ion-select>
+                </ion-item>
+                <ion-item>
+                    <ion-label>
+                        Pay To PSP
+                    </ion-label>
+                    <ion-input [(ngModel)]="payerPSP" type="text" placeholder="user@PSPName" name="payerPSP" required="true"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label stacked>
+                        Payer Id
+                    </ion-label>
+                    <ion-input [(ngModel)]="payeeId" type="text" placeholder="BOB@MobiPay" name="payeeId" required="true"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label stacked>
+                        Amount
+                    </ion-label>
+                    <ion-input [(ngModel)]="amount" placeholder="000000" name="amount" inputmode="numeric" maxlength="6"
+                        required="true"></ion-input>
+                </ion-item>
+                <ion-button (click)="doPay('pay')" color="primary">
+                    <ion-icon slot="start" name="cash"></ion-icon>
+                    Send Payment
+                </ion-button>
+            </form>
+        </ion-card-content>
+    </ion-card>
+</ion-content>
