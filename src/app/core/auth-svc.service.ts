@@ -116,11 +116,11 @@ export class AuthSvcService {
             uid: user.uid,
             email: user.email || null,
             displayName: user.displayName || 'nameless user',
-            photoURL: user.photoURL || 'https://goo.gl/Fz9nrQ',
+            nickname: user.nickname || null,
+            photoURL: user.photoURL || '/assets/img/avatar-default.png',
             phone: user.phone || null,
-            processor: user.processor || null
-            // createdAt: user.createdAt || 
-            // updatedAt: user.updatedAt
+            pspId: user.pspId || null,
+            zapId: user.zapId || null
         };
         userRef.set(data);
         return data;

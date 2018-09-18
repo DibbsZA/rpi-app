@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { iUser } from '../../models/interfaces';
-import { ReactiveFormsModule } from '@angular/forms';
-import { User } from '../../models/user';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
