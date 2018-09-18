@@ -15,6 +15,8 @@ export interface iUser {
     zapId?: string | null;
     accountNo?: string | null;
     authSecret?: string | null;
+    code?: string;
+    message?: string;
 }
 
 /**

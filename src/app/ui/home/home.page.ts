@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
-import { ReactiveFormsModule } from '@angular/forms';
-import { User } from '../../models/user';
+// import { User } from '../../models/user';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 
@@ -18,7 +17,7 @@ export class HomePage {
 
     user: Observable<iUser | null>;
 
-    client = {} as User;
+    // client = {} as iUser;
 
     constructor(
         public auth: AuthSvcService,

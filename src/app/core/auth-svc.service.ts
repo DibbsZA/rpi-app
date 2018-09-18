@@ -56,14 +56,18 @@ export class AuthSvcService {
     }
     //// Email/Password Auth ////
 
-    emailSignUp(email: string, password: string) {
+    async emailSignUp(email: string, password: string) {
         return this.afAuth.auth
             .createUserWithEmailAndPassword(email, password)
             .then(credential => {
                 this.notify.update('Welcome new user!', 'success');
                 return this.updateUserData(credential.user); // if using firestore
             })
-            .catch(error => this.handleError(error));
+            .catch(error => {
+                // this.handleError(error);
+                let err = { code: 'error', message: error.message };
+                return err;
+            });
     }
 
     async emailLogin(email: string, password: string) {

@@ -18,13 +18,20 @@ export class NotifyService {
 
     msg = this._msgSource.asObservable();
 
+    constructor(
+
+    ) {
+
+    }
+
     update(content: string, style: 'error' | 'info' | 'success') {
         const msg: Msg = { content, style };
         this._msgSource.next(msg);
-        console.log(msg)
+        console.log(msg);
     }
 
     clear() {
         this._msgSource.next(null);
     }
+
 }
