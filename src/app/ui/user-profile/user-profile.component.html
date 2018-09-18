@@ -1,23 +1,26 @@
 <ng-container *ngIf="userO | async as user">
     <ion-card>
         <ion-card-header>
-            <ion-card-subtitle>ZAP Mobile</ion-card-subtitle>
+            <ion-card-subtitle>ZAP Mobile @ BankservAfrica</ion-card-subtitle>
             <ion-card-title color="light"> {{user.displayName}} </ion-card-title>
         </ion-card-header>
-        <ion-card-content>
-            <div (click)="openProfileEdit()">
-                <img [src]="user.photoURL">
-            </div> <br>
+        <ion-card-content class="center">
+            <div class="profile">
+                <div (click)="openProfileEdit()">
+                    <img class="imgAvatar" [src]="user.photoURL">
+                </div> <br>
 
-            <div color="light">{{user.email}}</div>
-            <div color="light">{{user.processor}}</div>
-            <div color="light">
-                <ion-button color="danger" expand='full' (click)="logout()">
-                    Logout
-                    <ion-icon slot="end" name="exit"></ion-icon>
-                </ion-button>
+                <div color="light">{{user.email}}</div>
+                <div color="light">{{user.zapId}}</div>
             </div>
+
 
         </ion-card-content>
     </ion-card>
+    <div>
+        <ion-button color="danger" expand='full' (click)="logout()">
+            Logout
+            <ion-icon slot="end" name="exit"></ion-icon>
+        </ion-button>
+    </div>
 </ng-container>
