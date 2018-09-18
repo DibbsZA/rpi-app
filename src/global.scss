@@ -10,3 +10,17 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+.center {
+    text-align: center;
+}
+
+.profile {
+    display: inline-block;
+}
+
+.imgAvatar {
+    height: auto;
+    width: auto;
+    max-width: 120px;
+    max-height: 120px;
+}
