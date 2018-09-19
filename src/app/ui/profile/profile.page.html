@@ -4,7 +4,7 @@
             <ion-menu-button color="dark"></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            User Profile
+            User Profile & Accounts
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -13,31 +13,28 @@
     <ng-container *ngIf="userO | async as user">
         <ion-card>
             <ion-card-content>
-                <div (click)="openProfileEdit()" class="profile">
+                <div (click)="editProfile()" class="profile">
                     <img [src]="user.photoURL" class="imgAvatar">
                 </div>
                 <ion-list lines="none">
                     <ion-item>
-                        <ion-label>
-                            <h1> {{user.displayName}} </h1>
-                        </ion-label>
+                        <ion-input type="text" placeholder="Display Name" #name [value]="user.displayName" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>E-Mail</ion-label>
-                        <ion-input type="${1|text,password,email,search,number,tel,url}" placeholder="Email" [value]="user.email"></ion-input>
+                        <ion-input type="email" placeholder="Email" [value]="user.email" readonly></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>ZAP Id:</ion-label>
-                        <ion-input type="${1|text,password,email,search,number,tel,url}" placeholder="ZAP payment ID"
-                            [value]="user.zapId"></ion-input>
+                        <ion-input type="text" placeholder="name@psp" #zapid [value]="user.zapId" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>PSP Id:</ion-label>
-                        <ion-input type="${1|text,password,email,search,number,tel,url}" placeholder="PSP Id" [value]="user.pspId"></ion-input>
+                        <ion-input type="text" placeholder="pspid" #pspid [value]="user.pspId" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>Nickname</ion-label>
-                        <ion-input type="text" placeholder="Nickname?" [value]="user.nickname"></ion-input>
+                        <ion-input type="text" placeholder="Nickname?" #nick [value]="user.nickname" [readonly]="!editMode"></ion-input>
                     </ion-item>
                 </ion-list>
                 <!-- <div>
@@ -45,31 +42,48 @@
                         Edit
                         <ion-icon slot="end" name="exit"></ion-icon>
                     </ion-button>
-                </div> -->
-                <ion-fab vertical="top" horizontal="end" slot="fixed">
+</div> -->
+                <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="!editMode">
                     <ion-fab-button (click)="editProfile()">
                         <ion-icon name="create"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
+                <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="editMode">
+                    <ion-fab-button color="danger" (click)="saveProfile(name.value, pspid.value, zapid.value, nick.value)">
+                        <ion-icon name="save"></ion-icon>
+                    </ion-fab-button>
+                </ion-fab>
             </ion-card-content>
         </ion-card>
-    </ng-container>
-    <ng-container>
         <ion-card>
-            <ion-card-header>
+            <!-- <ion-card-header>
                 <ion-card-subtitle>My Accounts</ion-card-subtitle>
-                <!-- <ion-card-title>My Accounts</ion-card-title> -->
-            </ion-card-header>
+                 <ion-card-title>My Accounts</ion-card-title> 
+            </ion-card-header> -->
             <ion-card-content>
                 <ion-list lines="none">
-                    <ion-item>
-                        <ion-label>Bank 1</ion-label>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Bank 2</ion-label>
-                    </ion-item>
+                    <ion-item-divider>
+                        <ion-label>Accounts</ion-label>
+                    </ion-item-divider>
+                    <ion-item-sliding *ngFor="let acc of user.accounts ">
+                        <ion-item>
+                            <ion-label>{{acc.accountAlias}}</ion-label>
+                            <!-- <ion-input type="${1|text,password,email,search,number,tel,url}" placeholder="Awesome Input"
+                                [value]="acc.accountNo"></ion-input> -->
+                            {{acc.accountNo}}
+                        </ion-item>
+                        <ion-item-options side="start">
+                            <ion-item-option color="danger" (click)="deletAccount(acc)">Delete</ion-item-option>
+                        </ion-item-options>
+                    </ion-item-sliding>
                 </ion-list>
+                <ion-fab vertical="top" horizontal="end" slot="fixed">
+                    <ion-fab-button (click)="addAccount()">
+                        <ion-icon name="add"></ion-icon>
+                    </ion-fab-button>
+                </ion-fab>
             </ion-card-content>
         </ion-card>
+
     </ng-container>
 </ion-content>

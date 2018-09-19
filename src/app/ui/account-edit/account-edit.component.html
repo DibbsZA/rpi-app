@@ -1,0 +1,22 @@
+<ion-card>
+    <ion-card-content>
+        <ion-list>
+            <ion-list-header>
+                <ion-label>Edit Account</ion-label>
+            </ion-list-header>
+            <ion-item>
+                <ion-label>Alias</ion-label>
+                <ion-input type="text" placeholder="Account Name" #accName [value]=""></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label>Account</ion-label>
+                <ion-input type="number" placeholder="000000000" #accNo [value]=""></ion-input>
+            </ion-item>
+            <ion-button (click)="save(accName.value, accNo.value)">
+                <ion-icon slot="start" name="add"></ion-icon>
+                Save New Account
+            </ion-button>
+
+        </ion-list>
+    </ion-card-content>
+</ion-card>

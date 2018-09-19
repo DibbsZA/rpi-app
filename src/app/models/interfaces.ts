@@ -13,7 +13,7 @@ export interface iUser {
     phone?: string | null;
     photoURL?: string | '/assets/img/avatar-default.png';
     zapId?: string | null;
-    accountNo?: string | null;
+    accounts?: [iAccount] | null;
     authSecret?: string | null;
     code?: string;
     message?: string;
@@ -38,7 +38,6 @@ export interface iProcessor {
  * @interface iAccount
  */
 export interface iAccount {
-    accountNo: string | null;
+    accountNo: string;
     accountAlias: string;
-    bank?: string | null;
 }

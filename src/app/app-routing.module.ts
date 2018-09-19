@@ -10,7 +10,8 @@ const routes: Routes = [
     { path: 'pay', loadChildren: './ui/pay/pay.module#PayPageModule', canActivate: [AuthGuard] },
     { path: 'about', loadChildren: './ui/about/about.module#AboutPageModule' },
     { path: 'profile', loadChildren: './ui/profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
-    { path: 'registration', loadChildren: './ui/registration/registration.module#RegistrationPageModule' }
+    { path: 'registration', loadChildren: './ui/registration/registration.module#RegistrationPageModule' },
+    { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule' }
 ];
 
 @NgModule({

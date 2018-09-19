@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { firebase } from '@firebase/app';
+// import { firebase } from '@firebase/app';
 import { auth } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import {
     AngularFirestore,
-    AngularFirestoreDocument
+    // AngularFirestoreDocument
 } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 
 import { Observable, of } from 'rxjs';
 import { switchMap, startWith, tap, filter } from 'rxjs/operators';
 
-import { iUser } from "../models/interfaces";
+import { iUser, iAccount } from "../models/interfaces";
+import { UserServiceService } from './user-service.service';
 
 @Injectable({
     providedIn: 'root'
@@ -26,6 +27,7 @@ export class AuthSvcService {
         private afs: AngularFirestore,
         private router: Router,
         private notify: NotifyService,
+        private userSvc: UserServiceService,
 
     ) {
         this.user = this.afAuth.authState.pipe(
@@ -43,15 +45,16 @@ export class AuthSvcService {
     }
     //// Anonymous Auth ////
 
-    anonymousLogin() {
+    async anonymousLogin() {
         return this.afAuth.auth
             .signInAnonymously()
-            .then(credential => {
-                this.notify.update('Welcome to Firestarter!!!', 'success');
-                return this.updateUserData(credential.user); // if using firestore
-            })
+            // .then(credential => {
+            //     this.notify.update('Welcome to Firestarter!!!', 'success');
+            //     // return this.updateUserData(credential.user); // if using firestore
+            // })
             .catch(error => {
-                this.handleError(error);
+                let err = { code: 'error', message: error.message };
+                return err;
             });
     }
     //// Email/Password Auth ////
@@ -61,7 +64,11 @@ export class AuthSvcService {
             .createUserWithEmailAndPassword(email, password)
             .then(credential => {
                 this.notify.update('Welcome new user!', 'success');
-                return this.updateUserData(credential.user); // if using firestore
+                let newUser: iUser = {
+                    uid: credential.user.uid,
+                    email: credential.user.email
+                }
+                return this.userSvc.updateUserData(newUser);
             })
             .catch(error => {
                 // this.handleError(error);
@@ -73,18 +80,18 @@ export class AuthSvcService {
     async emailLogin(email: string, password: string) {
         return this.afAuth.auth
             .signInWithEmailAndPassword(email, password)
-            .then(credential => {
-                this.notify.update('Welcome back!', 'success');
-                this.updateUserData(credential.user);
-                // .then(r => {
-                //     console.log(r);
-                //     return credential.user;
-                // });
-                return credential;
-            })
+            // .then(credential => {
+            //     this.notify.update('Welcome back!', 'success');
+            //     // this.updateUserData(credential.user);
+            //     // .then(r => {
+            //     //     console.log(r);
+            //     //     return credential.user;
+            //     // });
+            //     // return this.userSvc.getUserData(credential.user.uid);
+            // })
             .catch(error => {
-                this.handleError(error);
-                return null
+                let err = { code: 'error', message: error.message };
+                return err;
             });
     }
 
@@ -100,6 +107,7 @@ export class AuthSvcService {
 
     signOut() {
         this.afAuth.auth.signOut().then(() => {
+            this.user = null;
             this.router.navigate(['/']);
         });
     }
@@ -110,23 +118,4 @@ export class AuthSvcService {
         this.notify.update(error.message, 'error');
     }
 
-    // Sets user data to firestore after succesful login
-    async updateUserData(user: iUser) {
-        const userRef: AngularFirestoreDocument<iUser> = this.afs.doc(
-            `users/${user.uid}`
-        );
-
-        const data: iUser = {
-            uid: user.uid,
-            email: user.email || null,
-            displayName: user.displayName || 'nameless user',
-            nickname: user.nickname || null,
-            photoURL: user.photoURL || '/assets/img/avatar-default.png',
-            phone: user.phone || null,
-            pspId: user.pspId || null,
-            zapId: user.zapId || null
-        };
-        userRef.set(data);
-        return data;
-    }
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UserServiceService } from '../../core/user-service.service';
+import { iUser } from '../../models/interfaces';
 
 @Component({
     selector: 'app-pay',
@@ -6,8 +8,14 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./pay.page.scss'],
 })
 export class PayPage implements OnInit {
+    user: iUser;
 
-    constructor() { }
+    constructor(
+        private userSvc: UserServiceService,
+
+    ) {
+        this.user = userSvc.getLocalUserData()
+    }
 
     ngOnInit() {
     }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { UserProfileComponent } from './ui/user-profile/user-profile.component';
+// import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';

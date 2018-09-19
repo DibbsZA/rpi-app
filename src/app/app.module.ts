@@ -22,6 +22,7 @@ import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AccountPageModule } from './ui/account/account.module';
 
 @NgModule({
     declarations: [
@@ -42,6 +43,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ProfilePageModule,
         ScanPageModule,
         PayPageModule,
+        AccountPageModule,
         FormsModule,
         ReactiveFormsModule
     ],
