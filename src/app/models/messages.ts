@@ -5,29 +5,92 @@
  * @interface msgPaymentInstruction
  */
 export interface msgPaymentInstruction {
+    payerId: string;
+    payerPSP: string;
+    consentKey: string;
     payerAccountNo: string;
+    payeeId: string;
+    payeePSP: string;
+    amount?: number;
+    userRef: string | null;
+    payerName?: string;
+    originatingDate?: string;
+    mpiHash?: string;
+    uniqueRef?: string
+
+}
+
+// TODO: This message comes in the GCM message
+export interface msgPaymentInstructionFCMResponse {
+    uniqueRef: string;
+    payerId: string;
     payerPSP: string;
     payeeId: string;
-    amount: string;
+    payeePSP: string;
+    amount?: number;
+    userRef?: string;
+    payerName?: string;
+    originatingDate?: string;
+    settlementDate?: string;
+    responseCode?: string;
+    responseDesc?: string;
 }
 
-export interface msgPaymentInstructionResponse {
 
-}
-
-
-export interface msgPaymentRequest {
-
+export interface msgPaymentAuth {
+    uniqueRef: string;
+    payerId: string;
+    payerPSP: string;
+    payerName: string;
+    payeeId: string;
+    payeePSP: string;
+    payeeAccountNo: string;
+    amount?: number;
+    userRef?: string;
+    originatingDate?: string;
+    responseCode?: string;
+    responseDesc?: string;
 }
 
 
 export interface msgConfirmation {
+    responseCode: string;
+    responseDesc: string;
+    uniqueRef: string;
 
 }
 
+/**
+ *
+ *
+ * @export
+ * @interface msgPSPPayment
+ * @property
+ */
+export interface msgPSPPayment {
 
-export interface msgPaymentInstructionResponse {
-
+    /**
+     * Unique Transaction Reference per PSP
+     *
+     * @type {(string | null)}
+     * @memberof msgPSPPayment
+     */
+    uniqueRef: string | null;
+    payerId: string | null;
+    payerPSP: string | null;
+    payerName: string | null;
+    payerAccountNo: string | null;
+    consentKey: string | null;
+    payeeId: string | null;
+    payeePSP: string | null;
+    payeeAccountNo: string | null;
+    amount: string | null;
+    userRef: string | null;
+    originatingDate: string | null;
+    settlementDate: string | null;
+    mpiHash: string | null;
+    responseCode: string | null;
+    responseDesc: string | null;
 }
 
 

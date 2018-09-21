@@ -34,12 +34,19 @@ export class AuthSvcService {
             switchMap(user => {
                 if (user) {
                     return this.afs.doc<iUser>(`users/${user.uid}`).valueChanges();
+                    // .toPromise()
+                    // .then(r => {
+                    //     localStorage.setItem('user', JSON.stringify(user));
+                    //     return r
+                    // });
                 } else {
+                    // localStorage.setItem('user', null);
                     return of(null);
                 }
-            }),
-            tap(user => localStorage.setItem('user', JSON.stringify(user))),
-            startWith(JSON.parse(localStorage.getItem('user')))
+            })
+            // ,
+            // tap(user => localStorage.setItem('user', JSON.stringify(user))),
+            // startWith(JSON.parse(localStorage.getItem('user')))
         );
 
     }
@@ -63,11 +70,13 @@ export class AuthSvcService {
         return this.afAuth.auth
             .createUserWithEmailAndPassword(email, password)
             .then(credential => {
-                this.notify.update('Welcome new user!', 'success');
+                // this.notify.update('Welcome new user!', 'success');
                 let newUser: iUser = {
                     uid: credential.user.uid,
-                    email: credential.user.email
+                    email: credential.user.email,
+                    accounts: []
                 }
+                console.log('New User: ' + JSON.stringify(credential));
                 return this.userSvc.updateUserData(newUser);
             })
             .catch(error => {

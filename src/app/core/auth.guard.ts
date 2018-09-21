@@ -25,9 +25,10 @@ export class AuthGuard implements CanActivate {
     ): boolean {
 
         var loggedIn = true;
+
         this.user.subscribe(
             x => {
-                console.log(x);
+
                 if (x == null) {
                     loggedIn = false;
                     this.router.navigate(['/']);
@@ -36,9 +37,9 @@ export class AuthGuard implements CanActivate {
             e => {
                 console.error(e);
             });
-        // if (!this.user) {
-        //     loggedIn = false;
-        // }
+        if (!this.user) {
+            loggedIn = false;
+        }
         return loggedIn;
     }
 }

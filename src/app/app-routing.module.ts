@@ -11,7 +11,9 @@ const routes: Routes = [
     { path: 'about', loadChildren: './ui/about/about.module#AboutPageModule' },
     { path: 'profile', loadChildren: './ui/profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
     { path: 'registration', loadChildren: './ui/registration/registration.module#RegistrationPageModule' },
-    { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule' }
+    { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule' },
+  { path: 'history', loadChildren: './ui/history/history.module#HistoryPageModule' },
+  { path: 'pin-confirm', loadChildren: './ui/pin-confirm/pin-confirm.module#PinConfirmPageModule' }
 ];
 
 @NgModule({

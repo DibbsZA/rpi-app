@@ -30,7 +30,7 @@ export class RegistrationPage implements OnInit {
             .then((res) => {
                 console.log(res);
                 if (res.code == undefined) {
-                    this.router.navigate(['/pay']);
+                    this.router.navigate(['/profile']);
                 }
                 else {
                     this.presentToast(res.message);

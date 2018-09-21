@@ -21,13 +21,13 @@ import { PayPageModule } from './ui/pay/pay.module';
 import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountPageModule } from './ui/account/account.module';
 
 @NgModule({
     declarations: [
         AppComponent,
         UserProfileComponent,
+        // PinComponent,
     ],
     entryComponents: [
 
@@ -44,8 +44,6 @@ import { AccountPageModule } from './ui/account/account.module';
         ScanPageModule,
         PayPageModule,
         AccountPageModule,
-        FormsModule,
-        ReactiveFormsModule
     ],
     providers: [
         StatusBar,

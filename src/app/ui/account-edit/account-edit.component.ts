@@ -3,6 +3,8 @@ import { iUser, iAccount } from '../../models/interfaces';
 import { UserServiceService } from '../../core/user-service.service';
 import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { AuthSvcService } from '../../core/auth-svc.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-account-edit',
@@ -11,18 +13,25 @@ import { Router } from '@angular/router';
 })
 export class AccountEditComponent implements OnInit {
 
-    user: iUser;
+    user: Observable<iUser>;
+    userO: iUser;
     newAccount: iAccount;
 
     constructor(
+        private auth: AuthSvcService,
         private userSvc: UserServiceService,
         public toastController: ToastController,
         private router: Router
     ) {
-        this.user = userSvc.getLocalUserData()
+        this.user = this.auth.user;
     }
 
     ngOnInit() {
+        this.user.subscribe(
+            x => {
+                this.userO = x;
+            }
+        )
     }
 
     save(accountAlias, accountNo) {
@@ -30,8 +39,8 @@ export class AccountEditComponent implements OnInit {
             accountAlias: accountAlias,
             accountNo: accountNo
         }
-        this.user.accounts.push(this.newAccount);
-        this.userSvc.updateUserData(this.user)
+        this.userO.accounts.push(this.newAccount);
+        this.userSvc.updateUserData(this.userO)
             .then(r => {
                 this.presentToast('Account Added.')
                     .then(done => {

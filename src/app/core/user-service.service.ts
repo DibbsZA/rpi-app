@@ -21,9 +21,9 @@ export class UserServiceService {
         // });
     }
 
-    public getLocalUserData(): iUser {
-        return JSON.parse(localStorage.getItem('user'));
-    }
+    // public getLocalUserData(): iUser {
+    //     return JSON.parse(localStorage.getItem('user'));
+    // }
 
     public getUserData(uid): Promise<iUser> {
         const userRef: AngularFirestoreDocument<iUser> = this.afs.doc(
@@ -37,10 +37,7 @@ export class UserServiceService {
             `users/${user.uid}`
         );
 
-        const account: iAccount = {
-            accountNo: null,
-            accountAlias: null
-        }
+        // const accounts: iAccount = []
 
         const data: iUser = {
             uid: user.uid,
@@ -51,11 +48,11 @@ export class UserServiceService {
             phone: user.phone || null,
             pspId: user.pspId || null,
             zapId: user.zapId || null,
-            accounts: user.accounts
+            accounts: user.accounts || []
         };
         userRef.set(data)
             .then(r => {
-                localStorage.setItem('user', JSON.stringify(data));
+                // localStorage.setItem('user', JSON.stringify(data));
                 console.log('User saved: ' + JSON.stringify(data));
             });
         return data;

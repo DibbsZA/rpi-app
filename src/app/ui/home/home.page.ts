@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Router, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
 // import { User } from '../../models/user';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { ToastController } from '@ionic/angular';
 
 
 
@@ -13,7 +14,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
 
     user: Observable<iUser | null>;
 
@@ -22,21 +23,32 @@ export class HomePage {
     constructor(
         public auth: AuthSvcService,
         private afAuth: AngularFireAuth,
-        private router: Router
+        private router: Router,
+        public toastController: ToastController
     ) {
         this.user = this.auth.user;
-
-        // this.user.subscribe(
-        //     x => {
-        //         console.log(x);
-        //         if (x != null) {
-        //             return this.afterSignIn();
+        // this.user.toPromise()
+        //     .then(u => {
+        //         if (u) {
+        //             router.navigate(['/pay']);
         //         }
-        //     },
-        //     e => {
-        //         console.error(e);
-        //     });
+        //     })
 
+
+
+    }
+
+    ngOnInit(): void {
+        this.user.subscribe(
+            x => {
+                console.log(x);
+                if (x != null) {
+                    return this.afterSignIn();
+                }
+            },
+            e => {
+                console.error(e);
+            });
     }
 
     /// Anonymous Sign In
@@ -52,7 +64,9 @@ export class HomePage {
                 console.log("home-page.ts")
                 console.log(result);
                 if (result) {
-                    this.router.navigate(['/pay']);
+                    // this.presentToast();
+                    // this.router.navigate(['/pay']);
+                    this.afterSignIn();
                 }
             })
     }
@@ -66,6 +80,16 @@ export class HomePage {
     private async afterSignIn() {
         // Do after login stuff here, such router redirects, toast messages, etc.
         console.log(this.user);
+        this.presentToast();
         return this.router.navigate(['/pay']);
     }
+
+    async presentToast() {
+        const toast = await this.toastController.create({
+            message: "You are logged in. Let's start...",
+            duration: 3000
+        });
+        toast.present();
+    }
+
 }

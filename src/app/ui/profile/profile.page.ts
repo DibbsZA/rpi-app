@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { iUser, iAccount } from '../../models/interfaces';
+import { iUser, iAccount, iProcessor } from '../../models/interfaces';
 import { ModalController, ToastController, LoadingController } from '@ionic/angular';
 import { UserServiceService } from '../../core/user-service.service';
+import { DataServiceService } from '../../core/data-service.service';
 
 @Component({
     selector: 'app-profile',
@@ -16,23 +17,32 @@ export class ProfilePage implements OnInit {
     userO: Observable<iUser>;
     dirtyUser: iUser;
     editMode: boolean = false;
+    processors: Observable<iProcessor[]>;
+    payerPspLable: string = '@psp';
+    payeePspLable: string = '@psp';
 
     constructor(
         public auth: AuthSvcService,
+        private dataSvc: DataServiceService,
         private router: Router,
         public toastController: ToastController,
         private userSvc: UserServiceService,
-        public loadingController: LoadingController
     ) {
         this.userO = this.auth.user;
-        this.userO.subscribe(
-            x => {
-                this.dirtyUser = x;
-            }
-        );
+
     }
 
     ngOnInit() {
+
+        this.processors = this.dataSvc.getProcessors();
+        this.userO.subscribe(
+            x => {
+                this.dirtyUser = x;
+                if (this.dirtyUser.pspId != null) {
+                    this.payerPspLable = '@' + this.dirtyUser.pspId;
+                }
+            }
+        );
     }
 
     // TODO:  edit user details and ZAP details
@@ -59,18 +69,23 @@ export class ProfilePage implements OnInit {
         this.router.navigate(['/account']);
     }
 
-    deletAccount(acc: iAccount) {
-        let index = this.dirtyUser.accounts.indexOf(acc);
+    deleteAccount(acc: iAccount) {
+        var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
+        let index = dirtyAccounts.indexOf(acc);
         this.dirtyUser.accounts.splice(index);
-        this.loadingController.create().then(loading => {
-            loading.present()
-            return this.userSvc.updateUserData(this.dirtyUser)
-                .then(r => {
-                    loading.dismiss();
-                    return this.presentToast("user Account Deleted");
-                });
-        }  
+        return this.userSvc.updateUserData(this.dirtyUser)
+            .then(r => {
+                return this.presentToast("user Account Deleted");
+            });
     }
+
+    private payerPspSelect(psp) {
+        if (psp != undefined && psp != null) {
+
+            this.payerPspLable = '@' + psp;
+        }
+    }
+
 
     public async presentToast(msg) {
 

@@ -6,14 +6,14 @@
  */
 export interface iUser {
     uid: string;
+    email: string;
+    accounts: iAccount[];
     displayName?: string;
     nickname?: string | null;
     pspId?: string | null;
-    email?: string | null;
     phone?: string | null;
     photoURL?: string | '/assets/img/avatar-default.png';
     zapId?: string | null;
-    accounts?: [iAccount] | null;
     authSecret?: string | null;
     code?: string;
     message?: string;
@@ -38,6 +38,6 @@ export interface iProcessor {
  * @interface iAccount
  */
 export interface iAccount {
-    accountNo: string;
-    accountAlias: string;
+    accountNo?: string;
+    accountAlias?: string;
 }

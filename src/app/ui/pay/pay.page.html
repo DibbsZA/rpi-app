@@ -4,79 +4,97 @@
             <ion-menu-button color="dark"></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            Make Payment
+            Send a ZAP
         </ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-    <form *ngIf="user">
-        <ion-card>
-            <ion-card-header>
-                <ion-card-subtitle>Pay From</ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content>
-                <ion-list lines="none">
-                    <ion-item>
-                        <ion-label>My PSP</ion-label>
-                        {{user.pspId}}
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>My ID</ion-label>
-                        {{user.zapId}}
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>
-                            Pay From
-                        </ion-label>
-                        <ion-select name="debitAccount" required="true" #payerAcc>
-                            <ion-select-option *ngFor="let acc of user.accounts" value='acc.accountNo'>
-                                {{acc.accountAlias}}
-                            </ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label stacked>
-                            Amount
-                        </ion-label>
-                        <ion-input [(ngModel)]="amount" placeholder="000000" name="amount" inputmode="numeric"
-                            maxlength="6" required="true"></ion-input>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Description</ion-label>
-                        <ion-input type="text" #payref [value]="" placeholder="Payment reference"></ion-input>
-                    </ion-item>
-                </ion-list>
-            </ion-card-content>
-        </ion-card>
-        <div class="center">
-            <ion-img src="/assets/img/down-arrow-gif-8.gif" style="height: 40px"></ion-img>
-        </div>
-        <ion-card>
-            <ion-card-header>
-                <ion-card-subtitle>Pay To</ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content>
-                <ion-list lines="none">
-                    <ion-item>
-                        <ion-label>Recipient PSP</ion-label>
-                        <ion-select placeholder="Select PSP">
-                            <ion-select-option value="ABSA">ABSA</ion-select-option>
-                            <ion-select-option value="SBSA">SBSA</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                    <ion-item>
-                        <ion-label>Recipient ID</ion-label>
-                        <ion-input type="${1|text,password,email,search,number,tel,url}" placeholder="userAlias"></ion-input>
-                    </ion-item>
-                </ion-list>
-            </ion-card-content>
-        </ion-card>
+    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="showPin()">
+        <ng-container *ngIf="!ShowPin">
+            <ion-card>
+                <ion-card-header>
+                    <ion-card-subtitle>Pay From</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-list lines="none">
+                        <ion-item>
+                            <ion-label>My PSP</ion-label>
+                            <ion-input type="text" readonly formControlName="payerPSP"></ion-input>
+                            <!-- {{userO.pspId}} -->
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>My ID</ion-label>
+                            <ion-input type="text" readonly formControlName="payerId"></ion-input>
+                            {{payerPspLable}}
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>
+                                Pay From
+                            </ion-label>
+                            <!-- <ion-select required="true" #payerAcc formControlName="payerAccountNo" placeholder=" Select Account" (ionChange)="payerAccountSelect(payerAcc.value)"> -->
+                            <ion-select required="true" formControlName="payerAccountNo" placeholder=" Select Account">
+                                <ion-select-option *ngFor="let acc of userO.accounts" [value]="acc.accountNo">
+                                    {{acc.accountAlias}}
+                                </ion-select-option>
+                            </ion-select>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerAccountNo.valid">!</ion-badge>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label stacked>
+                                Amount
+                            </ion-label>
+                            <ion-input formControlName="amount" placeholder="000000" type="number" maxlength="6"
+                                required="true"></ion-input>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amount.dirty">!</ion-badge>
+                        </ion-item>
+                        <ion-item>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
+                            <ion-label>Description</ion-label>
+                            <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"></ion-input>
+                        </ion-item>
+                    </ion-list>
+                </ion-card-content>
+            </ion-card>
+            <div class="center">
+                <ion-img src="/assets/img/down-arrow-gif-8.gif" style="height: 40px"></ion-img>
+            </div>
+            <ion-card>
+                <ion-card-header>
+                    <ion-card-subtitle>Pay To</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-list lines="none">
+                        <ion-item>
+                            <ion-label>Recipient PSP</ion-label>
+                            <ion-select placeholder="Select PSP" formControlName="payeePSP">
+                                <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
+                            </ion-select>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeePSP.valid">!</ion-badge>
+                        </ion-item>
+                        <ion-item>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeId.valid">!</ion-badge>
+                            <ion-label>ZAP Id:</ion-label>
+                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Zap Id" #zapid></ion-input>
+                            {{payeePspLable}}
+                        </ion-item>
+                    </ion-list>
+                </ion-card-content>
+            </ion-card>
 
-        <ion-button expand="block" (click)="doPay('pay')" color="primary">
-            <ion-icon slot="start" name="cash"></ion-icon>
-            Send Payment
-        </ion-button>
+            <ion-button [disabled]="!payForm.valid" expand="block" color="primary">
+                <ion-icon slot="start" name="cash"></ion-icon>
+                ZAP It!
+            </ion-button>
+            <!-- <label *ngIf="Pin">Pin entered is {{Pin}}</label> -->
+        </ng-container>
+
+        <!-- <div text-center *ngIf="!ShowPin">
+            <ion-button (click)="showPin()">Enter Pin</ion-button>
+            <br>
+            <label *ngIf="Pin">Pin entered is {{Pin}}</label>
+        </div> -->
+
+        <app-pin *ngIf="ShowPin" pagetitle="Enter The Pin" (change)="eventCapture($event)"></app-pin>
     </form>
-
 </ion-content>

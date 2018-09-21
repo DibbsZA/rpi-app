@@ -1,0 +1,73 @@
+<!-- <ion-content padding> -->
+<h6 text-center margin-vertical>{{ pagetitle }}</h6>
+<div text-center large margin-vertical>
+    <ion-icon [name]="pin.length>0 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+    <ion-icon [name]="pin.length>1 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+    <ion-icon [name]="pin.length>2 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+    <ion-icon [name]="pin.length>3 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+    <ion-icon [name]="pin.length>4 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+    <ion-icon [name]="pin.length>5 ? 'radio-button-on' : 'radio-button-off'"></ion-icon>
+</div>
+
+<div>
+    <ion-grid text-center>
+        <ion-row>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('1')">1</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('2')">2</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('3')">3</ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('4')">4</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('5')">5</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('6')">6</ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('7')">7</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('8')">8</ion-button>
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('9')">9</ion-button>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" (click)="handleInput('0')">0</ion-button>
+            </ion-col>
+            <ion-col>
+
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" ion-button fill="outline" color="dark" expand="block"
+                    clear large no-padding (click)="handleInput('clear')">Clear</ion-button>
+            </ion-col>
+            <ion-col>
+
+            </ion-col>
+            <ion-col>
+                <ion-button fill="outline" color="dark" expand="block" ion-button fill="outline" color="dark" expand="block"
+                    clear large (click)="emitEvent()">OK</ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</div>
+<!-- </ion-content> -->
