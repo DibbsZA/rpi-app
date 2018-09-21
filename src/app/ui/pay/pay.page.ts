@@ -68,7 +68,7 @@ export class PayPage implements OnInit {
                         consentKey: null,
                         payeeId: ['', [Validators.required]],
                         payeePSP: ['', [Validators.required]],
-                        amount: [0, [Validators.required, Validators.min(100), Validators.max(100001)]],
+                        amount: [null, [Validators.required, Validators.min(100), Validators.max(100001)]],
                         userRef: ['', [Validators.required]],
                     });
 

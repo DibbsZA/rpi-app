@@ -82,10 +82,13 @@
                 </ion-card-content>
             </ion-card>
 
-            <ion-button [disabled]="!payForm.valid" expand="block" color="primary">
+            <ion-button type="submit" [disabled]="!payForm.valid" expand="block" color="primary">
                 <ion-icon slot="start" name="cash"></ion-icon>
                 ZAP It!
             </ion-button>
+            <div *ngIf="!payForm.valid">
+                form has an error
+            </div>
             <!-- <label *ngIf="Pin">Pin entered is {{Pin}}</label> -->
         </ng-container>
 
