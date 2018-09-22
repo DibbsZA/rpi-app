@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-// import { firebase } from '@firebase/app';
 import { auth } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
-import {
-    AngularFirestore,
-    // AngularFirestoreDocument
-} from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 
 import { Observable, of } from 'rxjs';
 import { switchMap, startWith, tap, filter } from 'rxjs/operators';
 
-import { iUser, iAccount } from "../models/interfaces";
+import { iUser } from '../models/interfaces';
 import { UserServiceService } from './user-service.service';
 
 @Injectable({
@@ -27,7 +23,7 @@ export class AuthSvcService {
         private afs: AngularFirestore,
         private router: Router,
         private notify: NotifyService,
-        private userSvc: UserServiceService,
+        private userSvc: UserServiceService
 
     ) {
         this.user = this.afAuth.authState.pipe(
@@ -48,14 +44,16 @@ export class AuthSvcService {
     async anonymousLogin() {
         return this.afAuth.auth
             .signInAnonymously()
-            // .then(credential => {
-            //     this.notify.update('Welcome to Firestarter!!!', 'success');
-            //     // return this.updateUserData(credential.user); // if using firestore
-            // })
-            .catch(error => {
-                let err = { code: 'error', message: error.message };
-                return err;
-            });
+            .then(credential => {
+                this.notify.update('Welcome to ZAP!!!', 'success');
+                return credential;
+                // return this.updateUserData(credential.user); // if using firestore
+            })
+            // .catch(error => {
+            //     const err = { code: 'error', message: error.message };
+            //     return err;
+            // });
+            .catch(error => this.handleError(error));
     }
     //// Email/Password Auth ////
 
@@ -63,36 +61,39 @@ export class AuthSvcService {
         return this.afAuth.auth
             .createUserWithEmailAndPassword(email, password)
             .then(credential => {
-                this.notify.update('Welcome new user!', 'success');
-                let newUser: iUser = {
+                this.notify.update('Welcome to ZAP!!!', 'success');
+                const newUser: iUser = {
                     uid: credential.user.uid,
                     email: credential.user.email
-                }
+                };
                 return this.userSvc.updateUserData(newUser);
             })
-            .catch(error => {
-                // this.handleError(error);
-                let err = { code: 'error', message: error.message };
-                return err;
-            });
+            .catch(error => this.handleError(error));
+        // .catch(error => {
+        //     // this.handleError(error);
+        //     const err = { code: 'error', message: error.message };
+        //     return err;
+        // });
     }
 
     async emailLogin(email: string, password: string) {
         return this.afAuth.auth
             .signInWithEmailAndPassword(email, password)
-            // .then(credential => {
-            //     this.notify.update('Welcome back!', 'success');
-            //     // this.updateUserData(credential.user);
-            //     // .then(r => {
-            //     //     console.log(r);
-            //     //     return credential.user;
-            //     // });
-            //     // return this.userSvc.getUserData(credential.user.uid);
-            // })
-            .catch(error => {
-                let err = { code: 'error', message: error.message };
-                return err;
-            });
+            .then(credential => {
+                this.notify.update('Welcome back!', 'success');
+                return credential;
+                // this.updateUserData(credential.user);
+                // .then(r => {
+                //     console.log(r);
+                //     return credential.user;
+                // });
+                // return this.userSvc.getUserData(credential.user.uid);
+            })
+            .catch(error => this.handleError(error));
+        // .catch(error => {
+        //     const err = { code: 'error', message: error.message };
+        //     return err;
+        // });
     }
 
     // Sends email allowing user to reset password

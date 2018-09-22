@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
         state: RouterStateSnapshot
     ): boolean {
 
-        var loggedIn = true;
+        let loggedIn = true;
         this.user.subscribe(
             x => {
                 console.log(x);
