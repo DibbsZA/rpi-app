@@ -25,10 +25,15 @@
     max-height: 120px;
 }
 
-.appToast .appAlert {
-    --background: #222;
+.appToast {
+    --background: #555;
     --color: #eee;
-    --button-color: #888;
+}
+
+.appAlert {
+    --background: #555;
+    --color: #eee;
+    --button-color: #f9a61a;
 }
 
 ion-input {
