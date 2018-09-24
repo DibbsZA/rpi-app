@@ -36,3 +36,14 @@ ion-card {
 ion-card-header {
     padding-bottom: 0 !important;
 }
+
+.appToast {
+    --background: #555;
+    --color: #eee;
+}
+
+.appAlert {
+    --background: #555;
+    --color: #eee;
+    --button-color: #f9a61a;
+}
