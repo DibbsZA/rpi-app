@@ -52,7 +52,7 @@ export class AuthSvcService {
         return this.afAuth.auth
             .signInAnonymously()
             .then(credential => {
-                this.notify.update('Welcome to ZAP!!!', 'success');
+                this.notify.update('Welcome to Z@P!!!', 'success');
                 return credential;
                 // return this.updateUserData(credential.user); // if using firestore
             })
@@ -89,7 +89,7 @@ export class AuthSvcService {
         return this.afAuth.auth
             .signInWithEmailAndPassword(email, password)
             .then(credential => {
-                this.notify.update('Welcome back!', 'success');
+                this.notify.update('Welcome back to Z@P!', 'success');
                 return credential;
                 // this.updateUserData(credential.user);
                 // .then(r => {
