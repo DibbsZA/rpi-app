@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserServiceService } from '../../core/user-service.service';
-import { iUser, iProcessor } from '../../models/interfaces';
+import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { ToastController } from '@ionic/angular';
@@ -10,6 +10,8 @@ import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
 import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { NotifyService } from '../../core/notify.service';
+import { TxnSvcService } from '../../core/txn-svc.service';
 
 @Component({
     selector: 'app-pay',
@@ -29,7 +31,8 @@ export class PayPage implements OnInit {
         private auth: AuthSvcService,
         private dataSvc: DataServiceService,
         private fb: FormBuilder,
-        public toastController: ToastController,
+        public notify: NotifyService,
+        private txnSvc: TxnSvcService,
         private router: Router
     ) {
         this.user = this.auth.user;
@@ -44,7 +47,7 @@ export class PayPage implements OnInit {
             x => {
                 this.userO = x;
                 if (this.userO.pspId == null) {
-                    this.presentToast('Please update your profile first!!!.');
+                    this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
                 }
                 else {
@@ -81,24 +84,7 @@ export class PayPage implements OnInit {
                     })
 
                 }
-                // let msg: msgPSPPayment = {
-                //     uniqueRef: null,
-                //     payeeId: null,
-                //     payeeAccountNo: null,
-                //     payeePSP: null,
-                //     payerAccountNo: null,
-                //     payerId: null,
-                //     payerName: null,
-                //     payerPSP: null,
-                //     amount: null,
-                //     originatingDate: null,
-                //     settlementDate: null,
-                //     mpiHash: null,
-                //     consentKey: null,
-                //     responseCode: null,
-                //     responseDesc: null,
-                //     userRef: null
-                // }
+
             }
         )
 
@@ -121,19 +107,22 @@ export class PayPage implements OnInit {
     // }
 
     public doPay(secret) {
-
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
 
-        alert(JSON.stringify(this.pay);
-    }
-
-    async presentToast(msg: string) {
-        const toast = await this.toastController.create({
-            message: msg,
-            duration: 3000
-        });
-        toast.present();
+        this.notify.update(JSON.stringify(this.pay), 'info');
+        const txnMsg: msgPSPPayment = this.pay;
+        const txn: iTransaction = {
+            payMessage: txnMsg,
+            payConfirm: {}
+        }
+        //TODO: Save Transaction to DB
+        return this.txnSvc.savePayment(txn)
+            .then(r => {
+                console.log('Transaction saved!');
+                console.log(txn);
+                return
+            });
     }
 
     Pin: String = "";
