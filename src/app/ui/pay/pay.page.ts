@@ -27,6 +27,10 @@ export class PayPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
+
+    Pin: String = '';
+    ShowPin: Boolean = false;
+
     constructor(
         private auth: AuthSvcService,
         private dataSvc: DataServiceService,
@@ -49,8 +53,7 @@ export class PayPage implements OnInit {
                 if (this.userO.pspId == null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
-                }
-                else {
+                } else {
                     this.payerPspLable = '@' + this.userO.pspId;
 
                     this.pay = {
@@ -75,18 +78,18 @@ export class PayPage implements OnInit {
                         userRef: ['', [Validators.required]],
                     });
 
-                    this.payForm.valueChanges.subscribe(x => {
-                        console.log(x);
-                        if (x.payeePSP != null) {
+                    this.payForm.valueChanges
+                        .subscribe(x => {
+                            console.log(x);
+                            if (x.payeePSP != null) {
 
-                            this.payeePspLable = '@' + x.payeePSP;
-                        }
-                    })
+                                this.payeePspLable = '@' + x.payeePSP;
+                            }
+                        });
 
                 }
 
-            }
-        )
+            });
 
     }
 
@@ -102,7 +105,7 @@ export class PayPage implements OnInit {
     //     }
     // }
 
-    // public optionsFn(data): void { //here item is an object 
+    // public optionsFn(data): void { // here item is an object
     //     alert("clicked" + data)
     // }
 
@@ -110,31 +113,35 @@ export class PayPage implements OnInit {
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
 
-        this.notify.update(JSON.stringify(this.pay), 'info');
         const txnMsg: msgPSPPayment = this.pay;
         const txn: iTransaction = {
+            txnOwner: this.userO.zapId + '@' + this.userO.pspId,
+            time: new Date().getTime(),
             payMessage: txnMsg,
             payConfirm: {}
-        }
-        //TODO: Save Transaction to DB
+        };
+
+        // TODO: Save Transaction to DB
         return this.txnSvc.savePayment(txn)
             .then(r => {
+                this.notify.update('Payment to ' + this.pay.payeeId + '@' + this.pay.payeePSP + ' submitted.', 'info');
                 console.log('Transaction saved!');
-                console.log(txn);
-                return
+                console.log(r);
+                return r;
             });
     }
 
-    Pin: String = "";
-    ShowPin: Boolean = false;
 
     eventCapture(event) {
         this.ShowPin = false;
         this.Pin = event;
-        var m: Message = event;
+        const m: Message = event;
         const hashSecret = sha256.hmac(this.pay.payerPSP, m);
         console.log(hashSecret);
-        this.doPay(hashSecret);
+        this.doPay(hashSecret)
+            .then(r => {
+                return this.router.navigate(['history']);
+            });
     }
 
     showPin() {
