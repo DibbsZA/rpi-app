@@ -75,22 +75,22 @@ export interface msgPSPPayment {
      * @type {(string | null)}
      * @memberof msgPSPPayment
      */
-    uniqueRef: string | null;
-    payerId: string | null;
-    payerPSP: string | null;
-    payerName: string | null;
-    payerAccountNo: string | null;
-    consentKey: string | null;
-    payeeId: string | null;
-    payeePSP: string | null;
-    payeeAccountNo: string | null;
-    amount: string | null;
-    userRef: string | null;
-    originatingDate: string | null;
-    settlementDate: string | null;
-    mpiHash: string | null;
-    responseCode: string | null;
-    responseDesc: string | null;
+    uniqueRef?: string | null;
+    payerId?: string | null;
+    payerPSP?: string | null;
+    payerName?: string | null;
+    payerAccountNo?: string | null;
+    consentKey?: string | null;
+    payeeId?: string | null;
+    payeePSP?: string | null;
+    payeeAccountNo?: string | null;
+    amount?: string | null;
+    userRef?: string | null;
+    originatingDate?: string | null;
+    settlementDate?: string | null;
+    mpiHash?: string | null;
+    responseCode?: string | null;
+    responseDesc?: string | null;
 }
 
 

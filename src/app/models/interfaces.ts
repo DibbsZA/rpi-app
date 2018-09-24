@@ -1,3 +1,5 @@
+import { msgPSPPayment, msgConfirmation } from "./messages";
+
 /**
  * User Profile definition
  *
@@ -40,4 +42,10 @@ export interface iProcessor {
 export interface iAccount {
     accountNo?: string;
     accountAlias?: string;
+}
+
+export interface iTransaction {
+    txnId: string;
+    payMessage: msgPSPPayment;
+    payConfirm: msgConfirmation;
 }
