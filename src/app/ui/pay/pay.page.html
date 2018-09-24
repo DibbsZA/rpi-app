@@ -1,10 +1,10 @@
 <ion-header>
-    <ion-toolbar color="warning">
+    <ion-toolbar color="primary">
         <ion-buttons slot="start">
             <ion-menu-button color="dark"></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            Send a ZAP
+            Send a Z@P
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -75,7 +75,7 @@
                         <ion-item>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeId.valid">!</ion-badge>
                             <ion-label>ZAP Id:</ion-label>
-                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Zap Id" #zapid></ion-input>
+                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
                             {{payeePspLable}}
                         </ion-item>
                     </ion-list>
@@ -84,7 +84,7 @@
 
             <ion-button type="submit" [disabled]="!payForm.valid" expand="block" color="primary">
                 <ion-icon slot="start" name="cash"></ion-icon>
-                ZAP It!
+                Z@P It!
             </ion-button>
             <div *ngIf="!payForm.valid">
                 form has an error
