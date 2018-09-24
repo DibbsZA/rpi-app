@@ -1,4 +1,5 @@
-import { msgPSPPayment, msgConfirmation } from "./messages";
+import { msgPSPPayment, msgConfirmation } from './messages';
+
 
 /**
  * User Profile definition
@@ -6,6 +7,7 @@ import { msgPSPPayment, msgConfirmation } from "./messages";
  * @export
  * @interface iUser
  */
+// tslint:disable-next-line:class-name
 export interface iUser {
     uid: string;
     email: string;
@@ -25,6 +27,7 @@ export interface iUser {
  * @export
  * @interface iProcessor
  */
+// tslint:disable-next-line:class-name
 export interface iProcessor {
     id: string;
     name: string;
@@ -37,11 +40,13 @@ export interface iProcessor {
  * @export
  * @interface iAccount
  */
+// tslint:disable-next-line:class-name
 export interface iAccount {
     accountNo?: string;
     accountAlias?: string;
 }
 
+// tslint:disable-next-line:class-name
 export interface iTransaction {
     txnId?: string;
     payMessage: msgPSPPayment;
