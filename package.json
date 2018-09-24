@@ -26,6 +26,8 @@
     "@ionic-native/status-bar": "5.0.0-beta.15",
     "@ionic/angular": "4.0.0-beta.7",
     "@ultimate/ngxerrors": "^1.4.0",
+    "angular2-prettyjson": "^3.0.1",
+    "chart.js": "^2.7.2",
     "core-js": "^2.5.3",
     "firebase": "^5.5.0",
     "js-sha256": "^0.9.0",
