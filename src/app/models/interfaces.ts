@@ -17,8 +17,6 @@ export interface iUser {
     photoURL?: string | '/assets/img/avatar-default.png';
     zapId?: string | null;
     authSecret?: string | null;
-    code?: string;
-    message?: string;
 }
 
 /**
@@ -45,7 +43,7 @@ export interface iAccount {
 }
 
 export interface iTransaction {
-    txnId: string;
+    txnId?: string;
     payMessage: msgPSPPayment;
     payConfirm: msgConfirmation;
 }

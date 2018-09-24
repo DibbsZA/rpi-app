@@ -54,10 +54,9 @@ export interface msgPaymentAuth {
 
 
 export interface msgConfirmation {
-    responseCode: string;
-    responseDesc: string;
-    uniqueRef: string;
-
+    responseCode?: string;
+    responseDesc?: string;
+    uniqueRef?: string;
 }
 
 /**
@@ -84,7 +83,7 @@ export interface msgPSPPayment {
     payeeId?: string | null;
     payeePSP?: string | null;
     payeeAccountNo?: string | null;
-    amount?: string | null;
+    amount?: number | null;
     userRef?: string | null;
     originatingDate?: string | null;
     settlementDate?: string | null;
