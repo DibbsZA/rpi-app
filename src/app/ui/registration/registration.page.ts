@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { ToastController } from '@ionic/angular';
+import { NotifyService } from '../../core/notify.service';
 
 @Component({
     selector: 'app-registration',
@@ -14,7 +14,7 @@ export class RegistrationPage implements OnInit {
     constructor(public auth: AuthSvcService,
         private afAuth: AngularFireAuth,
         private router: Router,
-        public toastController: ToastController
+        public notify: NotifyService
     ) { }
 
     ngOnInit() {
@@ -29,24 +29,16 @@ export class RegistrationPage implements OnInit {
         this.auth.emailSignUp(email, pwd)
             .then((res) => {
                 console.log(res);
-                if (res.code == undefined) {
+                if (res == undefined) {
                     this.router.navigate(['/profile']);
                 }
                 else {
-                    this.presentToast(res.message);
+                    this.notify.update('Register failed', 'error');
                 }
 
             })
             .catch((err) => {
                 console.log(err)
             })
-    }
-
-    async presentToast(msg) {
-        const toast = await this.toastController.create({
-            message: msg,
-            duration: 4000
-        });
-        toast.present();
     }
 }
