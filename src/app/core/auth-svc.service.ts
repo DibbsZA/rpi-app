@@ -69,11 +69,12 @@ export class AuthSvcService {
             .createUserWithEmailAndPassword(email, password)
             .then(credential => {
                 this.notify.update('Welcome to Z@P!', 'success');
-                let newUser: iUser = {
+                const newUser: iUser = {
                     uid: credential.user.uid,
                     email: credential.user.email,
                     accounts: []
-                }
+                };
+
                 console.log('New User: ' + JSON.stringify(credential));
                 return this.userSvc.updateUserData(newUser);
             })

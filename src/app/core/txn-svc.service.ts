@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
 import { iUser, iTransaction } from '../models/interfaces';
 import { Observable } from 'rxjs';
+import { expand, takeWhile, mergeMap, take, map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -17,90 +18,50 @@ export class TxnSvcService {
         private afs: AngularFirestore,
     ) {
 
+        this.txnCollection = this.afs.collection<iTransaction>('transactions');
+    }
+
+    public getAllTxn() {
+        this.txnCollection = this.afs.collection<iTransaction>('transactions', ref => ref.orderBy('time', 'desc').limit(20));
+
+        return this.txnCollection.valueChanges();
     }
 
 
-    /**
-     * getAllTxn
-     * @description Get Last 20 Transactions in DB.
-     * @returns {Observable<iTransaction[]>}
-     * @memberOf TxnSvcService
-     */
-    public getAllTxn(): Observable<iTransaction[]> {
-        const colRef = this.afs.firestore.collection('/transactions');
-        this.txnCollection = this.afs.collection<iTransaction>(colRef, ref => ref.orderBy('originatingDate', 'desc')
-            .limit(20));
-        this.transactions = this.txnCollection.valueChanges();
-        return this.transactions;
-    }
-
-
-    /**
-     * getUserTxnHistory
-     * @description 'Get last 20 statement for User'
-     * @param {string} zapId 'User Id to filter by'
-     * @returns {Observable<iTransaction[]>}
-     * @memberOf TxnSvcService
-     */
     public getUserTxnHistory(zapId: string): Observable<iTransaction[]> {
-        const colRef = this.afs.firestore.collection('/transactions');
-        this.txnCollection = this.afs.collection<iTransaction>(colRef, ref => ref.where('payInstruction.payeeId', '==', 'zapId')
-            .orderBy('originatingDate', 'desc').limit(20));
+        const colRef = this.afs.firestore.collection('transactions');
+        this.txnCollection = this.afs.collection<iTransaction>(colRef, ref => ref.where('txnOwner', '==', 'zapId')
+            .orderBy('time', 'desc').limit(10));
         return this.transactions;
     }
 
-    /**
-     * getTxn
-     * @description 'Retrieve a particular Transaction from the database.'
-     * @param {iTransaction['txnId']} txnId
-     * @returns {Observable<iTransaction>}
-     * @memberOf TxnSvcService
-     */
-    public getTxn(txnId: iTransaction['txnId']): Observable<iTransaction> {
-        this.txnCollection = this.afs.collection('/transactions');
-        this.txnDocRef = this.txnCollection.doc('${txnId}');
+    public getTxn(txnId): Observable<iTransaction> {
+        this.txnCollection = this.afs.collection<iTransaction>('transactions');
+        this.txnDocRef = this.txnCollection.doc(txnId);
         return this.txnDocRef.valueChanges();
     }
 
 
-    /**
-     * savePayment
-     * @description 'Save a User Txn to the DB'
-     * @param {iTransaction} txn 'Save a new Txn to the database'
-     * @returns {Promise<void>}
-     * @memberOf TxnSvcService
-     */
-    public savePayment(txn: iTransaction): Promise<void> {
-        this.txnCollection = this.afs.collection('/transactions');
-        this.txnDocRef = this.txnCollection.doc('${txnId}');
-        return this.txnDocRef.set(txn);
+    public savePayment(txn: iTransaction) {
+        this.txnCollection = this.afs.collection<iTransaction>('transactions');
+        // return this.txnCollection.add(txn);
+
+        return this.txnCollection.add(txn).then(ref => {
+            // add the returned is to the txn and update the values again.
+            txn.id = ref.id;
+            return this.updatePayment(txn);
+        });
     }
 
-    /**
-     * updatePayment
-     * @description 'Update a Payment eg When a PaymentResponse is recieved'
-     * @param {iTransaction} txn 'Transaction Data'
-     * @returns {Promise<void>}
-     * @memberOf TxnSvcService
-     */
-    public updatePayment(txn: iTransaction): Promise<void> {
-        this.txnCollection = this.afs.collection('/transactions');
-        this.txnDocRef = this.txnCollection.doc('${txnId}');
+    public updatePayment(txn: iTransaction) {
+        this.txnCollection = this.afs.collection<iTransaction>('transactions');
+        this.txnDocRef = this.txnCollection.doc(txn.id);
         return this.txnDocRef.update(txn);
     }
 
-
-    /**
-     * deletePayment
-     * @description 'Delete a Txn from the DB. Admin Only Use'
-     * @param {string} txnId 'Transaction ID'
-     * @returns {Promise<void>}
-     *
-     * @memberOf TxnSvcService
-     */
     public deletePayment(txnId: string): Promise<void> {
-        this.txnCollection = this.afs.collection('/transactions');
-        this.txnDocRef = this.txnCollection.doc('${txnId}');
+        this.txnCollection = this.afs.collection<iTransaction>('transactions');
+        this.txnDocRef = this.txnCollection.doc(txnId);
         return this.txnDocRef.delete();
     }
 }

@@ -48,7 +48,9 @@ export interface iAccount {
 
 // tslint:disable-next-line:class-name
 export interface iTransaction {
-    txnId?: string;
+    id?: string;
+    txnOwner: string;
     payMessage: msgPSPPayment;
     payConfirm: msgConfirmation;
+    time: number;
 }

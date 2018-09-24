@@ -57,4 +57,9 @@ export class UserServiceService {
             });
         return data;
     }
+
+    public getUsers() {
+
+        return this.afs.collection<iUser>('users').valueChanges();
+    }
 }
