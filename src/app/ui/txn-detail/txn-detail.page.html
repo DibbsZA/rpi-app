@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button color="dark"></ion-menu-button>
+        </ion-buttons>
+        <ion-buttons slot="secondary">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>
+            Txn - {{ txn.time | date:'short' }}
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <pre class="jsonData">
+{{ txn | json }}
+</pre>
+</ion-content>
