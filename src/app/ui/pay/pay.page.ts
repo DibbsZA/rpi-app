@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { UserServiceService } from '../../core/user-service.service';
 import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
-import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { DataServiceService } from '../../core/data-service.service';
 import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
-import { sha256, sha224, Message } from 'js-sha256';
+import { sha256, Message } from 'js-sha256';
 
-import { FormBuilder, FormGroup, FormControl, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 
