@@ -4,7 +4,7 @@ import { RouterModule, RouteReuseStrategy, Routes } from '@angular/router';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { firebaseConfig } from './config';
+import { firebaseConfig, options } from './config';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -21,6 +21,8 @@ import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AccountPageModule } from './ui/account/account.module';
+// import { NgxMaskModule } from 'ngx-mask'
+
 
 @NgModule({
     declarations: [
@@ -39,6 +41,7 @@ import { AccountPageModule } from './ui/account/account.module';
         AngularFireModule.initializeApp(firebaseConfig),
         AngularFirestoreModule,
         AngularFireAuthModule,
+        // NgxMaskModule.forRoot(options),
         ProfilePageModule,
         ScanPageModule,
         PayPageModule,

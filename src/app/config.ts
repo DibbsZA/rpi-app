@@ -14,3 +14,7 @@ export const firebaseConfig = {
     storageBucket: "zapmobile-954c4.appspot.com",
     messagingSenderId: "393591030275"
 }
+
+export const options = {
+
+}
