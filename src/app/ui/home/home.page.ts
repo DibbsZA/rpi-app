@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
 // import { User } from '../../models/user';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { ToastController } from '@ionic/angular';
+import { NotifyService } from '../../core/notify.service';
 
 
 
@@ -24,7 +24,7 @@ export class HomePage implements OnInit {
         public auth: AuthSvcService,
         private afAuth: AngularFireAuth,
         private router: Router,
-        public toastController: ToastController
+        public notify: NotifyService
     ) {
         this.user = this.auth.user;
         // this.user.toPromise()
@@ -79,17 +79,8 @@ export class HomePage implements OnInit {
     /// Shared
     private async afterSignIn() {
         // Do after login stuff here, such router redirects, toast messages, etc.
-        console.log(this.user);
-        this.presentToast();
+        this.notify.update("You are logged in. Let's start...", 'success')
         return this.router.navigate(['/pay']);
-    }
-
-    async presentToast() {
-        const toast = await this.toastController.create({
-            message: "You are logged in. Let's start...",
-            duration: 3000
-        });
-        toast.present();
     }
 
 }
