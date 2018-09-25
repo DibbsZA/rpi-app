@@ -32,10 +32,11 @@ import { AccountPageModule } from './ui/account/account.module';
     ],
     imports: [
         BrowserModule,
-        IonicModule.forRoot(),
-        AngularFireModule.initializeApp(firebaseConfig),
+        IonicModule.forRoot({
+            backButtonText: ''
+        }),
         AppRoutingModule,
-        AngularFireModule,
+        AngularFireModule.initializeApp(firebaseConfig),
         AngularFirestoreModule,
         AngularFireAuthModule,
         ProfilePageModule,
