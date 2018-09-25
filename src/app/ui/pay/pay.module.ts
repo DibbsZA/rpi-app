@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { PayPage } from './pay.page';
 import { PinComponent } from '../pin/pin.component';
+import { NgxMaskModule } from 'ngx-mask';
+import { options } from '../../config';
 
 const routes: Routes = [
     {
@@ -20,6 +22,7 @@ const routes: Routes = [
         CommonModule,
         IonicModule,
         ReactiveFormsModule,
+        NgxMaskModule.forRoot(options),
         RouterModule.forChild(routes)
     ],
     declarations: [
