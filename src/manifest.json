@@ -1,7 +1,20 @@
 {
     "short_name": "ZAPMobile",
-    "name": "ZAPMobile Payments App",
-    "start_url": "/?utm_source=home",
-
-    "gcm_sender_id": "393591030275"
+    "name": "Z@P Payments App",
+    "start_url": "/?utm_source=about",
+    "display": "standalone",
+    "gcm_sender_id": "393591030275",
+    "icons": [{
+            "src": "/assets/icon/icons-192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/assets/icon/icons-512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "orientation": "portrait",
+    "backgound_color": "#000000"
 }
