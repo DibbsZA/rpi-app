@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "393591030275",
+    "firebase_url": "https://zapmobile-954c4.firebaseio.com",
+    "project_id": "zapmobile-954c4",
+    "storage_bucket": "zapmobile-954c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393591030275:android:08c4828062a49975",
+        "android_client_info": {
+          "package_name": "com.bankservafrica.zapmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393591030275-o80564tbaqu0616m7mrreeoe92lf1vr6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA64LzR17e0Bg1RNwoaeQ5hylzihXoYUJk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

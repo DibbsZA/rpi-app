@@ -1,0 +1,7 @@
+{
+    "short_name": "ZAPMobile",
+    "name": "ZAPMobile Payments App",
+    "start_url": "/?utm_source=home",
+
+    "gcm_sender_id": "393591030275"
+}

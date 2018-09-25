@@ -19,6 +19,7 @@ export interface iUser {
     photoURL?: string | '/assets/img/avatar-default.png';
     zapId?: string | null;
     authSecret?: string | null;
+    fcmTokens?: { [token: string]: true };
 }
 
 /**

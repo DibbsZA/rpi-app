@@ -26,7 +26,6 @@ import { AccountPageModule } from './ui/account/account.module';
     declarations: [
         AppComponent,
         UserProfileComponent,
-        // PinComponent,
     ],
     entryComponents: [
 
@@ -54,3 +53,5 @@ import { AccountPageModule } from './ui/account/account.module';
     bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+

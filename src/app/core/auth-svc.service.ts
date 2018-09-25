@@ -16,7 +16,7 @@ import { UserServiceService } from './user-service.service';
     providedIn: 'root'
 })
 export class AuthSvcService {
-    user: Observable<iUser | null>;
+    user: Observable<iUser>;
 
     constructor(
         private afAuth: AngularFireAuth,
@@ -30,19 +30,10 @@ export class AuthSvcService {
             switchMap(user => {
                 if (user) {
                     return this.afs.doc<iUser>(`users/${user.uid}`).valueChanges();
-                    // .toPromise()
-                    // .then(r => {
-                    //     localStorage.setItem('user', JSON.stringify(user));
-                    //     return r
-                    // });
                 } else {
-                    // localStorage.setItem('user', null);
                     return of(null);
                 }
             })
-            // ,
-            // tap(user => localStorage.setItem('user', JSON.stringify(user))),
-            // startWith(JSON.parse(localStorage.getItem('user')))
         );
 
     }
@@ -79,11 +70,7 @@ export class AuthSvcService {
                 return this.userSvc.updateUserData(newUser);
             })
             .catch(error => this.handleError(error));
-        // .catch(error => {
-        //     // this.handleError(error);
-        //     const err = { code: 'error', message: error.message };
-        //     return err;
-        // });
+
     }
 
     async emailLogin(email: string, password: string) {
