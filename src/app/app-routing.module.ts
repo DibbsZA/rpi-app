@@ -13,7 +13,11 @@ const routes: Routes = [
     { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule', canActivate: [AuthGuard] },
     { path: 'history', loadChildren: './ui/history/history.module#HistoryPageModule', canActivate: [AuthGuard] },
     { path: 'pin-confirm', loadChildren: './ui/pin-confirm/pin-confirm.module#PinConfirmPageModule', canActivate: [AuthGuard] },
-    { path: 'txn-detail/:id', loadChildren: './ui/txn-detail/txn-detail.module#TxnDetailPageModule', canActivate: [AuthGuard] }
+    { path: 'txn-detail/:id', loadChildren: './ui/txn-detail/txn-detail.module#TxnDetailPageModule', canActivate: [AuthGuard] },
+    { path: 'payrequestAuth', loadChildren: './ui/payrequest-auth/payrequest-auth.module#PayrequestAuthPageModule', canActivate: [AuthGuard] },
+    { path: 'requestpay', loadChildren: './ui/request-pay/request-pay.module#RequestPayPageModule', canActivate: [AuthGuard] },
+    { path: 'show-qr', loadChildren: './ui/show-qr/show-qr.module#ShowQrPageModule', canActivate: [AuthGuard] }
+
 ];
 
 @NgModule({
