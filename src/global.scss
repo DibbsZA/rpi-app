@@ -42,10 +42,11 @@ ion-card-header {
 .appToast {
     --background: #555;
     --color: #eee;
+    --ion-text-color: #eee !important;
 }
 
 .appAlert {
     --background: #555;
-    --color: #eee;
+    --ion-text-color: #eee !important;
     --button-color: #f9a61a;
 }
