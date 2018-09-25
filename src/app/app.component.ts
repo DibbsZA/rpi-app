@@ -16,9 +16,10 @@ import { AuthSvcService } from './core/auth-svc.service';
 })
 export class AppComponent implements OnInit {
     public appPages = [
-        { title: 'Login', url: '/home', icon: 'home' },
-        { title: 'Pay', url: '/pay', icon: 'cash' },
-        { title: 'Scan', url: '/scan', icon: 'aperture' },
+        { title: 'Login', url: '/home', icon: 'log-in' },
+        { title: 'Pay', url: '/pay', icon: 'cash', icon2: 'arrow-round-forward' },
+        { title: 'Request Payment', url: '/requestpay', icon: 'cash', icon2: 'arrow-round-back' },
+        { title: 'Scan', url: '/scan', icon: 'qr-scanner' },
         { title: 'History', url: '/history', icon: 'paper' },
         { title: 'Profile', url: '/profile', icon: 'contact' },
         { title: 'About', url: '/about', icon: 'information-circle-outline' }
