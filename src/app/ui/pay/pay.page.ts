@@ -9,7 +9,7 @@ import { DataServiceService } from '../../core/data-service.service';
 import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
 import { sha256, sha224, Message } from 'js-sha256';
 
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, FormControl } from '@angular/forms';
 import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 
@@ -28,6 +28,7 @@ export class PayPage implements OnInit {
     payForm: FormGroup;
 
 
+    payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
 
@@ -74,7 +75,7 @@ export class PayPage implements OnInit {
                         consentKey: null,
                         payeeId: ['', [Validators.required]],
                         payeePSP: ['', [Validators.required]],
-                        amount: [null, [Validators.required, Validators.min(100), Validators.max(100001)]],
+                        amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
                     });
 
@@ -84,6 +85,7 @@ export class PayPage implements OnInit {
                             if (x.payeePSP != null) {
 
                                 this.payeePspLable = '@' + x.payeePSP;
+
                             }
                         });
 
@@ -93,21 +95,12 @@ export class PayPage implements OnInit {
 
     }
 
-    // payerAccountSelect(value) {
-    //     this.pay.payerAccountNo = value;
-    // }
-
-    // setPayeePSP(value) {
-    //     this.pay.payeePSP = value;
-    //     if (value != undefined && value != null) {
-
-    //         this.payeePspLable = '@' + value;
-    //     }
-    // }
-
-    // public optionsFn(data): void { // here item is an object
-    //     alert("clicked" + data)
-    // }
+    public whatError(name: string) {
+        // name = 'payForm.' + name;
+        const ctrl = this.payForm.get(name);
+        const msg: string = "Error in " + name.toLocaleUpperCase() + ": </br>" + JSON.stringify(ctrl.errors) + " "
+        this.notify.update(msg, 'error');
+    }
 
     public doPay(secret) {
         this.pay = this.payForm.value;
