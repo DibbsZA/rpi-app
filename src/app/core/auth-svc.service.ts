@@ -37,24 +37,8 @@ export class AuthSvcService {
         );
 
     }
-    //// Anonymous Auth ////
 
-    async anonymousLogin() {
-        return this.afAuth.auth
-            .signInAnonymously()
-            .then(credential => {
-                this.notify.update('Welcome to Z@P!!!', 'success');
-                return credential;
-                // return this.updateUserData(credential.user); // if using firestore
-            })
-            // .catch(error => {
-            //     const err = { code: 'error', message: error.message };
-            //     return err;
-            // });
-            .catch(error => this.handleError(error));
-    }
     //// Email/Password Auth ////
-
     async emailSignUp(email: string, password: string) {
         return this.afAuth.auth
             .createUserWithEmailAndPassword(email, password)
@@ -66,11 +50,10 @@ export class AuthSvcService {
                     accounts: []
                 };
 
-                console.log('New User: ' + JSON.stringify(credential));
+                console.log('New User: ' + JSON.stringify(newUser));
                 return this.userSvc.updateUserData(newUser);
             })
             .catch(error => this.handleError(error));
-
     }
 
     async emailLogin(email: string, password: string) {
@@ -87,10 +70,6 @@ export class AuthSvcService {
                 // return this.userSvc.getUserData(credential.user.uid);
             })
             .catch(error => this.handleError(error));
-        // .catch(error => {
-        //     const err = { code: 'error', message: error.message };
-        //     return err;
-        // });
     }
 
     // Sends email allowing user to reset password
@@ -106,7 +85,7 @@ export class AuthSvcService {
     signOut() {
         this.afAuth.auth.signOut().then(() => {
             this.user = null;
-            this.router.navigate(['/']);
+            this.router.navigate(['/about']);
         });
     }
 

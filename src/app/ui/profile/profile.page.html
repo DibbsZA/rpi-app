@@ -4,7 +4,7 @@
             <ion-menu-button color="dark"></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            User Profile & Accounts
+            Your Profile & Accounts
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -26,7 +26,6 @@
                     </ion-item>
                     <ion-item>
                         <ion-label>My PSP</ion-label>
-                        <!-- {{user.pspId}} -->
                         <ion-select #pspid placeholder="Select PSP" expand='full' [disabled]="!editMode" (ionChange)="payerPspSelect(pspid.value)">
                             <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="user.pspId">{{psp.id}}</ion-select-option>
                         </ion-select>
@@ -36,22 +35,11 @@
                         <ion-input type="text" placeholder="name" #zapid [value]="user.zapId" [readonly]="!editMode"></ion-input>
                         {{payerPspLable}}
                     </ion-item>
-                    <!-- 
-                    <ion-item>
-                        <ion-label>PSP Id:</ion-label>
-                        <ion-input type="text" placeholder="pspid" #pspid [value]="user.pspId" [readonly]="!editMode"></ion-input>
-                    </ion-item> -->
                     <ion-item>
                         <ion-label>Nickname</ion-label>
                         <ion-input type="text" placeholder="Nickname?" #nick [value]="user.nickname" [readonly]="!editMode"></ion-input>
                     </ion-item>
                 </ion-list>
-                <!-- <div>
-                    <ion-button color="warning" expand='full'>
-                        Edit
-                        <ion-icon slot="end" name="exit"></ion-icon>
-                    </ion-button>
-</div> -->
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="!editMode">
                     <ion-fab-button (click)="editProfile()">
                         <ion-icon name="create"></ion-icon>
@@ -65,10 +53,6 @@
             </ion-card-content>
         </ion-card>
         <ion-card>
-            <!-- <ion-card-header>
-                <ion-card-subtitle>My Accounts</ion-card-subtitle>
-                 <ion-card-title>My Accounts</ion-card-title> 
-            </ion-card-header> -->
             <ion-card-content>
                 <ion-list lines="none">
                     <ion-item-divider>
@@ -77,8 +61,6 @@
                     <ion-item-sliding *ngFor="let acc of user.accounts ">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
-                            <!-- <ion-input type="${1|text,password,email,search,number,tel,url}" placeholder="Awesome Input"
-                                [value]="acc.accountNo"></ion-input> -->
                             {{acc.accountNo}}
                         </ion-item>
                         <ion-item-options side="start">
@@ -91,6 +73,7 @@
                         <ion-icon name="add"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
+                <span class="tiny">Swipe account right to delete.</span>
             </ion-card-content>
         </ion-card>
 

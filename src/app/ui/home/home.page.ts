@@ -27,15 +27,6 @@ export class HomePage implements OnInit {
         public notify: NotifyService
     ) {
         this.user = this.auth.user;
-        // this.user.toPromise()
-        //     .then(u => {
-        //         if (u) {
-        //             router.navigate(['/pay']);
-        //         }
-        //     })
-
-
-
     }
 
     ngOnInit(): void {
@@ -51,12 +42,6 @@ export class HomePage implements OnInit {
             });
     }
 
-    /// Anonymous Sign In
-    async signInAnonymously() {
-        await this.auth.anonymousLogin();
-        return await this.afterSignIn();
-    }
-
     async login(email, pwd) {
 
         return this.auth.emailLogin(email, pwd)
@@ -64,8 +49,6 @@ export class HomePage implements OnInit {
                 console.log("home-page.ts")
                 console.log(result);
                 if (result) {
-                    // this.presentToast();
-                    // this.router.navigate(['/pay']);
                     this.afterSignIn();
                 }
             })
@@ -80,7 +63,7 @@ export class HomePage implements OnInit {
     private async afterSignIn() {
         // Do after login stuff here, such router redirects, toast messages, etc.
         this.notify.update("You are logged in. Let's start...", 'success')
-        return this.router.navigate(['/pay']);
+        return this.router.navigate(['/about']);
     }
 
 }

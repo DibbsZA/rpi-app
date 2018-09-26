@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
 import { Route, Router } from '@angular/router';
 import { AuthSvcService } from '../../core/auth-svc.service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
     selector: 'app-user-profile',
@@ -11,13 +12,14 @@ import { AuthSvcService } from '../../core/auth-svc.service';
 })
 export class UserProfileComponent implements OnInit {
 
-    userO: Observable<iUser>;
+    userO: iUser;
 
     constructor(
         public auth: AuthSvcService,
         private router: Router,
+        public menu: MenuController,
     ) {
-        this.userO = this.auth.user;
+        this.auth.user.subscribe(x => { this.userO = x });
     }
 
     ngOnInit() {
@@ -25,7 +27,8 @@ export class UserProfileComponent implements OnInit {
     }
 
     openProfileEdit() {
-        this.router.navigate(['/profile']);
+        this.menu.close();
+        this.router.navigateByUrl('/profile');
     }
 
     logout() {

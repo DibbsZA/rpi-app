@@ -1,4 +1,4 @@
-<ng-container *ngIf="userO | async as user">
+<ng-container *ngIf="userO">
     <ion-card>
         <ion-card-header>
             <ion-card-title color="light" class="center">Z@P Mobile</ion-card-title>
@@ -8,13 +8,13 @@
 
             <div class="profile">
                 <div (click)="openProfileEdit()">
-                    <img class="imgAvatar" [src]="user.photoURL">
+                    <img class="imgAvatar" [src]="userO.photoURL">
                 </div>
-                <ion-item>
-                    <ion-label class="center" color="medium">{{user.displayName}}</ion-label>
+                <ion-item lines="none">
+                    <ion-label class="center" color="medium">{{userO.displayName}}</ion-label>
                 </ion-item>
-                <ion-item>
-                    <ion-label class="center" color="medium">{{user.zapId}} @ {{user.pspId}}</ion-label>
+                <ion-item lines="none">
+                    <ion-label class="center" color="medium">{{userO.zapId}} @ {{userO.pspId}}</ion-label>
                 </ion-item>
             </div>
 

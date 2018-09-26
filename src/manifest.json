@@ -1,9 +1,9 @@
 {
-    "short_name": "ZAPMobile",
+    "short_name": "Z@PMobile",
     "name": "Z@P Payments App",
     "start_url": "/?utm_source=about",
     "display": "standalone",
-    "gcm_sender_id": "393591030275",
+    "gcm_sender_id": "103953800507",
     "icons": [{
             "src": "/assets/icon/icons-192.png",
             "type": "image/png",

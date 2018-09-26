@@ -15,13 +15,16 @@ import { AuthSvcService } from './core/auth-svc.service';
     templateUrl: 'app.component.html'
 })
 export class AppComponent implements OnInit {
+
+    loggedin = false;
+
     public appPages = [
-        { title: 'Login', url: '/home', icon: 'log-in' },
-        { title: 'Pay', url: '/pay', icon: 'cash', icon2: 'arrow-round-forward' },
-        { title: 'Request Payment', url: '/requestpay', icon: 'cash', icon2: 'arrow-round-back' },
-        { title: 'Scan', url: '/scan', icon: 'qr-scanner' },
-        { title: 'History', url: '/history', icon: 'paper' },
-        { title: 'Profile', url: '/profile', icon: 'contact' },
+        { title: 'Login', url: '/home', icon: 'log-in', loggedin: false },
+        { title: 'Pay', url: '/pay', icon: 'cash', icon2: 'arrow-round-forward', loggedin: true },
+        { title: 'Request Payment', url: '/requestpay', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
+        { title: 'Scan', url: '/scan', icon: 'qr-scanner', loggedin: true },
+        { title: 'History', url: '/history', icon: 'paper', loggedin: true },
+        { title: 'Profile', url: '/profile', icon: 'contact', loggedin: true },
         { title: 'About', url: '/about', icon: 'information-circle-outline' }
     ];
 
@@ -41,11 +44,10 @@ export class AppComponent implements OnInit {
         this.platform.ready().then(() => {
             this.statusBar.hide();
             this.splashScreen.hide();
-
-
         });
         this.auth.user
             .subscribe(user => {
+                this.loggedin = true;
                 if (user) {
                     this.fcm.getPermission(user)
                     this.fcm.monitorRefresh(user)

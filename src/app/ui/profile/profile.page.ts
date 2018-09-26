@@ -3,9 +3,9 @@ import { AuthSvcService } from '../../core/auth-svc.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { iUser, iAccount, iProcessor } from '../../models/interfaces';
-import { ModalController, ToastController, LoadingController } from '@ionic/angular';
 import { UserServiceService } from '../../core/user-service.service';
 import { DataServiceService } from '../../core/data-service.service';
+import { NotifyService } from '../../core/notify.service';
 
 @Component({
     selector: 'app-profile',
@@ -25,7 +25,7 @@ export class ProfilePage implements OnInit {
         public auth: AuthSvcService,
         private dataSvc: DataServiceService,
         private router: Router,
-        public toastController: ToastController,
+        private notify: NotifyService,
         private userSvc: UserServiceService,
     ) {
         this.userO = this.auth.user;
@@ -60,7 +60,7 @@ export class ProfilePage implements OnInit {
 
         this.userSvc.updateUserData(this.dirtyUser)
             .then(r => {
-                this.presentToast("user Updated Successful");
+                this.notify.update("Profile Updated. That's awesome!", 'success');
             });
 
     }
@@ -75,7 +75,7 @@ export class ProfilePage implements OnInit {
         this.dirtyUser.accounts.splice(index);
         return this.userSvc.updateUserData(this.dirtyUser)
             .then(r => {
-                return this.presentToast("user Account Deleted");
+                return this.notify.update("User Account Deleted", "info");
             });
     }
 
@@ -84,16 +84,6 @@ export class ProfilePage implements OnInit {
 
             this.payerPspLable = '@' + psp;
         }
-    }
-
-
-    public async presentToast(msg) {
-
-        const toast = await this.toastController.create({
-            message: msg,
-            duration: 2000
-        });
-        toast.present();
     }
 
 }

@@ -21,7 +21,7 @@ export class AccountPage implements OnInit {
     }
 
     gotoProfile() {
-        this.router.navigate(['/profile']);
+        this.router.navigateByUrl('/profile');
     }
 
 

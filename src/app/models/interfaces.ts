@@ -16,18 +16,13 @@ export interface iUser {
     nickname?: string | null;
     pspId?: string | null;
     phone?: string | null;
-    photoURL?: string | '/assets/img/avatar-default.png';
+    photoURL?: string | '/assets/img/sun-dog.png';
     zapId?: string | null;
     authSecret?: string | null;
-    fcmTokens?: { [token: string]: true };
+    fcmTokens?: string | null;
 }
 
-/**
- * Definition of a PSP
- *
- * @export
- * @interface iProcessor
- */
+
 // tslint:disable-next-line:class-name
 export interface iProcessor {
     id: string;
@@ -35,12 +30,7 @@ export interface iProcessor {
     sponsor: string;
     apiUrl?: string;
 }
-/**
- * Nominated Account definition
- *
- * @export
- * @interface iAccount
- */
+
 // tslint:disable-next-line:class-name
 export interface iAccount {
     accountNo?: string;

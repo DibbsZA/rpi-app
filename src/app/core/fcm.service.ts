@@ -58,14 +58,14 @@ export class FcmService {
     // save the permission token in firestore
     private saveToken(user, token): void {
 
-        const currentTokens = user.fcmTokens || {}
+        // const currentTokens = user.fcmTokens || []
 
-        // If token does not exist in firestore, update db
-        if (!currentTokens[token]) {
-            const userRef = this.afs.collection('users').doc(user.uid)
-            const tokens = { ...currentTokens, [token]: true }
-            userRef.update({ fcmTokens: tokens })
-        }
+        // // If token does not exist in firestore, update db
+        // if (!currentTokens[token]) {
+        const userRef = this.afs.collection('users').doc(user.uid)
+        //     const tokens = { ...currentTokens, [token]: true }
+        userRef.update({ fcmTokens: token })
+        // }
     }
 
     // used to show message when app is open
