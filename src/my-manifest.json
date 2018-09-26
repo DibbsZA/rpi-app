@@ -1,12 +1,9 @@
 {
+    "short_name": "Z@PMobile",
     "name": "Z@P Payments App",
-    "short_name": "Z@P",
-    "theme_color": "#1976d2",
-    "background_color": "#000000",
+    "start_url": "/?utm_source=about",
     "display": "standalone",
-    "orientation": "portrait",
-    "scope": "/",
-    "start_url": "/about",
+    "gcm_sender_id": "103953800507",
     "icons": [{
             "src": "/assets/icon/icons-192.png",
             "type": "image/png",
@@ -17,5 +14,7 @@
             "type": "image/png",
             "sizes": "512x512"
         }
-    ]
+    ],
+    "orientation": "portrait",
+    "backgound_color": "#000000"
 }

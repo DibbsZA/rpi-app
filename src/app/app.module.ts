@@ -21,6 +21,8 @@ import { PayPageModule } from './ui/pay/pay.module';
 import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AccountPageModule } from './ui/account/account.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
     declarations: [
@@ -43,6 +45,7 @@ import { AccountPageModule } from './ui/account/account.module';
         ScanPageModule,
         PayPageModule,
         AccountPageModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     ],
     providers: [
         StatusBar,
