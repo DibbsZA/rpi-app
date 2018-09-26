@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 // import { NgxErrorsModule } from '@ultimate/ngxerrors';
 
 import { HomePage } from './home.page';
-import { UserFormComponent } from '../user-form/user-form.component';
+// import { UserFormComponent } from '../user-form/user-form.component';
 
 @NgModule({
     imports: [
@@ -26,6 +26,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
     ],
     declarations: [
         HomePage,
-        UserFormComponent]
+        // UserFormComponent
+    ]
 })
 export class HomePageModule { }

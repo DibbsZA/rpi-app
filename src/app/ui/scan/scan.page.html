@@ -19,7 +19,7 @@
                     <ion-label>
                         Pay From
                     </ion-label>
-                    <ion-select [(ngModel)]="data" (ionChange)="optionsFn(data);" name="debitAccount" required="true">
+                    <ion-select name="debitAccount" required="true">
                         <ion-select-option value='123412344243'>
                             Card 1
                         </ion-select-option>
@@ -32,22 +32,21 @@
                     <ion-label>
                         Pay To PSP
                     </ion-label>
-                    <ion-input [(ngModel)]="payerPSP" type="text" placeholder="user@PSPName" name="payerPSP" required="true"></ion-input>
+                    <ion-input type="text" placeholder="user@PSPName" name="payerPSP" required="true"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label stacked>
                         Payer Id
                     </ion-label>
-                    <ion-input [(ngModel)]="payeeId" type="text" placeholder="BOB@MobiPay" name="payeeId" required="true"></ion-input>
+                    <ion-input type="text" placeholder="BOB@MobiPay" name="payeeId" required="true"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label stacked>
                         Amount
                     </ion-label>
-                    <ion-input [(ngModel)]="amount" placeholder="000000" name="amount" inputmode="numeric" maxlength="6"
-                        required="true"></ion-input>
+                    <ion-input placeholder="000000" name="amount" inputmode="numeric" maxlength="6" required="true"></ion-input>
                 </ion-item>
-                <ion-button (click)="doPay('pay')" color="primary">
+                <ion-button color="primary">
                     <ion-icon slot="start" name="cash"></ion-icon>
                     Send Payment
                 </ion-button>
