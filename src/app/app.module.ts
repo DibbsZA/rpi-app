@@ -23,11 +23,14 @@ import { AuthSvcService } from './core/auth-svc.service';
 import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { HttpClientModule } from '@angular/common/http';
+// import { HoldableDirective } from './core/holdable.directive';
 
 @NgModule({
     declarations: [
         AppComponent,
         UserProfileComponent,
+        // HoldableDirective,
     ],
     entryComponents: [
 
@@ -41,6 +44,7 @@ import { environment } from '../environments/environment';
         AngularFireModule.initializeApp(firebaseConfig),
         AngularFirestoreModule,
         AngularFireAuthModule,
+        HttpClientModule,
         ProfilePageModule,
         ScanPageModule,
         PayPageModule,
