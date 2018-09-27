@@ -64,6 +64,7 @@ export class PayPage implements OnInit {
                             x => { this.myPSP = x }
                         );
 
+
                     this.pay = {
                         userRef: null,
                         payerId: this.userO.zapId,
@@ -115,12 +116,16 @@ export class PayPage implements OnInit {
 
         const txnMsg: msgPSPPayment = this.pay;
 
+        if (this.myPSP === null) {
+            console.log('no result for PSP lookup yet');
+        }
 
         const payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
         const payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
 
         txnMsg.payeeId = payeeId;
         txnMsg.payerId = payerId;
+        txnMsg.originatingDate = new Date().toISOString();
 
         //  FIXME: Double check that payerId format & date format as this will affect the output!!!!!!!!!
         // Create mpiHash
@@ -129,14 +134,17 @@ export class PayPage implements OnInit {
 
         txnMsg.mpiHash = sha224(hashInput);
 
-
-
         const txn: iTransaction = {
             txnOwner: payerId,   // full ZAPID@PSP
             time: new Date().getTime(),
             payMessage: txnMsg,
             payConfirm: {}
         };
+
+        // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
+        // console.log(this.myPSP);
+
+
         this.pspApiSvc.psp_paymentInstruction(this.myPSP, txnMsg)
             .subscribe(
                 x => {
@@ -180,10 +188,9 @@ export class PayPage implements OnInit {
         this.Pin = event;
         const m: Message = event;
         const hashSecret = sha256.hmac(this.pay.payerPSP, m);
-        console.log(hashSecret);
         this.doPay(hashSecret)
         // .then(r => {
-        return this.router.navigate(['history']);
+        // return this.router.navigate(['history']);
         // });
     }
 

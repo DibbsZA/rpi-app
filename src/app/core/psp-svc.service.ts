@@ -47,26 +47,33 @@ export class PspSvcService {
         const apiEndpoint = psp.apiUrl + '/paymentInstruction';
 
         const body: any = {
-            "uniqueRef": "",
-            "payeeId": "user2@bank2",
-            "payerAccountNo": "123456789012345678901234",
-            "payerId": "user1@bank1",
-            "payerPSP": "bank1",
-            "payerName": "Bobby Dobby",
-            "amount": "10",
-            "userRef": "string",
-            "consentKey": "'kjhagwfcabkjhfgbxewfjhgafbckskdf==",
-            "originatingDate": "",
-            "mpiHash": "034jh23kjhjhg345hkjg2345khg5432345=="
+            "uniqueRef": msgPayment.uniqueRef,
+            "payeeId": msgPayment.payeeId,
+            "payerAccountNo": msgPayment.payerAccountNo,
+            "payerId": msgPayment.payerId,
+            "payerPSP": msgPayment.payerPSP,
+            "payerName": msgPayment.payerName,
+            "amount": msgPayment.amount.toString(),
+            "userRef": msgPayment.userRef,
+            "consentKey": msgPayment.consentKey,
+            "originatingDate": msgPayment.originatingDate,
+            "mpiHash": msgPayment.mpiHash
         }
 
 
-        this.httpClient.post(apiEndpoint, body)
-            .pipe(
-                map(r => { console.log(r); }),
-                catchError(err => of('error found'))
+        let h = this.httpClient.post(apiEndpoint, body)
+            // .pipe(
+            //     map(r => { 
+            //         console.log(r); 
+            //     }),
+            //     catchError(err => of('error found'))
+            // )
+            .subscribe(
+                x => {
+                    console.log(x);
+                    return x;
+                }
             )
-            .subscribe()
 
 
         return;
