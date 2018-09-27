@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { Subject } from 'rxjs';
 import { ToastController, AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { msgPaymentAuth } from '../models/messages';
 
 /// Notify users about errors and other helpful stuff
 export interface Msg {
@@ -21,16 +23,30 @@ export class NotifyService {
 
     constructor(
         public toastController: ToastController,
-        public alertController: AlertController
+        public alertController: AlertController,
+        public router: Router
     ) {
 
     }
 
-    update(content: string, style: 'error' | 'info' | 'success') {
+    update(content: any, style: 'error' | 'info' | 'success' | 'action') {
+
         const msg: Msg = { content, style };
+        const msgPaymentAuth: msgPaymentAuth = content;
+        const stringyfied = JSON.stringify(msgPaymentAuth);
+        const encoded = encodeURIComponent(stringyfied);
+
+        if (content.toString().startsWith('{')) {
+            msg.content = JSON.stringify(msg.content);
+        }
+
         this._msgSource.next(msg);
         console.log(msg);
-        if (msg.style === 'error') {
+        if (msg.style === 'action') {
+            this.router.navigate(['/payrequestAuth'], { queryParams: { msg: encoded } });
+
+        } else if (msg.style === 'error') {
+
             this.presentAlert(msg);
         } else {
             this.presentToast(msg.content);

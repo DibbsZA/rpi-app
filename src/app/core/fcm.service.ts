@@ -5,6 +5,7 @@ import * as firebase from 'firebase';
 import { Subject } from 'rxjs';
 import { AuthSvcService } from './auth-svc.service';
 import { NotifyService } from './notify.service';
+import { msgPaymentAuth } from '../models/messages';
 
 
 @Injectable({
@@ -70,8 +71,10 @@ export class FcmService {
     // used to show message when app is open
     receiveMessages() {
         this.messaging.onMessage(payload => {
+            const data: msgPaymentAuth = payload.data;
+
             console.log('Message received. ', payload);
-            this.notify.update(JSON.stringify(payload), 'error');
+            this.notify.update(data, 'action');
             this.messageSource.next(payload)
         });
 
