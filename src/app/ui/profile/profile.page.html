@@ -58,7 +58,7 @@
                     <ion-item-divider>
                         <ion-label>Accounts</ion-label>
                     </ion-item-divider>
-                    <ion-item-sliding *ngFor="let acc of user.accounts ">
+                    <!-- <ion-item-sliding *ngFor="let acc of user.accounts ">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
                             {{acc.accountNo}}
@@ -66,16 +66,24 @@
                         <ion-item-options side="start">
                             <ion-item-option color="danger" (click)="deletAccount(acc)">Delete</ion-item-option>
                         </ion-item-options>
-                    </ion-item-sliding>
+                    </ion-item-sliding> -->
+                    <ion-item *ngFor="let acc of user.accounts ">
+                        <ion-label>{{acc.accountAlias}}</ion-label>
+                        {{acc.accountNo}}
+                        <ion-button class="accDelete" slot="end" color="danger" holdable (holdTime)="deletAccount(acc)">
+                            <ion-icon slot="icon-only" name="trash"></ion-icon>
+                        </ion-button>
+                    </ion-item>
                 </ion-list>
                 <ion-fab vertical="top" horizontal="end" slot="fixed">
                     <ion-fab-button (click)="addAccount()">
                         <ion-icon name="add"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
-                <span class="tiny">Swipe account right to delete.</span>
+                <!-- <span class="tiny">Swipe account right to delete.</span> -->
+                <span class="tiny">Hold account icon to delete.</span>
+                <progress color="warning" class="progress" [value]="progress" max="100"></progress>
             </ion-card-content>
         </ion-card>
-
     </ng-container>
 </ion-content>

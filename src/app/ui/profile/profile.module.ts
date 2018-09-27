@@ -7,6 +7,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 
+import { HoldableDirective } from '../../core/holdable.directive';
+
+
 const routes: Routes = [
     {
         path: '',
@@ -24,7 +27,8 @@ const routes: Routes = [
     entryComponents: [
     ],
     declarations: [
-        ProfilePage
+        ProfilePage,
+        HoldableDirective
     ]
 })
 export class ProfilePageModule { }

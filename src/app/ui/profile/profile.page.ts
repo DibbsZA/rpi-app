@@ -20,6 +20,7 @@ export class ProfilePage implements OnInit {
     processors: Observable<iProcessor[]>;
     payerPspLable: string = '@psp';
     payeePspLable: string = '@psp';
+    progress = 0;
 
     constructor(
         public auth: AuthSvcService,
@@ -69,14 +70,18 @@ export class ProfilePage implements OnInit {
         this.router.navigate(['/account']);
     }
 
-    deleteAccount(acc: iAccount) {
-        var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
-        let index = dirtyAccounts.indexOf(acc);
-        this.dirtyUser.accounts.splice(index);
-        return this.userSvc.updateUserData(this.dirtyUser)
-            .then(r => {
-                return this.notify.update("User Account Deleted", "info");
-            });
+    deleteAccount(e, acc: iAccount) {
+        this.progress = e / 10;
+        if (this.progress > 100) {
+            var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
+            let index = dirtyAccounts.indexOf(acc);
+            this.dirtyUser.accounts.splice(index);
+            return this.userSvc.updateUserData(this.dirtyUser)
+                .then(r => {
+                    return this.notify.update("User Account Deleted", "info");
+                });
+        }
+
     }
 
     private payerPspSelect(psp) {
