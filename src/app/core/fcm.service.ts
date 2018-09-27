@@ -31,15 +31,16 @@ export class FcmService {
     getPermission(user) {
         this.messaging.requestPermission()
             .then(() => {
-                console.log('Notification permission granted.');
+                // this.notify.update('Notify permission granted.', 'success');
                 return this.messaging.getToken()
             })
             .then(token => {
                 console.log(token)
-                this.saveToken(user, token)
+                // this.notify.update(token, 'success');
+                this.saveToken(user, token);
             })
             .catch((err) => {
-                console.log('Unable to get permission to notify.', err);
+                this.notify.update('Unable to get permission to notify.', 'error')
             });
     }
 
@@ -48,31 +49,29 @@ export class FcmService {
         this.messaging.onTokenRefresh(() => {
             this.messaging.getToken()
                 .then(refreshedToken => {
-                    console.log('Token refreshed.');
+                    this.notify.update('Registered for Push Notifications <br>' + refreshedToken, 'error');
                     this.saveToken(user, refreshedToken)
                 })
-                .catch(err => console.log(err, 'Unable to retrieve new token'))
+                .catch(err => this.notify.update('Unable to retrieve new token', 'error'));
         });
     }
 
     // save the permission token in firestore
     private saveToken(user, token): void {
 
-        // const currentTokens = user.fcmTokens || []
-
-        // // If token does not exist in firestore, update db
-        // if (!currentTokens[token]) {
-        const userRef = this.afs.collection('users').doc(user.uid)
-        //     const tokens = { ...currentTokens, [token]: true }
-        userRef.update({ fcmTokens: token })
-        // }
+        const userRef = this.afs.collection('users').doc(user.uid);
+        user.fcmTokens = token;
+        userRef.set(user);
+        // .then(r => {
+        //     this.notify.update('Token saved.', 'success');
+        // });
     }
 
     // used to show message when app is open
     receiveMessages() {
         this.messaging.onMessage(payload => {
             console.log('Message received. ', payload);
-            this.notify.update(payload, 'info');
+            this.notify.update(JSON.stringify(payload), 'error');
             this.messageSource.next(payload)
         });
 

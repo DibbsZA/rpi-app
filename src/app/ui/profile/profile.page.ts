@@ -51,12 +51,12 @@ export class ProfilePage implements OnInit {
 
     }
 
-    saveProfile(displayName, pspId, zapId, nickname) {
+    saveProfile(displayName, pspId: string, zapId: string, nickname) {
         this.editMode = false;
         this.dirtyUser.displayName = displayName;
         this.dirtyUser.nickname = nickname;
-        this.dirtyUser.zapId = zapId;
-        this.dirtyUser.pspId = pspId;
+        this.dirtyUser.zapId = zapId.toUpperCase();
+        this.dirtyUser.pspId = pspId.toUpperCase();
 
         this.userSvc.updateUserData(this.dirtyUser)
             .then(r => {

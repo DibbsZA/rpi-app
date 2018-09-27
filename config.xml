@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.bankservafrica.zapmobile" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>ZAPMobile</name>
-    <description>ZAP Instant Payments</description>
+    <description>Z@P Instant Payments</description>
     <author email="garyd@bankservafrica.com" href="http://bankservafrica.com/">BankservAfrica Dev Team</author>
     <content src="index.html" />
     <access origin="*" />

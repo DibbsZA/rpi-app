@@ -41,14 +41,15 @@ export class UserServiceService {
 
         const data: iUser = {
             uid: user.uid,
-            email: user.email || null,
+            email: user.email.trimRight().toLowerCase() || null,
             displayName: user.displayName || 'nameless user',
             nickname: user.nickname || null,
-            photoURL: user.photoURL || '/assets/img/avatar-default.png',
+            photoURL: user.photoURL || '/assets/img/sun-dog.png',
             phone: user.phone || null,
             pspId: user.pspId || null,
             zapId: user.zapId || null,
-            accounts: user.accounts || []
+            accounts: user.accounts || [],
+            fcmTokens: user.fcmTokens || null
         };
         userRef.set(data)
             .then(r => {

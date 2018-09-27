@@ -41,13 +41,14 @@ export class AuthSvcService {
     //// Email/Password Auth ////
     async emailSignUp(email: string, password: string) {
         return this.afAuth.auth
-            .createUserWithEmailAndPassword(email, password)
+            .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
                 this.notify.update('Welcome to Z@P!', 'success');
                 const newUser: iUser = {
                     uid: credential.user.uid,
                     email: credential.user.email,
-                    accounts: []
+                    accounts: [],
+                    fcmTokens: null
                 };
 
                 console.log('New User: ' + JSON.stringify(newUser));
@@ -58,7 +59,7 @@ export class AuthSvcService {
 
     async emailLogin(email: string, password: string) {
         return this.afAuth.auth
-            .signInWithEmailAndPassword(email, password)
+            .signInWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
                 this.notify.update('Welcome back to Z@P!', 'success');
                 return credential;

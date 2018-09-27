@@ -4,6 +4,7 @@ import { iUser } from '../../models/interfaces';
 import { Route, Router } from '@angular/router';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { MenuController } from '@ionic/angular';
+import { FcmService } from '../../core/fcm.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -18,12 +19,17 @@ export class UserProfileComponent implements OnInit {
         public auth: AuthSvcService,
         private router: Router,
         public menu: MenuController,
+        private fcmSvc: FcmService,
     ) {
         this.auth.user.subscribe(x => { this.userO = x });
     }
 
     ngOnInit() {
 
+    }
+
+    tokenRefresh() {
+        this.fcmSvc.monitorRefresh(this.userO);
     }
 
     openProfileEdit() {
