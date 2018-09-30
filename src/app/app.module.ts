@@ -17,13 +17,14 @@ import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { ProfilePageModule } from './ui/profile/profile.module';
 import { ScanPageModule } from './ui/scan/scan.module';
-import { PayPageModule } from './ui/pay/pay.module';
+// import { PayPageModule } from './ui/pay/pay.module';
 import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { PaymentModule } from './ui/payment.module';
 // import { HoldableDirective } from './core/holdable.directive';
 
 @NgModule({
@@ -47,7 +48,8 @@ import { HttpClientModule } from '@angular/common/http';
         HttpClientModule,
         ProfilePageModule,
         ScanPageModule,
-        PayPageModule,
+        // PayPageModule,
+        PaymentModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
         // ServiceWorkerModule.register('firebase-messaging-sw.js', { enabled: environment.production }),

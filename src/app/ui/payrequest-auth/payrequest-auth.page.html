@@ -10,6 +10,8 @@
 </ion-header>
 
 <ion-content padding>
+    <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
+
     <pre class="jsonData">
 {{ fcmPayload | json }}
 </pre>
