@@ -8,10 +8,7 @@ import { map, catchError } from "rxjs/operators";
 
 import { msgPSPPayment } from '../models/messages';
 
-// DEFAULT Headers
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+
 
 /**
  * Handle communicating with the PSP API.
@@ -32,6 +29,8 @@ export class PspSvcService {
 
     msgPayment: msgPSPPayment;
 
+    headers: HttpHeaders = new HttpHeaders();
+
     constructor(
         public httpClient: HttpClient,
         dataSvc: DataServiceService,
@@ -39,6 +38,10 @@ export class PspSvcService {
     ) {
 
 
+        this.headers = this.headers.append('Access-Control-Allow-Origin', '*');
+        // this.headers = this.headers.append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        // this.headers = this.headers.append('Content-Type', 'application/json');
+        // this.headers = this.headers.append('Accept', 'application/json');
 
     }
 
@@ -46,8 +49,10 @@ export class PspSvcService {
 
         const apiEndpoint = psp.apiUrl + '/paymentInstruction';
 
+
+
         const body: any = {
-            "uniqueRef": msgPayment.uniqueRef,
+            "uniqueRef": '',
             "payeeId": msgPayment.payeeId,
             "payerAccountNo": msgPayment.payerAccountNo,
             "payerId": msgPayment.payerId,
