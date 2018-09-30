@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { msgPaymentAuth } from '../models/messages';
+import { msgPaymentAuth, msgPSPPayment } from '../models/messages';
 
 /// Notify users about errors and other helpful stuff
 export interface Msg {
@@ -32,8 +32,8 @@ export class NotifyService {
     update(content: any, style: 'error' | 'info' | 'success' | 'action') {
 
         const msg: Msg = { content, style };
-        const msgPaymentAuth: msgPaymentAuth = content;
-        const stringyfied = JSON.stringify(msgPaymentAuth);
+        const msgContent: msgPSPPayment = content;
+        const stringyfied = JSON.stringify(msgContent);
         const encoded = encodeURIComponent(stringyfied);
 
         if (content.toString().startsWith('{')) {
@@ -43,7 +43,7 @@ export class NotifyService {
         this._msgSource.next(msg);
         console.log(msg);
         if (msg.style === 'action') {
-            this.router.navigate(['/payrequestAuth'], { queryParams: { msg: encoded } });
+            this.router.navigate([msgContent.click_action.split('?').shift()], { queryParams: { msg: encoded } });
 
         } else if (msg.style === 'error') {
 

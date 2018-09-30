@@ -90,6 +90,8 @@ export interface msgPSPPayment {
     mpiHash?: string | null;
     responseCode?: string | null;
     responseDesc?: string | null;
+    click_action?: string | null;
+    msg_type?: string | null;
 }
 
 

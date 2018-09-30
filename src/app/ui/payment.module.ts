@@ -9,11 +9,14 @@ import { PinComponent } from './pin/pin.component';
 import { PayPage } from './pay/pay.page';
 import { RequestPayPage } from './request-pay/request-pay.page';
 import { RequestPayAuthPage } from './request-pay-auth/request-pay-auth.page';
+import { ZapcurrencyPipe } from '../core/zapcurrency.pipe';
+import { PaySuccessComponent } from './pay-success/pay-success.component';
 
 
 const routes: Routes = [
     { path: 'payment/pay', component: PayPage },
     { path: 'payment/payauth', component: PayAuthPage },
+    { path: 'payment/success', component: PaySuccessComponent },
     { path: 'payment/requestpay', component: RequestPayPage },
     { path: 'payment/requestpayauth', component: RequestPayAuthPage }
 ];
@@ -31,6 +34,8 @@ const routes: Routes = [
         RequestPayPage,
         RequestPayAuthPage,
         PinComponent,
+        ZapcurrencyPipe,
+        PaySuccessComponent
     ]
 })
 export class PaymentModule { }

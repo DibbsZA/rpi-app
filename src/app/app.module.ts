@@ -25,12 +25,20 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
 import { PaymentModule } from './ui/payment.module';
-// import { HoldableDirective } from './core/holdable.directive';
+
+import { registerLocaleData } from '@angular/common';
+import localeZa from '@angular/common/locales/en-ZA';
+import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
+
+// the second parameter 'fr' is optional
+registerLocaleData(localeZa, 'en-ZA');
+
 
 @NgModule({
     declarations: [
         AppComponent,
         UserProfileComponent,
+        // ZapcurrencyPipe,
         // HoldableDirective,
     ],
     entryComponents: [
@@ -61,6 +69,9 @@ import { PaymentModule } from './ui/payment.module';
         PspSvcService,
         AuthSvcService
     ],
+    // exports: [
+    //     ZapcurrencyPipe
+    // ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -41,7 +41,8 @@ export interface iAccount {
 export interface iTransaction {
     id?: string;
     txnOwner: string;
+    direction: string;
     payMessage: msgPSPPayment;
     payConfirm: msgConfirmation;
-    time: number;
+    time: string;
 }

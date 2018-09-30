@@ -13,7 +13,13 @@ import { Observable } from 'rxjs';
 })
 export class TxnDetailPage implements OnInit {
     id: any;
-    txn: iTransaction;
+    txn: iTransaction = {
+        txnOwner: null,
+        payMessage: null,
+        payConfirm: null,
+        direction: null,
+        time: null
+    }
 
     constructor(
         private route: ActivatedRoute,

@@ -39,7 +39,7 @@ export class PayPage implements OnInit {
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
         private pspApiSvc: PspSvcService,
-        private router: Router
+        private router: Router,
     ) {
         this.user = this.auth.user;
     }
@@ -103,14 +103,14 @@ export class PayPage implements OnInit {
 
     }
 
-    public whatError(name: string) {
+    whatError(name: string) {
         // name = 'payForm.' + name;
         const ctrl = this.payForm.get(name);
         const msg: string = "Error in " + name.toLocaleUpperCase() + ": </br>" + JSON.stringify(ctrl.errors) + " "
         this.notify.update(msg, 'error');
     }
 
-    public doPay(secret) {
+    async doPay(secret) {
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
         this.pay.payerName = this.userO.nickname;
@@ -144,40 +144,41 @@ export class PayPage implements OnInit {
 
         const txn: iTransaction = {
             txnOwner: txnMsg.payerId,   // full ZAPID@PSP
-            time: new Date().getTime(),
+            time: new Date().toISOString(),
+            direction: 'outward',
             payMessage: txnMsg,
             payConfirm: {}
         };
 
         // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
-        // console.log(this.myPSP);
+        console.log(txnMsg);
 
 
         this.pspApiSvc.psp_paymentInstruction(this.myPSP, txnMsg)
             .subscribe(
                 x => {
-                    // API Call succesfull                    
-                    this.notify.update(x, 'success');
+                    // API Call succesfull  
+                    x.forEach(element => {
+                        // this.notify.update(element.uniqueRef, 'success');
+                        // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
+                        txn.payConfirm.responseCode = element.responseCode;  // I assume if it worked this is a 200
+                        txn.payConfirm.uniqueRef = element.uniqueRef;
+                        txn.payConfirm.responseDesc = element.responseDesc;
 
-                    // Handle Response? Should be of type msgConfirmation
-                    // let result: msgConfirmation = x;
+                        // Save the transaction to the users history.
+                        // TODO: use result to set status of Txn: pending, failed, or complete?
+                        return this.txnSvc.savePayment(txn)
+                            .then(r => {
+                                this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
+                                console.log('Transaction saved!');
+                                console.log(r);
 
-                    // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
-                    txn.payConfirm.responseCode = '200';  // I assume if it worked this is a 200
-                    txn.payConfirm.uniqueRef = txn.payMessage.uniqueRef;
-                    txn.payConfirm.responseDesc = 'placeholder';
+                                return txn;
+                            });
+
+                    });
 
 
-                    // Save the transaction to the users history.
-                    // TODO: use result to set status of Txn: pending, failed, or complete?
-                    return this.txnSvc.savePayment(txn)
-                        .then(r => {
-                            this.notify.update('Payment to ' + this.pay.payeeId + '@' + this.pay.payeePSP + ' submitted.', 'info');
-                            console.log('Transaction saved!');
-                            console.log(r);
-
-                            return txn;
-                        });
                 },
                 e => {
                     // API Call threw error

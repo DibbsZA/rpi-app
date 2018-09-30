@@ -27,13 +27,13 @@
                     <ion-item>
                         <ion-label>My PSP</ion-label>
                         <ion-select #pspid placeholder="Select PSP" expand='full' [disabled]="!editMode" (ionChange)="payerPspSelect(pspid.value)">
-                            <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="user.pspId">{{psp.id}}</ion-select-option>
+                            <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="user.pspId">{{psp.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>
                     <ion-item>
                         <ion-label>ZAP Id:</ion-label>
                         <ion-input type="text" placeholder="name" #zapid [value]="user.zapId" [readonly]="!editMode"></ion-input>
-                        {{payerPspLable}}
+                        <!-- {{payerPspLable}} -->
                     </ion-item>
                     <ion-item>
                         <ion-label>Nickname</ion-label>

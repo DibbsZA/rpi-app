@@ -10,7 +10,10 @@
 </ion-header>
 
 <ion-content padding>
-    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.showPin()">
+    <ng-template #loading>
+        Loading Form...
+    </ng-template>
+    <form [formGroup]="payForm" *ngIf="user | async; else loading" [hidden]="success" (ngSubmit)="this.showPin()">
         <ng-container *ngIf="!ShowPin">
             <ion-card>
                 <ion-card-header>

@@ -3,17 +3,21 @@
         <ion-buttons slot="start">
             <ion-menu-button color="dark"></ion-menu-button>
         </ion-buttons>
-        <ion-buttons slot="secondary">
-            <ion-back-button></ion-back-button>
-        </ion-buttons>
         <ion-title>
-            Txn - <ng-container ng*If="txn.time">{{ txn.time | date:'yyyy-MM-dd HH:mm:ss' }}</ng-container>
+            Z@P Succesfull, Yeah!!!
         </ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-    <pre class="jsonData">
-{{ txn | json }}
+    <ng-container *ngIf="user | async; else loading">
+        <pre class="jsonData">
+
+{{ fcmPayload | json }}
 </pre>
+    </ng-container>
+
+    <ng-template #loading>
+        Loading Form...
+    </ng-template>
 </ion-content>
