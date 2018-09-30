@@ -49,8 +49,8 @@ import { HttpClientModule } from '@angular/common/http';
         ScanPageModule,
         PayPageModule,
         AccountPageModule,
-        // ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-        ServiceWorkerModule.register('firebase-messaging-sw.js', { enabled: environment.production }),
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+        // ServiceWorkerModule.register('firebase-messaging-sw.js', { enabled: environment.production }),
     ],
     providers: [
         StatusBar,
