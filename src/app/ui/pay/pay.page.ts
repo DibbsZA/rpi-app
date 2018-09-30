@@ -113,19 +113,26 @@ export class PayPage implements OnInit {
     public doPay(secret) {
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
+        this.pay.payerName = this.userO.nickname;
 
-        const txnMsg: msgPSPPayment = this.pay;
+        let txnMsg: msgPSPPayment = this.pay;
 
         if (this.myPSP === null) {
             console.log('no result for PSP lookup yet');
         }
 
-        const payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
-        const payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
+        // TODO: This is not required on a clean form - but during testing am not cleaning the form on multiple submit
+        if (!txnMsg.payeeId.includes('@')) {
+            txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
+        }
+        if (!txnMsg.payerId.includes('@')) {
+            txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
+        }
 
-        txnMsg.payeeId = payeeId;
-        txnMsg.payerId = payerId;
         txnMsg.originatingDate = new Date().toISOString();
+        let georgeDate: string = "";
+        georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
+        txnMsg.originatingDate = georgeDate;
 
         //  FIXME: Double check that payerId format & date format as this will affect the output!!!!!!!!!
         // Create mpiHash
@@ -133,9 +140,10 @@ export class PayPage implements OnInit {
         console.log(hashInput);
 
         txnMsg.mpiHash = sha224(hashInput);
+        console.log(txnMsg.mpiHash);
 
         const txn: iTransaction = {
-            txnOwner: payerId,   // full ZAPID@PSP
+            txnOwner: txnMsg.payerId,   // full ZAPID@PSP
             time: new Date().getTime(),
             payMessage: txnMsg,
             payConfirm: {}
@@ -185,8 +193,11 @@ export class PayPage implements OnInit {
 
     eventCapture(event) {
         this.ShowPin = false;
-        this.Pin = event;
-        const m: Message = event;
+
+        this.myPSP.apiUrl = event.pspUrl;
+        this.Pin = event.pin;
+
+        const m: Message = event.pin;
         const hashSecret = sha256.hmac(this.pay.payerPSP, m);
         this.doPay(hashSecret)
         // .then(r => {

@@ -7,18 +7,33 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 })
 export class PinComponent implements OnInit {
 
-    ngOnInit() {
-    }
-    @Input() pagetitle: String = "Enter Pin";
+
+    @Input() pspUrl: string;
+    @Input() pagetitle: String;
 
     pin: string = "";
+    data: any;
 
-    @Output() change: EventEmitter<string> = new EventEmitter<string>();
+    // @Output() change: EventEmitter<string> = new EventEmitter<string>();
+    @Output() change: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor() { }
+    constructor(
+
+    ) {
+
+
+    }
+
+    ngOnInit() {
+        this.data = {
+            'pspUrl': this.pspUrl,
+            'pin': this.pin
+        }
+    }
+
 
     emitEvent() {
-        this.change.emit(this.pin);
+        this.change.emit(this.data);
     }
 
     handleInput(pin: string) {
@@ -27,10 +42,13 @@ export class PinComponent implements OnInit {
             return;
         }
 
-        if (this.pin.length === 6) {
-            return;
-        }
         this.pin += pin;
+        this.data.pin = this.pin;
+
+        if (this.pin.length === 6) {
+            return this.emitEvent();
+        }
+        return;
     }
 
 }

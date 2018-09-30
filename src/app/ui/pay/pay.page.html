@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content padding>
-    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.doPay('hashSecret')">
+    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.showPin()">
         <ng-container *ngIf="!ShowPin">
             <ion-card>
                 <ion-card-header>
@@ -68,17 +68,17 @@
                 <ion-card-content>
                     <ion-list lines="none">
                         <ion-item>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeId.valid" (click)="whatError('payeeId')">!</ion-badge>
+                            <ion-label>ZAP Id:</ion-label>
+                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
+                            {{payeePspLable}}
+                        </ion-item>
+                        <ion-item>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeePSP.valid" (click)="whatError('payeePSP')">!</ion-badge>
                             <ion-label>Recipient PSP</ion-label>
                             <ion-select placeholder="Select PSP" formControlName="payeePSP">
                                 <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
                             </ion-select>
-                        </ion-item>
-                        <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeId.valid" (click)="whatError('payeeId')">!</ion-badge>
-                            <ion-label>ZAP Id:</ion-label>
-                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
-                            {{payeePspLable}}
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
@@ -91,7 +91,7 @@
             <div *ngIf="!payForm.valid">
                 <span class="errorMsg">Form incomplete or invalid. Tap the red badge to see why.</span>
             </div>
-            <!-- <label *ngIf="Pin">Pin entered is {{Pin}}</label> -->
+            <label class="errorMsg"> {{myPSP.apiUrl}} </label>
         </ng-container>
 
         <!-- <div text-center *ngIf="!ShowPin">
@@ -100,6 +100,6 @@
             <label *ngIf="Pin">Pin entered is {{Pin}}</label>
         </div> -->
 
-        <!-- <app-pin *ngIf="ShowPin" pagetitle="Enter The Pin" (change)="eventCapture($event)"></app-pin> -->
+        <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
     </form>
 </ion-content>
