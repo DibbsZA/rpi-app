@@ -7,7 +7,6 @@ const routes: Routes = [
     { path: 'home', loadChildren: './ui/home/home.module#HomePageModule', canLoad: [] },
     { path: 'registration', loadChildren: './ui/registration/registration.module#RegistrationPageModule', canLoad: [] },
     { path: 'scan', loadChildren: './ui/scan/scan.module#ScanPageModule', canActivate: [AuthGuard] },
-    // { path: 'pay', loadChildren: './ui/pay/pay.module#PayPageModule', canActivate: [AuthGuard] },
     { path: 'about', loadChildren: './ui/about/about.module#AboutPageModule', canLoad: [] },
     { path: 'profile', loadChildren: './ui/profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
     { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule', canActivate: [AuthGuard] },

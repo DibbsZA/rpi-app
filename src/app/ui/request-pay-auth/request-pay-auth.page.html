@@ -4,15 +4,11 @@
             <ion-menu-button color="dark"></ion-menu-button>
         </ion-buttons>
         <ion-title>
-            Authorize a Z@P payment
+            Authorise a Z@P Request-to-Pay
         </ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-    <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
 
-    <pre class="jsonData">
-{{ fcmPayload | json }}
-</pre>
 </ion-content>

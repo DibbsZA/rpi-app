@@ -4,16 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-import { PayrequestAuthPage } from './payrequest-auth/payrequest-auth.page';
+import { PayAuthPage } from './pay-auth/pay-auth.page';
 import { PinComponent } from './pin/pin.component';
 import { PayPage } from './pay/pay.page';
 import { RequestPayPage } from './request-pay/request-pay.page';
+import { RequestPayAuthPage } from './request-pay-auth/request-pay-auth.page';
 
 
 const routes: Routes = [
     { path: 'payment/pay', component: PayPage },
-    { path: 'payment/payrequestauth', component: PayrequestAuthPage },
-    { path: 'payment/requestpay', component: RequestPayPage }
+    { path: 'payment/payauth', component: PayAuthPage },
+    { path: 'payment/requestpay', component: RequestPayPage },
+    { path: 'payment/requestpayauth', component: RequestPayAuthPage }
 ];
 
 @NgModule({
@@ -25,9 +27,10 @@ const routes: Routes = [
     ],
     declarations: [
         PayPage,
-        PayrequestAuthPage,
+        PayAuthPage,
         RequestPayPage,
-        PinComponent
+        RequestPayAuthPage,
+        PinComponent,
     ]
 })
 export class PaymentModule { }
