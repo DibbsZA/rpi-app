@@ -94,12 +94,6 @@
             <label *ngIf="myPSP" class="errorMsg"> {{myPSP.apiUrl}} </label>
         </ng-container>
 
-        <!-- <div text-center *ngIf="!ShowPin">
-            <ion-button (click)="showPin()">Enter Pin</ion-button>
-            <br>
-            <label *ngIf="Pin">Pin entered is {{Pin}}</label>
-        </div> -->
-
-        <!-- <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin> -->
+        <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
     </form>
 </ion-content>
