@@ -82,6 +82,7 @@ export interface msgPSPPayment {
     consentKey?: string | null;
     payeeId?: string | null;
     payeePSP?: string | null;
+    payeeName?: string | null;
     payeeAccountNo?: string | null;
     amount?: number | null;
     userRef?: string | null;

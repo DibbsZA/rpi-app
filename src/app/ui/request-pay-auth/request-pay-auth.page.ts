@@ -12,6 +12,7 @@ import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
 import { ActivatedRoute } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
     selector: 'app-request-pay-auth',
@@ -23,7 +24,7 @@ export class RequestPayAuthPage implements OnInit {
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
-    pay: msgPaymentInstruction;
+    pay: msgPSPPayment;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
@@ -37,9 +38,17 @@ export class RequestPayAuthPage implements OnInit {
 
     // FIXME: Mock data for testing
     fcmPayload: any = {
-        payeeId: 'USER2',
-        payeeName: 'Bill Bob2',
-        payeePSP: 'BANK2'
+        uniqueRef: '4c49eb1a5441',
+        payeeId: 'USER4@UBNK',
+        payeePSP: 'UBNK',
+        payeeAccountNo: '',
+        payerName: 'User Three',
+        payerId: 'USER3@STDB',
+        payerPSP: 'STDB',
+        userRef: 'REF',
+        amount: '12300',
+        mpiHash: '4a18aefba736a9b4bf66435e1e51162df68d6a8bc13749031e4d7ad4',
+        originatingDate: '2018-09-30 16:04:49.649000'
     };
 
     constructor(
@@ -51,6 +60,7 @@ export class RequestPayAuthPage implements OnInit {
         private pspApiSvc: PspSvcService,
         private router: Router,
         private activeRoute: ActivatedRoute,
+        public alertController: AlertController
     ) {
         this.user = this.auth.user;
     }
@@ -71,7 +81,7 @@ export class RequestPayAuthPage implements OnInit {
             }
         });
 
-        this.payeePspLable = '@psp';
+        this.payeePspLable = '@ ' + this.fcmPayload.payeePSP;
         this.processors = this.dataSvc.getProcessors();
 
 
@@ -82,44 +92,56 @@ export class RequestPayAuthPage implements OnInit {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
                 } else {
-                    this.payerPspLable = '@' + this.userO.pspId;
+                    this.payerPspLable = '@ ' + this.userO.pspId;
 
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
                             x => { this.myPSP = x }
                         );
 
+                    // let _payerId: string = this.fcmPayload.payerId;
+                    let _payeeId: string = this.fcmPayload.payeeId;
+                    // _payerId = _payerId.split('@').shift();
+                    _payeeId = _payeeId.split('@').shift();
 
                     this.pay = {
-                        userRef: null,
+                        uniqueRef: this.fcmPayload.uniqueRef,
+                        userRef: this.fcmPayload.userRef,
                         payerId: this.userO.zapId,
-                        payerAccountNo: null,
+                        payerName: this.userO.nickname,
                         payerPSP: this.userO.pspId,
-                        consentKey: null,
-                        payeeId: null,
-                        payeePSP: null,
-                        amount: null
+                        payeeId: _payeeId,
+                        payeeName: this.fcmPayload.payeeName,
+                        payeePSP: this.fcmPayload.payeePSP,
+                        payerAccountNo: null,
+                        amount: this.fcmPayload.amount,
+                        originatingDate: this.fcmPayload.originatingDate,
+                        responseCode: '',
+                        responseDesc: '',
                     };
 
                     this.payForm = this.fb.group({
-                        payerId: this.userO.zapId,
+                        uniqueRef: [this.fcmPayload.uniqueRef, Validators.required],
+                        payerId: [this.pay.payerId],
                         payerAccountNo: ['', [Validators.required]],
-                        payerPSP: this.userO.pspId,
-                        consentKey: null,
-                        payeeId: ['', [Validators.required]],
-                        payeePSP: ['', [Validators.required]],
-                        amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
-                        userRef: ['', [Validators.required]],
+                        payerPSP: [this.pay.payerPSP],
+                        payerName: [this.pay.payerName],
+                        payeeName: [this.fcmPayload.payeeName],
+                        payeeId: [_payeeId, [Validators.required]],
+                        payeePSP: [this.fcmPayload.payeePSP, [Validators.required]],
+                        amount: [this.fcmPayload.amount, [Validators.required, Validators.min(100), Validators.max(100000)]],
+                        userRef: [this.fcmPayload.userRef, [Validators.required]],
+                        originatingDate: [this.fcmPayload.originatingDate],
+                        responseCode: ['APPROVED'],
+                        responseDesc: ['Thanks!!']
                     });
 
                     this.payForm.valueChanges
                         .subscribe(x => {
                             console.log(x);
-                            if (x.payeePSP != null) {
-
-                                this.payeePspLable = '@' + x.payeePSP;
-
-                            }
+                            // if (x.payeePSP != null) {
+                            //     this.payeePspLable = '@' + x.payeePSP;
+                            // }
                         });
 
                 }
@@ -155,17 +177,21 @@ export class RequestPayAuthPage implements OnInit {
             txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
         }
 
-        txnMsg.originatingDate = new Date().toISOString();
-        let georgeDate: string = "";
-        georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
-        txnMsg.originatingDate = georgeDate;
+        // txnMsg.originatingDate = new Date().toISOString();
+        // let georgeDate: string = "";
+        // georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
+        // txnMsg.originatingDate = georgeDate;
 
         //  FIXME: Double check that payerId format & date format as this will affect the output!!!!!!!!!
         // Create mpiHash
         const hashInput = txnMsg.userRef + txnMsg.payeeId + txnMsg.payerId + txnMsg.amount.toString() + txnMsg.originatingDate;
         console.log(hashInput);
 
-        txnMsg.mpiHash = sha224(hashInput);
+
+        let confirmHash = sha224(hashInput);
+        if (confirmHash !== this.fcmPayload.mpiHash) {
+            this.notify.update("'Hashes don't Match!!", "error");
+        }
         console.log(txnMsg.mpiHash);
 
         const txn: iTransaction = {
@@ -217,6 +243,33 @@ export class RequestPayAuthPage implements OnInit {
 
     }
 
+    changeAuth() {
+        this.authorised = !this.authorised;
+    }
+
+    async presentAlertConfirm() {
+        const alert = await this.alertController.create({
+            header: 'Confirm!',
+            message: '<strong>Don\'t send the payment?</strong>!!!',
+            buttons: [
+                {
+                    text: 'Reconsider',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {
+                        console.log('Confirm Cancel: blah');
+                    }
+                }, {
+                    text: 'Don\'t Pay',
+                    handler: () => {
+                        console.log('Confirm decline');
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
+    }
 
     eventCapture(event) {
         this.ShowPin = false;

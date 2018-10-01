@@ -21,35 +21,18 @@
 </ion-header>
 
 <ion-content padding>
-    <!-- <ion-card>
-        <ion-card-header>
-            <ion-card-subtitle></ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content> -->
+    <ng-template #loading>
+        Loading Form...
+    </ng-template>
     <ion-list>
         <ion-list-header>
             <ion-label>Last 10 Transactions</ion-label>
         </ion-list-header>
-        <!-- <ion-virtual-scroll [items]="history">
-                    <ion-item *virtualItem="let item">
-                        <div class="txnItem" (click)="viewDetail(txn)">
-                            <ion-item>
-                                <ion-icon slot="start" color="success" name="md-cloud-upload"></ion-icon>
-                                <ion-label class="txnHeader">Paid => {{ item.payMessage.payeeId
-                                    }}@{{item.payMessage.payeePSP}}</ion-label>
-                            </ion-item>
-                            <ion-item detail>
-                                <span class="txnRef"><b>Ref:</b> {{item.payMessage.userRef}} </span>
-                                <span slot="end" class="txnAmount">{{item.payMessage.amount/100 | currency:'R
-                                    ':'symbol':'1.2-2'}}</span>
-                            </ion-item>
-                        </div>
-                    </ion-item>
-                </ion-virtual-scroll> -->
 
         <div class="txnItem" *ngFor='let txn of history' (click)="viewDetail(txn)">
             <ion-item>
-                <ion-icon slot="start" color="success" name="md-cloud-upload"></ion-icon>
+                <ion-icon slot="start" color="success" name="md-cloud-download" *ngIf="isInward(txn.direction)"></ion-icon>
+                <ion-icon slot="end" color="success" name="md-cloud-upload" *ngIf="!isInward(txn.direction)"></ion-icon>
                 <ion-label class="txnHeader">Paid => {{ txn.payMessage.payeeId
                     }}@{{txn.payMessage.payeePSP}}</ion-label>
             </ion-item>

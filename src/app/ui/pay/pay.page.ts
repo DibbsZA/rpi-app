@@ -4,13 +4,14 @@ import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataServiceService } from '../../core/data-service.service';
-import { msgPaymentInstruction, msgPSPPayment, msgConfirmation } from '../../models/messages';
+import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
 import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
+import { formatNumber } from '@angular/common';
 
 @Component({
     selector: 'app-pay',
@@ -49,7 +50,6 @@ export class PayPage implements OnInit {
         this.payeePspLable = '@psp';
         this.processors = this.dataSvc.getProcessors();
 
-
         this.user.subscribe(
             x => {
                 this.userO = x;
@@ -83,6 +83,7 @@ export class PayPage implements OnInit {
                         consentKey: null,
                         payeeId: ['', [Validators.required]],
                         payeePSP: ['', [Validators.required]],
+                        amountdisplay: [null],
                         amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
                     });
@@ -90,6 +91,8 @@ export class PayPage implements OnInit {
                     this.payForm.valueChanges
                         .subscribe(x => {
                             console.log(x);
+
+
                             if (x.payeePSP != null) {
 
                                 this.payeePspLable = '@' + x.payeePSP;
@@ -101,6 +104,18 @@ export class PayPage implements OnInit {
 
             });
 
+    }
+
+    formatAmount(val) {
+        if (val != null) {
+            if (val.length > 0) {
+                let amt_text: string = val;
+                let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
+                this.payForm.patchValue({ amount: amt_int });
+                let amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                this.payForm.patchValue({ amountdisplay: amt_dec });
+            }
+        }
     }
 
     whatError(name: string) {

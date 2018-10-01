@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { UserServiceService } from '../../core/user-service.service';
 import { Router } from '@angular/router';
+import { NotifyService } from '../../core/notify.service';
 
 @Component({
     selector: 'app-history',
@@ -13,7 +14,8 @@ import { Router } from '@angular/router';
     styleUrls: ['./history.page.scss'],
 })
 export class HistoryPage implements OnInit {
-    user: iUser;
+    user: Observable<iUser>;
+    userO: iUser;
     zapId: string;
     users: iUser[];
     history: iTransaction[];
@@ -25,22 +27,38 @@ export class HistoryPage implements OnInit {
         public auth: AuthSvcService,
         public userSvc: UserServiceService,
         public txnSvc: TxnSvcService,
-        private route: Router
-    ) {
-        this.auth.user
-            .subscribe(u => {
-                this.user = u;
-                this.zapId = u.zapId + '@' + u.pspId;
-            });
+        private router: Router,
+        private notify: NotifyService,
 
+    ) {
+
+        this.user = this.auth.user;
     }
 
     ngOnInit() {
 
 
+        this.user.subscribe(
+            x => {
+                this.userO = x;
+                if (this.userO.pspId == null) {
+                    this.notify.update('Please update your profile first!!!.', 'info');
+                    this.router.navigate(['/profile']);
+                }
+                this.zapId = this.userO.zapId + '@' + this.userO.pspId;
+                this.showData();
+            },
+            e => {
 
+            }
+        );
+
+
+    }
+
+    showData() {
         // this.history = this.txnSvc.getUserTxnHistory(this.zapId);
-        this.txnSvc.getAllTxn().subscribe(
+        this.txnSvc.getUserTxnHistory(this.zapId).subscribe(
             x => {
                 this.history = x;
 
@@ -92,10 +110,18 @@ export class HistoryPage implements OnInit {
 
             }
         );
+    }
 
+    isInward(direction): boolean {
+
+        if (direction === 'inward') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     viewDetail(txn) {
-        this.route.navigate(['txn-detail/' + txn.id]);
+        this.router.navigate(['txn-detail/' + txn.id]);
     }
 }

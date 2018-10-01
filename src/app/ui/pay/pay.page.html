@@ -50,12 +50,13 @@
                             <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"></ion-input>
                         </ion-item>
                         <ion-item>
-                            <ion-label stacked>
-                                Amount (no decimal)
+                            <ion-label>
+                                Amount
                             </ion-label>
-                            <ion-input class="largeAmount" formControlName="amount" type="number" required="true"
-                                placeholder="000000"></ion-input>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amount.dirty"
+                            <ion-input #amt class="largeAmount" formControlName="amountdisplay" type="text" placeholder="0.00"
+                                (ionChange)="formatAmount(amt.value)"></ion-input>
+                            <ion-input formControlName="amount" type="number" required="true" hidden></ion-input>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amountdisplay.dirty"
                                 (click)="whatError('amount')">!</ion-badge>
                         </ion-item>
                     </ion-list>

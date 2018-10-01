@@ -10,50 +10,29 @@
 </ion-header>
 
 <ion-content padding>
-    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.showPin()">
-        <ng-container *ngIf="!ShowPin">
+    <ng-template #loading>
+        Loading Form...
+    </ng-template>
+    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.doPayRequest()">
+        <ng-container>
             <ion-card>
                 <ion-card-header>
-                    <ion-card-subtitle>Your payment details</ion-card-subtitle>
+                    <ion-card-subtitle>Request payment from</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
                     <ion-list lines="none">
                         <ion-item>
-                            <ion-label>My PSP</ion-label>
-                            <ion-input type="text" readonly formControlName="payerPSP"></ion-input>
-                            <!-- {{userO.pspId}} -->
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerId.valid" (click)="whatError('payerId')">!</ion-badge>
+                            <ion-label>ZAP Id:</ion-label>
+                            <ion-input formControlName="payerId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
+                            {{payeePspLable}}
                         </ion-item>
                         <ion-item>
-                            <ion-label>My ID</ion-label>
-                            <ion-input type="text" readonly formControlName="payerId"></ion-input>
-                            {{payerPspLable}}
-                        </ion-item>
-                        <ion-item>
-                            <ion-label>
-                                From Account?
-                            </ion-label>
-                            <!-- <ion-select required="true" #payerAcc formControlName="payerAccountNo" placeholder=" Select Account" (ionChange)="payerAccountSelect(payerAcc.value)"> -->
-                            <ion-select required="true" formControlName="payerAccountNo" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of userO.accounts" [value]="acc.accountNo">
-                                    {{acc.accountAlias}}
-                                </ion-select-option>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerPSP.valid" (click)="whatError('payerPSP')">!</ion-badge>
+                            <ion-label>Sender's PSP</ion-label>
+                            <ion-select placeholder="Select PSP" formControlName="payerPSP">
+                                <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
                             </ion-select>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerAccountNo.valid"
-                                (click)="whatError('payerAccountNo')">!</ion-badge>
-                        </ion-item>
-                        <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
-                            <ion-label>Description</ion-label>
-                            <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"></ion-input>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label stacked>
-                                Amount (no decimal)
-                            </ion-label>
-                            <ion-input class="largeAmount" formControlName="amount" type="number" required="true"
-                                placeholder="000000"></ion-input>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amount.dirty"
-                                (click)="whatError('amount')">!</ion-badge>
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
@@ -63,22 +42,47 @@
             </div>
             <ion-card>
                 <ion-card-header>
-                    <ion-card-subtitle>Pay To</ion-card-subtitle>
+                    <ion-card-subtitle>My details</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
                     <ion-list lines="none">
+                        <!-- <ion-item> -->
+                        <!-- <ion-label>My PSP</ion-label> -->
+                        <ion-input type="text" readonly formControlName="payeePSP" hidden></ion-input>
+                        <!-- {{userO.pspId}} -->
+                        <!-- </ion-item> -->
                         <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeId.valid" (click)="whatError('payeeId')">!</ion-badge>
-                            <ion-label>ZAP Id:</ion-label>
-                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
+                            <ion-label>My ID</ion-label>
+                            <ion-input type="text" readonly formControlName="payeeId"></ion-input>
                             {{payeePspLable}}
                         </ion-item>
                         <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeePSP.valid" (click)="whatError('payeePSP')">!</ion-badge>
-                            <ion-label>Recipient PSP</ion-label>
-                            <ion-select placeholder="Select PSP" formControlName="payeePSP">
-                                <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
+                            <ion-label>
+                                Into Account?
+                            </ion-label>
+                            <!-- <ion-select required="true" #payerAcc formControlName="payerAccountNo" placeholder=" Select Account" (ionChange)="payerAccountSelect(payerAcc.value)"> -->
+                            <ion-select required="true" formControlName="payeeAccountNo" placeholder="Select Acct">
+                                <ion-select-option *ngFor="let acc of userO.accounts" [value]="acc.accountNo">
+                                    {{acc.accountAlias}}
+                                </ion-select-option>
                             </ion-select>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeAccountNo.valid"
+                                (click)="whatError('payeeAccountNo')">!</ion-badge>
+                        </ion-item>
+                        <ion-item>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
+                            <ion-label>My Reference</ion-label>
+                            <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>
+                                Amount
+                            </ion-label>
+                            <ion-input #amt class="largeAmount" formControlName="amountdisplay" type="text" placeholder="0.00"
+                                (ionChange)="formatAmount(amt.value)"></ion-input>
+                            <ion-input formControlName="amount" type="number" required="true" hidden></ion-input>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amountdisplay.dirty"
+                                (click)="whatError('amount')">!</ion-badge>
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
@@ -94,6 +98,5 @@
             <label *ngIf="myPSP" class="errorMsg"> {{myPSP.apiUrl}} </label>
         </ng-container>
 
-        <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
     </form>
 </ion-content>

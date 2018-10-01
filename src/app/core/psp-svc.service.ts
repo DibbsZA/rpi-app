@@ -37,7 +37,6 @@ export class PspSvcService {
 
     ) {
 
-
         // this.headers = this.headers.append('Access-Control-Allow-Origin', '*');
         // this.headers = this.headers.append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         // this.headers = this.headers.append('Content-Type', 'application/json');
@@ -67,21 +66,7 @@ export class PspSvcService {
 
 
         return this.httpClient.post(apiEndpoint, body)
-        // .pipe(
-        //     map(r => { 
-        //         console.log(r); 
-        //     }),
-        //     catchError(err => of('error found'))
-        // )
-        // .subscribe(
-        //     x => {
-        //         console.log(x);
-        //         return x;
-        //     }
-        // )
 
-
-        // return;
     }
 
     public psp_paymentInstructionResponse(psp: iProcessor, msgPayment: msgPSPPayment): Observable<any> {
@@ -109,15 +94,45 @@ export class PspSvcService {
 
     public psp_paymentRequest(psp: iProcessor, msgPayment: msgPSPPayment): Observable<any> {
 
-        const apiEndpoint = psp.apiUrl + '/payementRequest';
+        const apiEndpoint = psp.apiUrl + '/paymentRequest';
 
-        return;
+        const body: any = {
+            "uniqueRef": '',
+            "payeeId": msgPayment.payeeId,
+            "payeePSP": msgPayment.payeePSP,
+            "payeeName": msgPayment.payeeName,
+            "payeeAccountNo": msgPayment.payeeAccountNo,
+            "payerId": msgPayment.payerId,
+            "payerPSP": msgPayment.payerPSP,
+            "payerName": msgPayment.payerName,
+            "amount": msgPayment.amount.toString(),
+            "userRef": msgPayment.userRef,
+            "consentKey": msgPayment.consentKey,
+            "originatingDate": msgPayment.originatingDate,
+            "mpiHash": msgPayment.mpiHash
+        }
+
+        return this.httpClient.post(apiEndpoint, body)
     }
 
     public psp_paymentRequestResponse(psp: iProcessor, msgPayment: msgPSPPayment): Observable<any> {
 
-        const apiEndpoint = psp.apiUrl + '/payementRequest';
+        const apiEndpoint = psp.apiUrl + '/paymentRequestResponse';
+        const body: any = {
+            "uniqueRef": msgPayment.uniqueRef,
+            "payeeId": msgPayment.payeeId,
+            "payeeName": msgPayment.payerName,
+            "payerId": msgPayment.payerId,
+            "payerPSP": msgPayment.payerPSP,
+            "payerAccountNo": msgPayment.payeeAccountNo,
+            "amount": msgPayment.amount.toString(),
+            "userRef": msgPayment.userRef,
+            "originatingDate": msgPayment.originatingDate,
+            "mpiHash": msgPayment.mpiHash,
+            "responseCode": msgPayment.responseCode,
+            "responseDesc": msgPayment.responseDesc
+        }
 
-        return;
+        return this.httpClient.post(apiEndpoint, body)
     }
 }

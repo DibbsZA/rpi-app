@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
+import { formatNumber } from '@angular/common';
 
 @Component({
     selector: 'app-request-pay',
@@ -22,7 +23,7 @@ export class RequestPayPage implements OnInit {
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
-    pay: msgPaymentInstruction;
+    pay: msgPSPPayment;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
@@ -67,22 +68,24 @@ export class RequestPayPage implements OnInit {
 
                     this.pay = {
                         userRef: null,
-                        payerId: this.userO.zapId,
-                        payerAccountNo: null,
-                        payerPSP: this.userO.pspId,
+                        payeeId: this.userO.zapId,
+                        payeeAccountNo: null,
+                        payeeName: this.userO.nickname,
+                        payeePSP: this.userO.pspId,
                         consentKey: null,
-                        payeeId: null,
-                        payeePSP: null,
+                        payerId: null,
+                        payerPSP: null,
                         amount: null
                     };
 
                     this.payForm = this.fb.group({
-                        payerId: this.userO.zapId,
-                        payerAccountNo: ['', [Validators.required]],
-                        payerPSP: this.userO.pspId,
+                        payeeId: this.userO.zapId,
+                        payeeAccountNo: ['', [Validators.required]],
+                        payeePSP: this.userO.pspId,
                         consentKey: null,
-                        payeeId: ['', [Validators.required]],
-                        payeePSP: ['', [Validators.required]],
+                        payerId: ['', [Validators.required]],
+                        payerPSP: ['', [Validators.required]],
+                        amountdisplay: [null],
                         amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
                     });
@@ -103,6 +106,18 @@ export class RequestPayPage implements OnInit {
 
     }
 
+    formatAmount(val) {
+        if (val != null) {
+            if (val.length > 0) {
+                let amt_text: string = val;
+                let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
+                this.payForm.patchValue({ amount: amt_int });
+                let amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                this.payForm.patchValue({ amountdisplay: amt_dec });
+            }
+        }
+    }
+
     public whatError(name: string) {
         // name = 'payForm.' + name;
         const ctrl = this.payForm.get(name);
@@ -110,10 +125,9 @@ export class RequestPayPage implements OnInit {
         this.notify.update(msg, 'error');
     }
 
-    public doPay(secret) {
+    public doPayRequest() {
         this.pay = this.payForm.value;
-        this.pay.consentKey = secret;
-        this.pay.payerName = this.userO.nickname;
+        this.pay.payeeName = this.userO.nickname;
 
         let txnMsg: msgPSPPayment = this.pay;
 
@@ -154,7 +168,7 @@ export class RequestPayPage implements OnInit {
         // console.log(this.myPSP);
 
 
-        this.pspApiSvc.psp_paymentInstruction(this.myPSP, txnMsg)
+        this.pspApiSvc.psp_paymentRequest(this.myPSP, txnMsg)
             .subscribe(
                 x => {
                     // API Call succesfull                    
@@ -191,22 +205,4 @@ export class RequestPayPage implements OnInit {
 
     }
 
-
-    eventCapture(event) {
-        this.ShowPin = false;
-
-        this.myPSP.apiUrl = event.pspUrl;
-        this.Pin = event.pin;
-
-        const m: Message = event.pin;
-        const hashSecret = sha256.hmac(this.pay.payerPSP, m);
-        this.doPay(hashSecret)
-        // .then(r => {
-        // return this.router.navigate(['history']);
-        // });
-    }
-
-    showPin() {
-        this.ShowPin = !this.ShowPin;
-    }
 }

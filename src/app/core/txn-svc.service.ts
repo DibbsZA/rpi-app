@@ -30,9 +30,9 @@ export class TxnSvcService {
 
     public getUserTxnHistory(zapId: string): Observable<iTransaction[]> {
         const colRef = this.afs.firestore.collection('transactions');
-        this.txnCollection = this.afs.collection<iTransaction>(colRef, ref => ref.where('txnOwner', '==', 'zapId')
+        this.txnCollection = this.afs.collection<iTransaction>(colRef, ref => ref.where('txnOwner', '==', zapId)
             .orderBy('time', 'desc').limit(10));
-        return this.transactions;
+        return this.txnCollection.valueChanges();
     }
 
     public getTxn(txnId): Observable<iTransaction> {

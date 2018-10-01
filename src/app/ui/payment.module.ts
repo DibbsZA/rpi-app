@@ -11,14 +11,15 @@ import { RequestPayPage } from './request-pay/request-pay.page';
 import { RequestPayAuthPage } from './request-pay-auth/request-pay-auth.page';
 import { ZapcurrencyPipe } from '../core/zapcurrency.pipe';
 import { PaySuccessComponent } from './pay-success/pay-success.component';
+import { AuthGuard } from '../core/auth.guard';
 
 
 const routes: Routes = [
-    { path: 'payment/pay', component: PayPage },
-    { path: 'payment/payauth', component: PayAuthPage },
-    { path: 'payment/success', component: PaySuccessComponent },
-    { path: 'payment/requestpay', component: RequestPayPage },
-    { path: 'payment/requestpayauth', component: RequestPayAuthPage }
+    { path: 'payment/pay', component: PayPage, canActivate: [AuthGuard] },
+    { path: 'payment/payauth', component: PayAuthPage, canActivate: [AuthGuard] },
+    { path: 'payment/success', component: PaySuccessComponent, canActivate: [AuthGuard] },
+    { path: 'payment/requestpay', component: RequestPayPage, canActivate: [AuthGuard] },
+    { path: 'payment/requestpayauth', component: RequestPayAuthPage, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

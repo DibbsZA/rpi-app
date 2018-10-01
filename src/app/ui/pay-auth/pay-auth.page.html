@@ -17,22 +17,18 @@
                 <ion-card-title>{{fcmPayload.payerId}} has sent you a payment of {{ fcmPayload.amount | zapcurrency }}</ion-card-title>
             </ion-card-header>
             <ion-card-content>
-                <!-- <ion-item>
-                    <ion-label>Recieve the payment?</ion-label>
-                    <ion-toggle color="success" slot="end" (checked)="authorised" (ionChange)="changeAuth()"></ion-toggle>
-                </ion-item> -->
                 <ion-grid>
                     <ion-row>
                         <ion-col>
                             <ion-button type="button" onclick="confirm('Are you sure you don\'t want the money?')"
                                 expand="block" color="danger">
-                                <ion-icon slot="start" name="trash"></ion-icon>
+                                <ion-icon slot="end" name="trash"></ion-icon>
                                 Decline!!
                             </ion-button>
                         </ion-col>
                         <ion-col>
                             <ion-button type="button" (click)="changeAuth()" expand="block" color="success">
-                                <ion-icon slot="start" name="cash"></ion-icon>
+                                <ion-icon slot="end" name="checkmark-circle-outline"></ion-icon>
                                 Accept
                             </ion-button>
                         </ion-col>

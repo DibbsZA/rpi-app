@@ -12,6 +12,7 @@ import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
 import { ActivatedRoute } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
     selector: 'app-pay-auth',
@@ -58,7 +59,8 @@ export class PayAuthPage implements OnInit {
         private txnSvc: TxnSvcService,
         private pspApiSvc: PspSvcService,
         private router: Router,
-        private activeRoute: ActivatedRoute
+        private activeRoute: ActivatedRoute,
+        public alertController: AlertController
     ) {
         this.user = this.auth.user;
     }
@@ -266,5 +268,29 @@ export class PayAuthPage implements OnInit {
 
     changeAuth() {
         this.authorised = !this.authorised;
+    }
+
+    async presentAlertConfirm() {
+        const alert = await this.alertController.create({
+            header: 'Confirm!',
+            message: '<strong>Don\'t you want to get the payment?</strong>',
+            buttons: [
+                {
+                    text: 'Reconsider',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: () => {
+                        console.log('Confirm Cancel: blah');
+                    }
+                }, {
+                    text: 'Decline',
+                    handler: () => {
+                        console.log('Confirm decline');
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
     }
 }
