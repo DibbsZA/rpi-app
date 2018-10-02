@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Router } from '@angular/router';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { NotifyService } from '../../core/notify.service';
 
 @Component({
@@ -11,25 +10,27 @@ import { NotifyService } from '../../core/notify.service';
 })
 export class RegistrationPage implements OnInit {
 
-    constructor(public auth: AuthSvcService,
-        private afAuth: AngularFireAuth,
+    constructor(
+        public auth: AuthSvcService,
         private router: Router,
         public notify: NotifyService
     ) { }
 
     ngOnInit() {
+
     }
 
-    loginPage() {
-        return this.router.navigate(['/home']);
-    }
+    // loginPage() {
+    //     return this.router.navigate(['/home']);
+    // }
 
     register(email, pwd) {
+
 
         this.auth.emailSignUp(email, pwd)
             .then((res) => {
                 console.log(res);
-                if (res == undefined) {
+                if (res !== undefined) {
                     this.router.navigate(['/profile']);
                 }
                 else {

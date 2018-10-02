@@ -1,6 +1,6 @@
 {
     "name": "ZAPMobile",
-    "version": "1.1.2",
+    "version": "1.1.5",
     "author": "BankservAfrica Ltd.",
     "homepage": "https://zap.bankserv.africa/",
     "scripts": {
@@ -30,8 +30,8 @@
         "@ultimate/ngxerrors": "^1.4.0",
         "angular2-prettyjson": "^3.0.1",
         "chart.js": "^2.7.2",
-        "cordova-android": "^7.1.1",
         "cordova-plugin-device": "^2.0.2",
+        "cordova-plugin-firebase-messaging": "^1.1.4",
         "cordova-plugin-ionic-keyboard": "^2.1.2",
         "cordova-plugin-ionic-webview": "^2.1.4",
         "cordova-plugin-splashscreen": "^5.0.2",
@@ -83,8 +83,6 @@
             },
             "cordova-plugin-ionic-keyboard": {}
         },
-        "platforms": [
-            "android"
-        ]
+        "platforms": []
     }
 }

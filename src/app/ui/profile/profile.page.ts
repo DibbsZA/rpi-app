@@ -46,6 +46,25 @@ export class ProfilePage implements OnInit {
         );
     }
 
+    canDeactivate(): Observable<boolean> | boolean {
+        console.log('CanDeactivate!.');
+        if (this.editMode) {
+            this.notify.update('Please save your profile before leaving this page.', 'note');
+            return false;
+        }
+        return true;
+    }
+
+    doRefresh(event) {
+        console.log('Begin async operation');
+        this.ngOnInit();
+
+        setTimeout(() => {
+            console.log('Async operation has ended');
+            event.target.complete();
+        }, 2000);
+    }
+
     // TODO:  edit user details and ZAP details
     editProfile() {
         this.editMode = true;
@@ -71,16 +90,14 @@ export class ProfilePage implements OnInit {
     }
 
     deleteAccount(e, acc: iAccount) {
-        this.progress = e / 10;
-        if (this.progress > 100) {
-            var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
-            let index = dirtyAccounts.indexOf(acc);
-            this.dirtyUser.accounts.splice(index);
-            return this.userSvc.updateUserData(this.dirtyUser)
-                .then(r => {
-                    return this.notify.update("User Account Deleted", "info");
-                });
-        }
+
+        var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
+        let index = dirtyAccounts.indexOf(acc);
+        this.dirtyUser.accounts.splice(index);
+        this.userSvc.updateUserData(this.dirtyUser)
+        // .then(r => {
+        //     this.notify.update("User Account Deleted", "info");
+        // });
 
     }
 

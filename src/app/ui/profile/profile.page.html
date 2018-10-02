@@ -10,6 +10,10 @@
 </ion-header>
 
 <ion-content padding>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
+        </ion-refresher-content>
+    </ion-refresher>
     <ng-container *ngIf="userO | async as user">
         <ion-card>
             <ion-card-content>
@@ -18,7 +22,7 @@
                 </div>
                 <ion-list lines="none">
                     <ion-item>
-                        <ion-input type="text" placeholder="Display Name" #name [value]="user.displayName" [readonly]="!editMode"></ion-input>
+                        <ion-input type="text" placeholder="User Name" #name [value]="user.displayName" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>E-Mail</ion-label>
@@ -26,8 +30,10 @@
                     </ion-item>
                     <ion-item>
                         <ion-label>My PSP</ion-label>
-                        <ion-select #pspid placeholder="Select PSP" expand='full' [disabled]="!editMode" (ionChange)="payerPspSelect(pspid.value)">
-                            <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="user.pspId">{{psp.name}}</ion-select-option>
+                        <ion-input type="text" placeholder="PSP Name" [value]="user.pspId" readonly *ngIf="!editMode"></ion-input>
+                        <ion-select slot="end" #pspid placeholder="Select PSP" expand='full' [hidden]="!editMode"
+                            (ionChange)="payerPspSelect(pspid.value)">
+                            <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="user.pspId">{{psp.id}}</ion-select-option>
                         </ion-select>
                     </ion-item>
                     <ion-item>
@@ -58,31 +64,31 @@
                     <ion-item-divider>
                         <ion-label>Accounts</ion-label>
                     </ion-item-divider>
-                    <!-- <ion-item-sliding *ngFor="let acc of user.accounts ">
+                    <ion-item-sliding *ngFor="let acc of user.accounts ">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
                             {{acc.accountNo}}
                         </ion-item>
                         <ion-item-options side="start">
-                            <ion-item-option color="danger" (click)="deletAccount(acc)">Delete</ion-item-option>
+                            <ion-item-option color="danger" (click)="deleteAccount(acc)">Delete</ion-item-option>
                         </ion-item-options>
-                    </ion-item-sliding> -->
-                    <ion-item *ngFor="let acc of user.accounts ">
+                    </ion-item-sliding>
+                    <!-- <ion-item *ngFor="let acc of user.accounts ">
                         <ion-label>{{acc.accountAlias}}</ion-label>
                         {{acc.accountNo}}
-                        <ion-button class="accDelete" slot="end" color="danger" holdable (holdTime)="deletAccount(acc)">
+                        <ion-button class="accDelete" slot="end" color="danger" holdable (holdTime)="deleteAccount(acc)">
                             <ion-icon slot="icon-only" name="trash"></ion-icon>
                         </ion-button>
-                    </ion-item>
+                    </ion-item> -->
                 </ion-list>
                 <ion-fab vertical="top" horizontal="end" slot="fixed">
                     <ion-fab-button (click)="addAccount()">
                         <ion-icon name="add"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
-                <!-- <span class="tiny">Swipe account right to delete.</span> -->
-                <span class="tiny">Hold account icon to delete.</span>
-                <progress color="warning" class="progress" [value]="progress" max="100"></progress>
+                <span class="tiny">Swipe account right to delete.</span>
+                <!-- <span class="tiny">Hold account icon to delete.</span> -->
+                <!-- <progress color="warning" class="progress" [value]="progress" max="100"></progress> -->
             </ion-card-content>
         </ion-card>
     </ng-container>

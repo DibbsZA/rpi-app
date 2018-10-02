@@ -47,7 +47,7 @@ export class RequestPayPage implements OnInit {
 
     ngOnInit() {
 
-        this.payeePspLable = '@psp';
+        // this.payerPspLable = '@ select psp';
         this.processors = this.dataSvc.getProcessors();
 
 
@@ -58,7 +58,7 @@ export class RequestPayPage implements OnInit {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
                 } else {
-                    this.payerPspLable = '@' + this.userO.pspId;
+                    this.payeePspLable = '@' + this.userO.pspId;
 
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
@@ -67,6 +67,7 @@ export class RequestPayPage implements OnInit {
 
 
                     this.pay = {
+                        uniqueRef: '',
                         userRef: null,
                         payeeId: this.userO.zapId,
                         payeeAccountNo: null,
@@ -92,10 +93,11 @@ export class RequestPayPage implements OnInit {
 
                     this.payForm.valueChanges
                         .subscribe(x => {
+                            this.pay = x;
                             console.log(x);
-                            if (x.payeePSP != null) {
+                            if (x.payerPSP != null) {
 
-                                this.payeePspLable = '@' + x.payeePSP;
+                                this.payerPspLable = '@' + x.payerPSP;
 
                             }
                         });
@@ -117,6 +119,7 @@ export class RequestPayPage implements OnInit {
             }
         }
     }
+
 
     public whatError(name: string) {
         // name = 'payForm.' + name;
@@ -157,7 +160,7 @@ export class RequestPayPage implements OnInit {
         console.log(txnMsg.mpiHash);
 
         const txn: iTransaction = {
-            txnOwner: txnMsg.payerId,   // full ZAPID@PSP
+            txnOwner: txnMsg.payeeId,   // full ZAPID@PSP
             time: new Date().toISOString(),
             direction: 'inward',
             payMessage: txnMsg,
@@ -171,28 +174,26 @@ export class RequestPayPage implements OnInit {
         this.pspApiSvc.psp_paymentRequest(this.myPSP, txnMsg)
             .subscribe(
                 x => {
-                    // API Call succesfull                    
-                    this.notify.update(x, 'success');
+                    // API Call succesfull  
+                    x.forEach(element => {
+                        this.notify.update(element.uniqueRef, 'success');
+                        // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
+                        txn.payConfirm.responseCode = element.responseCode;  // I assume if it worked this is a 200
+                        txn.payConfirm.uniqueRef = element.uniqueRef;
+                        txn.payConfirm.responseDesc = element.responseDesc;
 
-                    // Handle Response? Should be of type msgConfirmation
-                    // let result: msgConfirmation = x;
+                        // Save the transaction to the users history.
+                        // TODO: use result to set status of Txn: pending, failed, or complete?
+                        return this.txnSvc.savePayment(txn)
+                            .then(r => {
+                                this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
+                                console.log('Transaction saved!');
+                                console.log(r);
 
-                    // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
-                    txn.payConfirm.responseCode = '200';  // I assume if it worked this is a 200
-                    txn.payConfirm.uniqueRef = txn.payMessage.uniqueRef;
-                    txn.payConfirm.responseDesc = 'placeholder';
+                                return txn;
+                            });
 
-
-                    // Save the transaction to the users history.
-                    // TODO: use result to set status of Txn: pending, failed, or complete?
-                    return this.txnSvc.savePayment(txn)
-                        .then(r => {
-                            this.notify.update('Payment to ' + this.pay.payeeId + '@' + this.pay.payeePSP + ' submitted.', 'info');
-                            console.log('Transaction saved!');
-                            console.log(r);
-
-                            return txn;
-                        });
+                    });
                 },
                 e => {
                     // API Call threw error

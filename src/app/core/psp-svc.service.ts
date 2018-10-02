@@ -65,7 +65,7 @@ export class PspSvcService {
         }
 
 
-        return this.httpClient.post(apiEndpoint, body)
+        return this.httpClient.post(apiEndpoint, body);
 
     }
 
@@ -124,7 +124,8 @@ export class PspSvcService {
             "payeeName": msgPayment.payerName,
             "payerId": msgPayment.payerId,
             "payerPSP": msgPayment.payerPSP,
-            "payerAccountNo": msgPayment.payeeAccountNo,
+            "payerAccountNo": msgPayment.payerAccountNo,
+            "consentKey": msgPayment.consentKey,
             "amount": msgPayment.amount.toString(),
             "userRef": msgPayment.userRef,
             "originatingDate": msgPayment.originatingDate,

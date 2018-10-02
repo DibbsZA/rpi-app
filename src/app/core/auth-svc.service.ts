@@ -43,7 +43,7 @@ export class AuthSvcService {
         return this.afAuth.auth
             .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
-                this.notify.update('Welcome to Z@P!', 'success');
+                this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
                 const newUser: iUser = {
                     uid: credential.user.uid,
                     email: credential.user.email,

@@ -21,9 +21,9 @@ export class AppComponent implements OnInit {
     public appPages = [
         { title: 'Login', url: '/home', icon: 'log-in', loggedin: false },
         { title: 'Pay', url: '/payment/pay', icon: 'cash', icon2: 'arrow-round-forward', loggedin: true },
-        { title: 'Pay Auth', url: '/payment/payauth', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
-        { title: 'Request Payment', url: '/payment/requestpay', icon: 'cash', icon2: 'arrow-round-forward', loggedin: true },
-        { title: 'Request Payment Auth', url: '/payment/requestpayauth', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
+        // { title: 'Pay Auth', url: '/payment/payauth', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
+        { title: 'Request Payment', url: '/payment/requestpay', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
+        // { title: 'Request Payment Auth', url: '/payment/requestpayauth', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
         { title: 'Scan', url: '/scan', icon: 'qr-scanner', loggedin: true },
         { title: 'History', url: '/history', icon: 'paper', loggedin: true },
         { title: 'Profile', url: '/profile', icon: 'contact', loggedin: true },
@@ -58,6 +58,16 @@ export class AppComponent implements OnInit {
             })
     }
 
+
+    doRefresh(event) {
+        console.log('Begin async operation');
+        this.ngOnInit();
+
+        setTimeout(() => {
+            console.log('Async operation has ended');
+            event.target.complete();
+        }, 2000);
+    }
 
     close() {
         this.menu.close();

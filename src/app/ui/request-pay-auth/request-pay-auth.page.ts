@@ -13,6 +13,7 @@ import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { formatNumber } from '@angular/common';
 
 @Component({
     selector: 'app-request-pay-auth',
@@ -42,6 +43,7 @@ export class RequestPayAuthPage implements OnInit {
         payeeId: 'USER4@UBNK',
         payeePSP: 'UBNK',
         payeeAccountNo: '',
+        payerAccountNo: '',
         payerName: 'User Three',
         payerId: 'USER3@STDB',
         payerPSP: 'STDB',
@@ -114,6 +116,8 @@ export class RequestPayAuthPage implements OnInit {
                         payeeName: this.fcmPayload.payeeName,
                         payeePSP: this.fcmPayload.payeePSP,
                         payerAccountNo: null,
+                        consentKey: null,
+                        mpiHash: null,
                         amount: this.fcmPayload.amount,
                         originatingDate: this.fcmPayload.originatingDate,
                         responseCode: '',
@@ -150,6 +154,18 @@ export class RequestPayAuthPage implements OnInit {
 
     }
 
+
+    formatAmount(val) {
+        if (val != null) {
+            if (val.length > 0) {
+                let amt_text: string = val;
+                let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
+                this.payForm.patchValue({ amount: amt_int });
+                let amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                this.payForm.patchValue({ amountdisplay: amt_dec });
+            }
+        }
+    }
 
     public whatError(name: string) {
         // name = 'payForm.' + name;
@@ -193,6 +209,7 @@ export class RequestPayAuthPage implements OnInit {
             this.notify.update("'Hashes don't Match!!", "error");
         }
         console.log(txnMsg.mpiHash);
+        this.pay.mpiHash = this.fcmPayload.mpiHash;
 
         const txn: iTransaction = {
             txnOwner: txnMsg.payerId,   // full ZAPID@PSP
@@ -203,10 +220,10 @@ export class RequestPayAuthPage implements OnInit {
         };
 
         // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
-        // console.log(this.myPSP);
+        console.log(txn);
 
 
-        this.pspApiSvc.psp_paymentInstruction(this.myPSP, txnMsg)
+        this.pspApiSvc.psp_paymentRequestResponse(this.myPSP, txnMsg)
             .subscribe(
                 x => {
                     // API Call succesfull                    
@@ -216,20 +233,20 @@ export class RequestPayAuthPage implements OnInit {
                     // let result: msgConfirmation = x;
 
                     // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
-                    txn.payConfirm.responseCode = '200';  // I assume if it worked this is a 200
+                    txn.payConfirm.responseCode = 'APPROVED';  // I assume if it worked this is a 200
                     txn.payConfirm.uniqueRef = txn.payMessage.uniqueRef;
-                    txn.payConfirm.responseDesc = 'placeholder';
+                    txn.payConfirm.responseDesc = 'Take the cash.';
 
 
                     // Save the transaction to the users history.
                     // TODO: use result to set status of Txn: pending, failed, or complete?
                     return this.txnSvc.savePayment(txn)
                         .then(r => {
-                            this.notify.update('Payment to ' + this.pay.payeeId + '@' + this.pay.payeePSP + ' submitted.', 'info');
+                            this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
                             console.log('Transaction saved!');
                             console.log(r);
 
-                            return txn;
+                            return this.router.navigateByUrl('/history');
                         });
                 },
                 e => {

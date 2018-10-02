@@ -1,14 +1,8 @@
 <ion-header>
     <ion-toolbar color="primary">
-        <!-- <ion-buttons slot="secondary">
-            <ion-button (click)="loginPage()">
-                <ion-icon slot="start" name="arrow-back"></ion-icon>
-            </ion-button>
-        </ion-buttons> -->
         <ion-buttons slot="secondary">
             <ion-back-button></ion-back-button>
         </ion-buttons>
-
         <ion-title>
             Registration
         </ion-title>
@@ -19,8 +13,8 @@
         <ion-card-content>
             <ion-list lines='none'>
                 <ion-item>
-                    <ion-label position='floating'>Email Address</ion-label>
-                    <ion-input type="text" #eml [value]=""></ion-input>
+                    <ion-label position='stacked'>Email Address</ion-label>
+                    <ion-input type="text" #eml [value]="" placeholder="Enter email address"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label position='floating'>Password</ion-label>
@@ -31,7 +25,9 @@
                 </ion-item>
             </ion-list>
 
-            <ion-button ion-button type="submit" (click)="register(eml.value,pwd.value)" expand='full'>Register</ion-button>
+            <ion-button ion-button type="submit" (click)="register(eml.value,pwd.value)" expand='full'>Register
+                <ion-icon slot="end" name="log-in"></ion-icon>
+            </ion-button>
             <!-- <ion-button ion-button type="submit" (click)="loginPage()" expand='full'>Login</ion-button> -->
 
         </ion-card-content>

@@ -12,6 +12,7 @@
 <ion-content padding>
     <ng-template #loading>
         Loading Form...
+        <ion-img src="/assets/img/down-arrow-gif-8.gif" style="width: 100%"></ion-img>
     </ng-template>
     <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.doPayRequest()">
         <ng-container>
@@ -22,17 +23,17 @@
                 <ion-card-content>
                     <ion-list lines="none">
                         <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerId.valid" (click)="whatError('payerId')">!</ion-badge>
-                            <ion-label>ZAP Id:</ion-label>
-                            <ion-input formControlName="payerId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
-                            {{payeePspLable}}
-                        </ion-item>
-                        <ion-item>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerPSP.valid" (click)="whatError('payerPSP')">!</ion-badge>
                             <ion-label>Sender's PSP</ion-label>
                             <ion-select placeholder="Select PSP" formControlName="payerPSP">
                                 <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
                             </ion-select>
+                        </ion-item>
+                        <ion-item>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerId.valid" (click)="whatError('payerId')">!</ion-badge>
+                            <ion-label>ZAP Id:</ion-label>
+                            <ion-input formControlName="payerId" type="text" placeholder="Z@p Handle" #zapid></ion-input>
+                            {{payerPspLable}}
                         </ion-item>
                     </ion-list>
                 </ion-card-content>
@@ -78,8 +79,8 @@
                             <ion-label>
                                 Amount
                             </ion-label>
-                            <ion-input #amt class="largeAmount" formControlName="amountdisplay" type="text" placeholder="0.00"
-                                (ionChange)="formatAmount(amt.value)"></ion-input>
+                            <ion-input #amt class="largeAmount" formControlName="amountdisplay" type="text" pattern="[0-9.,]*"
+                                inputmode="numeric" placeholder="0.00" (ionChange)="formatAmount(amt.value)"></ion-input>
                             <ion-input formControlName="amount" type="number" required="true" hidden></ion-input>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amountdisplay.dirty"
                                 (click)="whatError('amount')">!</ion-badge>

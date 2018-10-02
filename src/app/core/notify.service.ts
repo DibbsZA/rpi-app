@@ -29,7 +29,7 @@ export class NotifyService {
 
     }
 
-    update(content: any, style: 'error' | 'info' | 'success' | 'action') {
+    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'action') {
 
         const msg: Msg = { content, style };
         const msgContent: msgPSPPayment = content;
@@ -45,7 +45,7 @@ export class NotifyService {
         if (msg.style === 'action') {
             this.router.navigate([msgContent.click_action.split('?').shift()], { queryParams: { msg: encoded } });
 
-        } else if (msg.style === 'error') {
+        } else if (msg.style === 'error' || msg.style === 'note') {
 
             this.presentAlert(msg);
         } else {

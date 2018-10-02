@@ -112,7 +112,7 @@ export class PayPage implements OnInit {
                 let amt_text: string = val;
                 let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
                 this.payForm.patchValue({ amount: amt_int });
-                let amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                let amt_dec = formatNumber(amt_int / 100, 'en-GB', '1.2');
                 this.payForm.patchValue({ amountdisplay: amt_dec });
             }
         }
@@ -224,4 +224,16 @@ export class PayPage implements OnInit {
     showPin() {
         this.ShowPin = !this.ShowPin;
     }
+
+
+    doRefresh(event) {
+        console.log('Begin async operation');
+        this.ngOnInit();
+
+        setTimeout(() => {
+            console.log('Async operation has ended');
+            event.target.complete();
+        }, 2000);
+    }
+
 }

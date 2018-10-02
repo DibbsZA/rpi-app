@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { ProfilePage } from './profile.page';
 
 import { HoldableDirective } from '../../core/holdable.directive';
+import { CanDeactivateGuard } from '../../core/can-deactivate-guard';
 
 
 const routes: Routes = [
@@ -29,6 +30,9 @@ const routes: Routes = [
     declarations: [
         ProfilePage,
         HoldableDirective
+    ],
+    providers: [
+        CanDeactivateGuard
     ]
 })
 export class ProfilePageModule { }

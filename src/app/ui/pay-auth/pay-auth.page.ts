@@ -229,11 +229,11 @@ export class PayAuthPage implements OnInit {
                     // TODO: use result to set status of Txn: pending, failed, or complete?
                     return this.txnSvc.savePayment(txn)
                         .then(r => {
-                            this.notify.update('Payment to ' + this.pay.payeeId + '@' + this.pay.payeePSP + ' submitted.', 'info');
+                            this.notify.update('Payment to ' + this.pay.payeeId + ' authorized.', 'info');
                             console.log('Transaction saved!');
                             console.log(r);
 
-                            return txn;
+                            return this.router.navigateByUrl('/history');
                         });
                 },
                 e => {

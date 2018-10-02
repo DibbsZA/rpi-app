@@ -39,6 +39,8 @@ export class UserProfileComponent implements OnInit {
 
     logout() {
         this.auth.signOut();
+        this.menu.close();
+        this.router.navigateByUrl('/');
     }
 
 }

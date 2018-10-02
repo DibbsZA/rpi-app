@@ -7,6 +7,10 @@
                 </ion-toolbar>
             </ion-header>
             <ion-content color="dark">
+                <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+                    <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
+                    </ion-refresher-content>
+                </ion-refresher>
                 <app-user-profile></app-user-profile>
                 <ion-list>
                     <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages">

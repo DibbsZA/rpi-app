@@ -42,7 +42,7 @@ export class UserServiceService {
         const data: iUser = {
             uid: user.uid,
             email: user.email.trimRight().toLowerCase() || null,
-            displayName: user.displayName || 'nameless user',
+            displayName: user.displayName || null,
             nickname: user.nickname || null,
             photoURL: user.photoURL || '/assets/img/sun-dog.png',
             phone: user.phone || null,

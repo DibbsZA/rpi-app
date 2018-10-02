@@ -1,8 +1,8 @@
 {
-    "name": "Z@P Payments v1.1.2",
+    "name": "Z@P Payments v1.1.5",
     "short_name": "Z@P",
     "theme_color": "#f9a61a",
-    "background_color": "#000000",
+    "background_color": "#000001",
     "display": "standalone",
     "orientation": "portrait",
     "gcm_sender_id": "103953800507",
