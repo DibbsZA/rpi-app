@@ -19,7 +19,7 @@ export class TxnDetailPage implements OnInit {
         payConfirm: null,
         direction: null,
         time: null
-    }
+    };
 
     constructor(
         private route: ActivatedRoute,
