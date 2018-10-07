@@ -95,10 +95,24 @@
                 </ion-card-content>
             </ion-card>
 
-            <ion-button type="submit" [disabled]="!payForm.valid" expand="block" color="primary">
-                <ion-icon slot="start" name="cash"></ion-icon>
-                Z@P It!
-            </ion-button>
+            <ion-grid fixed>
+                <ion-row>
+                    <ion-col size="8">
+                        <ion-button type="submit" [disabled]="!payForm.valid" expand="block" color="primary">
+                            <ion-icon slot="start" name="cash"></ion-icon>
+                            Send Z@P!
+                        </ion-button>
+                    </ion-col>
+                    <ion-col size="4">
+                        <ion-button [disabled]="!payForm.valid" (click)="showQR()" color="tertiary">
+                            <ion-icon slot="end" name="barcode"></ion-icon>
+                            Show QR
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
+
             <div *ngIf="!payForm.valid">
                 <span class="errorMsg">Form incomplete or invalid. Tap the red badge to see why.</span>
             </div>

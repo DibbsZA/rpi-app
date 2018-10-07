@@ -14,6 +14,7 @@ import { PspSvcService } from '../../core/psp-svc.service';
 import { formatNumber } from '@angular/common';
 import { UserServiceService } from '../../core/user-service.service';
 import { tap } from 'rxjs/operators';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({
     selector: 'app-request-pay',
@@ -38,6 +39,7 @@ export class RequestPayPage implements OnInit {
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
+    encodedData = {};
 
     constructor(
         private auth: AuthSvcService,
@@ -47,7 +49,8 @@ export class RequestPayPage implements OnInit {
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
         private pspApiSvc: PspSvcService,
-        private router: Router
+        private router: Router,
+        private barcodeScanner: BarcodeScanner,
     ) {
         this.user = this.auth.user;
     }
@@ -163,7 +166,7 @@ export class RequestPayPage implements OnInit {
         this.notify.update(msg, 'error');
     }
 
-    public doPayRequest() {
+    buildPayRequest() {
         this.pay = this.payForm.value;
         this.pay.payeeName = this.userO.nickname;
 
@@ -203,11 +206,17 @@ export class RequestPayPage implements OnInit {
             payConfirm: {}
         };
 
+        return txn;
+    }
+
+    public doPayRequest() {
+
+        let txn = this.buildPayRequest();
         // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
         // console.log(this.myPSP);
 
 
-        this.pspApiSvc.psp_paymentRequest(this.myPSP, txnMsg)
+        this.pspApiSvc.psp_paymentRequest(this.myPSP, txn.payMessage)
             .subscribe(
                 x => {
                     // API Call succesfull
@@ -241,5 +250,19 @@ export class RequestPayPage implements OnInit {
             );
 
     }
+
+    showQR() {
+        const txn = this.buildPayRequest();
+        this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, txn.payMessage)
+            .then(r => {
+                this.notify.update(JSON.stringify(r), 'note');
+                this.encodedData = r;
+            }).catch(err => {
+                this.notify.update('Encode failed <br>' + JSON.stringify(err), 'error');
+                console.log('Error', err);
+            });
+
+    }
+
 
 }

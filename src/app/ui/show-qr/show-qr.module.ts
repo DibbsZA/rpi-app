@@ -5,22 +5,23 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { ShowQrPage } from './show-qr.page';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: ShowQrPage
-  }
+    {
+        path: '',
+        component: ShowQrPage
+    }
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [ShowQrPage]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes)
+    ],
+    declarations: [ShowQrPage]
 })
-export class ShowQrPageModule {}
+export class ShowQrPageModule { }
