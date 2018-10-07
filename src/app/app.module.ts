@@ -19,7 +19,6 @@ import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { ProfilePageModule } from './ui/profile/profile.module';
 import { ScanPageModule } from './ui/scan/scan.module';
-// import { PayPageModule } from './ui/pay/pay.module';
 import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AccountPageModule } from './ui/account/account.module';
@@ -60,7 +59,6 @@ registerLocaleData(localeZa, 'en-ZA');
         HttpClientModule,
         ProfilePageModule,
         ScanPageModule,
-        // PayPageModule,
         PaymentModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),

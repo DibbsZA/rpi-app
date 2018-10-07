@@ -4,10 +4,10 @@ import { Component, OnInit } from '@angular/core';
 
 import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+// import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FcmService } from './core/fcm.service';
 import { NotifyService } from './core/notify.service';
-import { filter, take } from 'rxjs/operators';
+// import { filter, take } from 'rxjs/operators';
 import { AuthSvcService } from './core/auth-svc.service';
 
 @Component({
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     constructor(
         private platform: Platform,
         private splashScreen: SplashScreen,
-        private statusBar: StatusBar,
+        // private statusBar: StatusBar,
         private menu: MenuController,
         public fcm: FcmService,
         public notify: NotifyService,
