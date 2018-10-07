@@ -62,12 +62,13 @@
             <ion-card-content>
                 <ion-list lines="none">
                     <ion-item-divider>
-                        <ion-label>Accounts</ion-label>
+                        <ion-label>Accounts <span class="tiny">( checked = default )</span></ion-label>
                     </ion-item-divider>
-                    <ion-item-sliding *ngFor="let acc of user.accounts ">
+                    <ion-item-sliding *ngFor="let acc of accounts | async ">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
-                            {{acc.accountNo}}
+                            {{acc.accountNo}} &nbsp;
+                            <ion-toggle slot="end" [checked]="acc.default"></ion-toggle>
                         </ion-item>
                         <ion-item-options side="start">
                             <ion-item-option color="danger" (click)="deleteAccount(acc)">Delete</ion-item-option>
