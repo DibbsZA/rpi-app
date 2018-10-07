@@ -14,7 +14,7 @@ const routes: Routes = [
     { path: 'history', loadChildren: './ui/history/history.module#HistoryPageModule', canActivate: [AuthGuard] },
     { path: 'txn-detail/:id', loadChildren: './ui/txn-detail/txn-detail.module#TxnDetailPageModule', canActivate: [AuthGuard] },
     { path: 'payment', loadChildren: './ui/payment.module#PaymentModule', canActivate: [AuthGuard] },
-    { path: 'show-qr', loadChildren: './ui/show-qr/show-qr.module#ShowQrPageModule', canActivate: [AuthGuard] }
+    { path: 'show-qr/:id', loadChildren: './ui/show-qr/show-qr.module#ShowQrPageModule', canActivate: [AuthGuard] }
 
 ];
 
