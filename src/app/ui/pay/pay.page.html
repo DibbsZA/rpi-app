@@ -36,13 +36,19 @@
                             <ion-input type="text" readonly formControlName="payerId"></ion-input>
                             {{payerPspLable}}
                         </ion-item>
-                        <ion-item>
+                        <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
                             <ion-label>
                                 From Account?
                             </ion-label>
-                            <!-- <ion-select required="true" #payerAcc formControlName="payerAccountNo" placeholder=" Select Account" (ionChange)="payerAccountSelect(payerAcc.value)"> -->
+                            <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
+                        </ion-item>
+                        <ion-input hidden type="text" formControlName="payerAccountNo"></ion-input>
+                        <ion-item *ngIf="!useDefaultAccount">
+                            <ion-label>
+                                From Account?
+                            </ion-label>
                             <ion-select required="true" formControlName="payerAccountNo" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of userO.accounts" [value]="acc.accountNo">
+                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountNo">
                                     {{acc.accountAlias}}
                                 </ion-select-option>
                             </ion-select>
