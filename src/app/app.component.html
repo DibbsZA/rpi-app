@@ -12,6 +12,7 @@
                     </ion-refresher-content>
                 </ion-refresher>
                 <app-user-profile></app-user-profile>
+                <fcm-handler></fcm-handler>
                 <ion-list>
                     <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages">
                         <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">

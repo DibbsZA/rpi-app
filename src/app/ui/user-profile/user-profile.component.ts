@@ -19,18 +19,19 @@ export class UserProfileComponent implements OnInit {
         public auth: AuthSvcService,
         private router: Router,
         public menu: MenuController,
-        private fcmSvc: FcmService,
+        // private fcmSvc: FcmService,
     ) {
-        this.auth.user.subscribe(x => { this.userO = x });
+        this.auth.user.subscribe(x => { this.userO = x; });
     }
 
     ngOnInit() {
 
     }
 
-    tokenRefresh() {
-        this.fcmSvc.monitorRefresh(this.userO);
-    }
+    // replaced by fcm-handler
+    // tokenRefresh() {
+    //     this.fcmSvc.monitorTokenRefresh(this.userO);
+    // }
 
     openProfileEdit() {
         this.menu.close();

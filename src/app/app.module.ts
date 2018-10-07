@@ -8,8 +8,10 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { firebaseConfig } from './config';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Firebase } from '@ionic-native/firebase/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -29,6 +31,7 @@ import { PaymentModule } from './ui/payment.module';
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
 import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
+import { FcmHandlerComponent } from './ui/fcm-handler/fcm-handler.component';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -38,6 +41,7 @@ registerLocaleData(localeZa, 'en-ZA');
     declarations: [
         AppComponent,
         UserProfileComponent,
+        FcmHandlerComponent,
         // ZapcurrencyPipe,
         // HoldableDirective,
     ],
@@ -66,6 +70,7 @@ registerLocaleData(localeZa, 'en-ZA');
         StatusBar,
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        Firebase,
         PspSvcService,
         AuthSvcService
     ],

@@ -7,7 +7,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FcmService } from './core/fcm.service';
 import { NotifyService } from './core/notify.service';
-import { filter, take } from "rxjs/operators";
+import { filter, take } from 'rxjs/operators';
 import { AuthSvcService } from './core/auth-svc.service';
 
 @Component({
@@ -44,18 +44,20 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.platform.ready().then(() => {
-            this.statusBar.hide();
+            // this.statusBar.hide();
             this.splashScreen.hide();
         });
         this.auth.user
             .subscribe(user => {
                 this.loggedin = true;
-                if (user) {
-                    this.fcm.getPermission(user)
-                    this.fcm.monitorRefresh(user)
-                    this.fcm.receiveMessages()
-                }
-            })
+
+                // moved to ui/fcm-handler
+                // if (user) {
+                //    this.fcm.getToken();
+                //    this.fcm.monitorTokenRefresh();
+                //    this.fcm.receiveMessages();
+                // }
+            });
     }
 
 

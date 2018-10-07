@@ -8,104 +8,107 @@ import { DataServiceService } from '../../core/data-service.service';
 import { NotifyService } from '../../core/notify.service';
 
 @Component({
-    selector: 'app-profile',
-    templateUrl: './profile.page.html',
-    styleUrls: ['./profile.page.scss'],
+   selector: 'app-profile',
+   templateUrl: './profile.page.html',
+   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
 
-    userO: Observable<iUser>;
-    dirtyUser: iUser;
-    editMode: boolean = false;
-    processors: Observable<iProcessor[]>;
-    payerPspLable: string = '@psp';
-    payeePspLable: string = '@psp';
-    progress = 0;
+   userO: Observable<iUser>;
+   dirtyUser: iUser;
+   editMode: boolean = false;
+   processors: Observable<iProcessor[]>;
+   payerPspLable: string = '@psp';
+   payeePspLable: string = '@psp';
+   progress = 0;
 
-    constructor(
-        public auth: AuthSvcService,
-        private dataSvc: DataServiceService,
-        private router: Router,
-        private notify: NotifyService,
-        private userSvc: UserServiceService,
-    ) {
-        this.userO = this.auth.user;
+   constructor(
+      public auth: AuthSvcService,
+      private dataSvc: DataServiceService,
+      private router: Router,
+      private notify: NotifyService,
+      private userSvc: UserServiceService,
+   ) {
+      this.userO = this.auth.user;
 
-    }
+   }
 
-    ngOnInit() {
+   ngOnInit() {
 
-        this.processors = this.dataSvc.getProcessors();
-        this.userO.subscribe(
-            x => {
-                this.dirtyUser = x;
-                if (this.dirtyUser.pspId != null) {
-                    this.payerPspLable = '@' + this.dirtyUser.pspId;
-                }
+      this.processors = this.dataSvc.getProcessors();
+      this.userO.subscribe(
+         x => {
+            if (x !== null) {
+               this.dirtyUser = x;
+               if (this.dirtyUser.pspId != null) {
+                  this.payerPspLable = '@' + this.dirtyUser.pspId;
+               }
             }
-        );
-    }
 
-    canDeactivate(): Observable<boolean> | boolean {
-        console.log('CanDeactivate!.');
-        if (this.editMode) {
-            this.notify.update('Please save your profile before leaving this page.', 'note');
-            return false;
-        }
-        return true;
-    }
+         }
+      );
+   }
 
-    doRefresh(event) {
-        console.log('Begin async operation');
-        this.ngOnInit();
+   canDeactivate(): Observable<boolean> | boolean {
+      console.log('CanDeactivate!.');
+      if (this.editMode) {
+         this.notify.update('Please save your profile before leaving this page.', 'note');
+         return false;
+      }
+      return true;
+   }
 
-        setTimeout(() => {
-            console.log('Async operation has ended');
-            event.target.complete();
-        }, 2000);
-    }
+   doRefresh(event) {
+      console.log('Begin async operation');
+      this.ngOnInit();
 
-    // TODO:  edit user details and ZAP details
-    editProfile() {
-        this.editMode = true;
+      setTimeout(() => {
+         console.log('Async operation has ended');
+         event.target.complete();
+      }, 2000);
+   }
 
-    }
+   // TODO:  edit user details and ZAP details
+   editProfile() {
+      this.editMode = true;
 
-    saveProfile(displayName, pspId: string, zapId: string, nickname) {
-        this.editMode = false;
-        this.dirtyUser.displayName = displayName;
-        this.dirtyUser.nickname = nickname;
-        this.dirtyUser.zapId = zapId.toUpperCase();
-        this.dirtyUser.pspId = pspId.toUpperCase();
+   }
 
-        this.userSvc.updateUserData(this.dirtyUser)
-            .then(r => {
-                this.notify.update("Profile Updated. That's awesome!", 'success');
-            });
+   saveProfile(displayName, pspId: string, zapId: string, nickname) {
+      this.editMode = false;
+      this.dirtyUser.displayName = displayName;
+      this.dirtyUser.nickname = nickname;
+      this.dirtyUser.zapId = zapId.toUpperCase();
+      this.dirtyUser.pspId = pspId.toUpperCase();
 
-    }
+      this.userSvc.updateUserData(this.dirtyUser)
+         .then(r => {
+            this.notify.update("Profile Updated. That's awesome!", 'success');
+         });
 
-    addAccount() {
-        this.router.navigate(['/account']);
-    }
+   }
 
-    deleteAccount(e, acc: iAccount) {
+   addAccount() {
+      this.router.navigate(['/account']);
+   }
 
-        var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
-        let index = dirtyAccounts.indexOf(acc);
-        this.dirtyUser.accounts.splice(index);
-        this.userSvc.updateUserData(this.dirtyUser)
-        // .then(r => {
-        //     this.notify.update("User Account Deleted", "info");
-        // });
+   deleteAccount(e, acc: iAccount) {
 
-    }
+      var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
+      let index = dirtyAccounts.indexOf(acc);
+      this.dirtyUser.accounts.splice(index);
+      this.userSvc.updateUserData(this.dirtyUser)
+      // .then(r => {
+      //     this.notify.update("User Account Deleted", "info");
+      // });
 
-    private payerPspSelect(psp) {
-        if (psp != undefined && psp != null) {
+   }
 
-            this.payerPspLable = '@' + psp;
-        }
-    }
+   private payerPspSelect(psp) {
+      if (psp != undefined && psp != null) {
+
+         this.payerPspLable = '@' + psp;
+      }
+   }
 
 }

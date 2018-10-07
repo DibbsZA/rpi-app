@@ -12,6 +12,7 @@ import { RequestPayAuthPage } from './request-pay-auth/request-pay-auth.page';
 import { ZapcurrencyPipe } from '../core/zapcurrency.pipe';
 import { PaySuccessComponent } from './pay-success/pay-success.component';
 import { AuthGuard } from '../core/auth.guard';
+import { FcmHandlerComponent } from './fcm-handler/fcm-handler.component';
 
 
 const routes: Routes = [
@@ -36,7 +37,8 @@ const routes: Routes = [
         RequestPayAuthPage,
         PinComponent,
         ZapcurrencyPipe,
-        PaySuccessComponent
+        PaySuccessComponent,
+        // FcmHandlerComponent
     ]
 })
 export class PaymentModule { }
