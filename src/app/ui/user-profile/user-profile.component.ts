@@ -38,8 +38,8 @@ export class UserProfileComponent implements OnInit {
         this.router.navigateByUrl('/profile');
     }
 
-    logout() {
-        this.auth.signOut();
+    logout(userId) {
+        this.auth.signOut(userId);
         this.menu.close();
         this.router.navigateByUrl('/');
     }

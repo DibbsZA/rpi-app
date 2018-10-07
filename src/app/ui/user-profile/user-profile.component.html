@@ -20,11 +20,11 @@
                     <ion-label class="center" color="danger">Please complete your profile!</ion-label>
                 </ion-item>
             </div>
-
+            <fcm-handler></fcm-handler>
         </ion-card-content>
     </ion-card>
     <div>
-        <ion-button color="danger" expand='full' (click)="logout()">
+        <ion-button color="danger" expand='full' (click)="logout(userO.uid)">
             Logout
             <ion-icon slot="end" name="log-out"></ion-icon>
         </ion-button>
