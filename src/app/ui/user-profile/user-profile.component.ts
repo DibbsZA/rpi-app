@@ -14,18 +14,22 @@ import { FcmService } from '../../core/fcm.service';
 export class UserProfileComponent implements OnInit {
 
     userO: iUser;
+    token: string;
 
     constructor(
         public auth: AuthSvcService,
         private router: Router,
         public menu: MenuController,
-        // private fcmSvc: FcmService,
+        private fcmSvc: FcmService,
     ) {
         this.auth.user.subscribe(x => { this.userO = x; });
     }
 
     ngOnInit() {
-
+        this.fcmSvc.firebaseNative.getToken()
+            .then(t => {
+                this.token = t;
+            });
     }
 
     // replaced by fcm-handler
@@ -38,8 +42,9 @@ export class UserProfileComponent implements OnInit {
         this.router.navigateByUrl('/profile');
     }
 
-    logout(userId) {
-        this.auth.signOut(userId);
+    logout() {
+        // this.auth.signOut(this.fcmSvc.getCurrentToken());
+        this.auth.signOut(this.token);
         this.menu.close();
         this.router.navigateByUrl('/');
     }
