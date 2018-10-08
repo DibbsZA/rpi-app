@@ -13,6 +13,8 @@ import { tap } from 'rxjs/operators';
 })
 export class FcmService {
 
+    currentToken: string;
+
     constructor(
         public firebaseNative: Firebase,
         public afs: AngularFirestore,
@@ -45,8 +47,13 @@ export class FcmService {
         if (token !== undefined) {
 
             console.log(token);
+            this.currentToken = token;
             return this.saveTokenToFirestore(token);
         }
+    }
+
+    public getCurrentToken() {
+        return this.currentToken;
     }
 
     private async saveTokenToFirestore(token) {
@@ -64,10 +71,10 @@ export class FcmService {
             userId: user.uid
         };
 
-        return devicesRef.doc(token).set(docData)
-            .then(r => {
-                this.notify.update('token saved <br /> ' + JSON.stringify(docData), 'note');
-            });
+        return devicesRef.doc(token).set(docData);
+        // .then(r => {
+        // this.notify.update('token saved <br /> ' + JSON.stringify(docData), 'note');
+        // });
     }
 
     // Listen for token refresh
@@ -77,7 +84,7 @@ export class FcmService {
             return this.firebaseNative.onTokenRefresh()
                 .pipe(
                     tap(token => {
-                        this.notify.update('Native token refreshed <br>' + JSON.stringify(token), 'info');
+                        // this.notify.update('Native token refreshed <br>' + JSON.stringify(token), 'info');
                         this.saveTokenToFirestore(token);
                     })
                 );
