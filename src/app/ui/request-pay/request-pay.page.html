@@ -66,7 +66,7 @@
                         <ion-input hidden type="text" formControlName="payeeAccountNo"></ion-input>
                         <ion-item *ngIf="!useDefaultAccount">
                             <ion-label>
-                                From Account?
+                                Into Account?
                             </ion-label>
                             <ion-select required="true" formControlName="payeeAccountNo" placeholder="Select Acct">
                                 <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountNo">

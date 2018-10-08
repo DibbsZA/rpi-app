@@ -89,12 +89,19 @@
                         <!-- <ion-label>Recipient PSP</ion-label> -->
                         <ion-input type="text" readonly formControlName="payeePSP" hidden></ion-input>
                         <!-- </ion-item> -->
-                        <ion-item>
+                        <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
                             <ion-label>
-                                Into which Account?
+                                Into Account?
+                            </ion-label>
+                            <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
+                        </ion-item>
+                        <ion-input hidden type="text" formControlName="payeeAccountNo"></ion-input>
+                        <ion-item *ngIf="!useDefaultAccount">
+                            <ion-label>
+                                Into Account?
                             </ion-label>
                             <ion-select required="true" formControlName="payeeAccountNo" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of userO.accounts" [value]="acc.accountNo">
+                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountNo">
                                     {{acc.accountAlias}}
                                 </ion-select-option>
                             </ion-select>

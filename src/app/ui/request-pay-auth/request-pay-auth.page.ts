@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
+import { iUser, iProcessor, iTransaction, iAccount } from '../../models/interfaces';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataServiceService } from '../../core/data-service.service';
-import { msgPaymentInstruction, msgPSPPayment, msgConfirmation } from '../../models/messages';
+import { msgPSPPayment } from '../../models/messages';
 import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -14,6 +14,9 @@ import { PspSvcService } from '../../core/psp-svc.service';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { formatNumber } from '@angular/common';
+import { tap } from 'rxjs/operators';
+import { UserServiceService } from '../../core/user-service.service';
+
 
 @Component({
     selector: 'app-request-pay-auth',
@@ -22,6 +25,7 @@ import { formatNumber } from '@angular/common';
 })
 export class RequestPayAuthPage implements OnInit {
     processors: Observable<iProcessor[]>;
+    accounts: iAccount[] = [];
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
@@ -30,12 +34,14 @@ export class RequestPayAuthPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
+    useDefaultAccount = true;
+    defaultAccount: iAccount;
 
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
 
-    authorised: boolean = false;
+    authorised = false;
 
     // FIXME: Mock data for testing
     fcmPayload: any = {
@@ -56,6 +62,7 @@ export class RequestPayAuthPage implements OnInit {
     constructor(
         private auth: AuthSvcService,
         private dataSvc: DataServiceService,
+        private userSvc: UserServiceService,
         private fb: FormBuilder,
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
@@ -96,9 +103,25 @@ export class RequestPayAuthPage implements OnInit {
                 } else {
                     this.payerPspLable = '@ ' + this.userO.pspId;
 
+                    this.userSvc.getUserAccounts(this.userO.uid)
+                        .pipe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            tap(x => {
+                                x.forEach(element => {
+                                    this.accounts.push(element);
+                                    if (element.default) {
+                                        this.defaultAccount = element;
+                                        this.payForm.patchValue({ payerAccountNo: element.accountNo });
+                                    }
+                                });
+                            })
+                        )
+                        .subscribe();
+
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
-                            x => { this.myPSP = x }
+                            // tslint:disable-next-line:no-shadowed-variable
+                            x => { this.myPSP = x; }
                         );
 
                     // let _payerId: string = this.fcmPayload.payerId;
@@ -141,6 +164,7 @@ export class RequestPayAuthPage implements OnInit {
                     });
 
                     this.payForm.valueChanges
+                        // tslint:disable-next-line:no-shadowed-variable
                         .subscribe(x => {
                             console.log(x);
                             // if (x.payeePSP != null) {
@@ -158,10 +182,11 @@ export class RequestPayAuthPage implements OnInit {
     formatAmount(val) {
         if (val != null) {
             if (val.length > 0) {
-                let amt_text: string = val;
-                let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
+                const amt_text: string = val;
+                // tslint:disable-next-line:radix
+                const amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
                 this.payForm.patchValue({ amount: amt_int });
-                let amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                const amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
                 this.payForm.patchValue({ amountdisplay: amt_dec });
             }
         }
@@ -170,7 +195,7 @@ export class RequestPayAuthPage implements OnInit {
     public whatError(name: string) {
         // name = 'payForm.' + name;
         const ctrl = this.payForm.get(name);
-        const msg: string = "Error in " + name.toLocaleUpperCase() + ": </br>" + JSON.stringify(ctrl.errors) + " "
+        const msg: string = 'Error in ' + name.toLocaleUpperCase() + ': </br>' + JSON.stringify(ctrl.errors) + ' ';
         this.notify.update(msg, 'error');
     }
 
@@ -179,6 +204,7 @@ export class RequestPayAuthPage implements OnInit {
         this.pay.consentKey = secret;
         this.pay.payerName = this.userO.nickname;
 
+        // tslint:disable-next-line:prefer-const
         let txnMsg: msgPSPPayment = this.pay;
 
         if (this.myPSP === null) {
@@ -204,9 +230,10 @@ export class RequestPayAuthPage implements OnInit {
         console.log(hashInput);
 
 
-        let confirmHash = sha224(hashInput);
+        const confirmHash = sha224(hashInput);
         if (confirmHash !== this.fcmPayload.mpiHash) {
-            this.notify.update("'Hashes don't Match!!", "error");
+            // tslint:disable-next-line:quotemark
+            this.notify.update("Hashes don't Match!!", 'error');
         }
         console.log(txnMsg.mpiHash);
         this.pay.mpiHash = this.fcmPayload.mpiHash;
@@ -226,7 +253,7 @@ export class RequestPayAuthPage implements OnInit {
         this.pspApiSvc.psp_paymentRequestResponse(this.myPSP, txnMsg)
             .subscribe(
                 x => {
-                    // API Call succesfull                    
+                    // API Call succesfull
                     this.notify.update(x, 'success');
 
                     // Handle Response? Should be of type msgConfirmation
@@ -252,11 +279,11 @@ export class RequestPayAuthPage implements OnInit {
                 e => {
                     // API Call threw error
                     this.notify.update(e, 'error');
-                    return txn
+                    return txn;
                     // TODO: Do I need to save failed requests to the PSP API?
 
                 }
-            )
+            );
 
     }
 
@@ -296,7 +323,7 @@ export class RequestPayAuthPage implements OnInit {
 
         const m: Message = event.pin;
         const hashSecret = sha256.hmac(this.pay.payerPSP, m);
-        this.doPay(hashSecret)
+        this.doPay(hashSecret);
         // .then(r => {
         // return this.router.navigate(['history']);
         // });

@@ -8,6 +8,7 @@ import { AuthSvcService } from './core/auth-svc.service';
 import { tap } from 'rxjs/operators';
 import { msgPSPPayment } from './models/messages';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -35,7 +36,8 @@ export class AppComponent implements OnInit {
         private menu: MenuController,
         public fcm: FcmService,
         public notify: NotifyService,
-        public auth: AuthSvcService
+        public auth: AuthSvcService,
+        public router: Router,
     ) {
 
     }
@@ -43,37 +45,45 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.platform.ready().then(() => {
             this.splashScreen.hide();
+            this.auth.user
+                .subscribe(user => {
+                    this.loggedin = true;
+
+                    if (user) {
+                        this.fcm.getToken();
+
+                        this.fcm.monitorTokenRefresh().subscribe();
+
+                        this.fcm.listenToNotifications()
+                            .pipe(
+                                tap(msg => {
+                                    if (msg === null) {
+                                        return;
+                                    }
+                                    console.log('Message received. ');
+                                    console.log(msg);
+                                    if (!msg.tap) {
+                                        const data: msgPSPPayment = msg;
+                                        if (data.function === 'sendAuthRequest') {
+
+                                            const stringyfied = JSON.stringify(msg);
+                                            const encoded = encodeURIComponent(stringyfied);
+                                            this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
+                                        } else {
+                                            this.notify.update('Message: <br/>' + msg, 'note');
+                                        }
+                                    }
+                                    this.messageSource.next(msg);
+
+                                })
+                            )
+                            .subscribe();
+                    }
+                });
+
         });
-        this.auth.user
-            .subscribe(user => {
-                this.loggedin = true;
 
-                if (user) {
-                    this.fcm.getToken();
 
-                    this.fcm.monitorTokenRefresh().subscribe();
-
-                    this.fcm.listenToNotifications()
-                        .pipe(
-                            tap(msg => {
-                                if (msg === null) {
-                                    return;
-                                }
-                                this.notify.update(JSON.stringify(msg), 'note');
-                                // tslint:disable-next-line:prefer-const
-                                let data: msgPSPPayment = msg.data;
-                                data.click_action = msg.notification.click_action;
-                                data.msg_type = msg.data.msgtype;
-
-                                console.log('Message received. ', msg);
-                                this.notify.update(data, 'action');
-                                this.messageSource.next(msg);
-
-                            })
-                        )
-                        .subscribe();
-                }
-            });
     }
 
 

@@ -42,8 +42,9 @@ export class NotifyService {
 
         this._msgSource.next(msg);
         console.log(msg);
-        if (msg.style === 'action') {
-            this.router.navigate([msgContent.click_action.split('?').shift()], { queryParams: { msg: encoded } });
+        if (msg.style === 'auth') {
+            // this.router.navigate([msgContent.click_action.split('?').shift()], { queryParams: { msg: encoded } });
+            this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
 
         } else if (msg.style === 'error' || msg.style === 'note') {
 
