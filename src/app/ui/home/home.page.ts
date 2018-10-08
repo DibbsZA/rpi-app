@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthSvcService } from '../../core/auth-svc.service';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
-// import { User } from '../../models/user';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { NotifyService } from '../../core/notify.service';
 
 
@@ -22,7 +20,6 @@ export class HomePage implements OnInit {
 
     constructor(
         public auth: AuthSvcService,
-        private afAuth: AngularFireAuth,
         private router: Router,
         public notify: NotifyService
     ) {
@@ -30,28 +27,30 @@ export class HomePage implements OnInit {
     }
 
     ngOnInit(): void {
-        this.user.subscribe(
-            x => {
-                console.log(x);
-                if (x != null) {
-                    return this.afterSignIn();
-                }
-            },
-            e => {
-                console.error(e);
-            });
+        if (this.user !== null) {
+            this.user.subscribe(
+                x => {
+                    console.log(x);
+                    if (x != null) {
+                        return this.afterSignIn();
+                    }
+                },
+                e => {
+                    console.error(e);
+                });
+        }
+
     }
 
     async login(email, pwd) {
 
         return this.auth.emailLogin(email, pwd)
             .then(result => {
-                console.log("home-page.ts")
                 console.log(result);
                 if (result) {
                     this.afterSignIn();
                 }
-            })
+            });
     }
 
     register() {
@@ -62,7 +61,7 @@ export class HomePage implements OnInit {
     /// Shared
     private async afterSignIn() {
         // Do after login stuff here, such router redirects, toast messages, etc.
-        this.notify.update("You are logged in. Let's start...", 'success')
+        this.notify.update('You are logged in. Let\'s start...', 'success');
         return this.router.navigate(['/about']);
     }
 

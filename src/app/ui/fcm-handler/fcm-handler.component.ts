@@ -49,7 +49,7 @@ export class FcmHandlerComponent implements OnInit {
         this.fcm.getToken()
             .then(x => {
                 const token = this.fcm.firebaseNative.getToken();
-                this.notify.update('Token updated <br>' + token, 'note');
+                this.notify.update('Token updated <br>' + JSON.stringify(token), 'note');
             });
     }
 }
