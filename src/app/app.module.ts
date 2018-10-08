@@ -18,7 +18,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { ProfilePageModule } from './ui/profile/profile.module';
-import { ScanPageModule } from './ui/scan/scan.module';
 import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AccountPageModule } from './ui/account/account.module';
@@ -29,8 +28,9 @@ import { PaymentModule } from './ui/payment.module';
 
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
-import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
-import { FcmHandlerComponent } from './ui/fcm-handler/fcm-handler.component';
+import { FcmService } from './core/fcm.service';
+// import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
+// import { FcmHandlerComponent } from './ui/fcm-handler/fcm-handler.component';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -40,7 +40,7 @@ registerLocaleData(localeZa, 'en-ZA');
     declarations: [
         AppComponent,
         UserProfileComponent,
-        FcmHandlerComponent,
+        // FcmHandlerComponent,
         // ZapcurrencyPipe,
         // HoldableDirective,
     ],
@@ -58,7 +58,6 @@ registerLocaleData(localeZa, 'en-ZA');
         AngularFireAuthModule,
         HttpClientModule,
         ProfilePageModule,
-        ScanPageModule,
         PaymentModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
@@ -70,7 +69,8 @@ registerLocaleData(localeZa, 'en-ZA');
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         Firebase,
         PspSvcService,
-        AuthSvcService
+        AuthSvcService,
+        FcmService
     ],
     // exports: [
     //     ZapcurrencyPipe
