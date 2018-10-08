@@ -11,6 +11,7 @@ import { switchMap, startWith, tap, filter, first } from 'rxjs/operators';
 
 import { iUser } from '../models/interfaces';
 import { UserServiceService } from './user-service.service';
+import { Platform } from '@ionic/angular';
 
 @Injectable({
     providedIn: 'root'
@@ -23,8 +24,8 @@ export class AuthSvcService {
         private afs: AngularFirestore,
         private router: Router,
         private notify: NotifyService,
-        private userSvc: UserServiceService
-
+        private userSvc: UserServiceService,
+        public platform: Platform
     ) {
         this.user = this.afAuth.authState.pipe(
             switchMap(user => {
@@ -35,7 +36,6 @@ export class AuthSvcService {
                 }
             })
         );
-
     }
 
     async getCurrentUser(): Promise<any> {
@@ -50,8 +50,7 @@ export class AuthSvcService {
                 this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
                 const newUser: iUser = {
                     uid: credential.user.uid,
-                    email: credential.user.email,
-                    accounts: []
+                    email: credential.user.email
                 };
 
                 console.log('New User: ' + JSON.stringify(newUser));
@@ -65,6 +64,7 @@ export class AuthSvcService {
             .signInWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
                 this.notify.update('Welcome back to Z@P!', 'success');
+
                 return credential;
             })
             .catch(error => this.handleError(error));
@@ -80,12 +80,14 @@ export class AuthSvcService {
             .catch(error => this.handleError(error));
     }
 
-    signOut(userId) {
-        this.afs.doc(`devices/${userId}`).delete();
+    signOut(token) {
+        this.notify.update('Deleting token: ' + token, 'info');
+        this.afs.doc(`devices/${token}`).delete();
 
         this.afAuth.auth.signOut().then(() => {
             this.user = null;
-            this.router.navigate(['/about']);
+            navigator['app'].exitApp();
+            // this.router.navigate(['/about']);
         });
     }
 
