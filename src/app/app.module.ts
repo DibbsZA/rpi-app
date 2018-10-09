@@ -29,8 +29,8 @@ import { PaymentModule } from './ui/payment.module';
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
 import { FcmService } from './core/fcm.service';
+import { QrcodeService } from './core/qrcode.service';
 // import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
-// import { FcmHandlerComponent } from './ui/fcm-handler/fcm-handler.component';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -70,7 +70,8 @@ registerLocaleData(localeZa, 'en-ZA');
         Firebase,
         PspSvcService,
         AuthSvcService,
-        FcmService
+        FcmService,
+        QrcodeService,
     ],
     // exports: [
     //     ZapcurrencyPipe
