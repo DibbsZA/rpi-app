@@ -143,10 +143,27 @@ export class ScanPage implements OnInit {
 
             console.log('Barcode data', barcodeData);
 
+            this.notify.update('Barcode Data <br>' + JSON.stringify(barcodeData), 'note');
+
+            if (barcodeData.cancelled) {
+                return;
+            }
+            // hold existing this.pay values
+            let _pay = this.pay;
             //Decode barcode data
-            this.pay = this.qrSvc.decodeQR(barcodeData);
+            this.pay = this.qrSvc.decodeQR(barcodeData.text);
             console.log(this.pay);
             this.notify.update('Barcode Data <br>' + JSON.stringify(this.pay), 'note');
+
+            // Populate form with scanned data
+            this.payForm.patchValue({
+                payeePSP: this.pay.payeePSP,
+                payeeId: this.pay.payeeId,
+                payerId: this.pay.payerId,
+                payerPSP: this.pay.payerPSP,
+                userRef: this.pay.userRef,
+                amount: this.pay.amount
+            })
 
         }).catch(err => {
             this.notify.update('Barcode Data <br>' + JSON.stringify(err), 'error');
