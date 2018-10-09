@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-card *ngIf="!ShowPin || scanComplete">
+    <ion-card *ngIf="!ShowPin || !scanComplete">
         <ion-card-content>
             <ion-img class="scnImg" src="/assets/img/qr-4.png" (click)="scan()"></ion-img>
         </ion-card-content>

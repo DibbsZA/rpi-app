@@ -40,6 +40,7 @@ export class ScanPage implements OnInit {
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
+    scanComplete: false;
 
     constructor(
         private barcodeScanner: BarcodeScanner,
@@ -153,14 +154,16 @@ export class ScanPage implements OnInit {
             //Decode barcode data
             this.pay = this.qrSvc.decodeQR(barcodeData.text);
             console.log(this.pay);
-            this.notify.update('Barcode Data <br>' + JSON.stringify(this.pay), 'note');
+
+            this.scanComplete = true;
+            // this.notify.update('Barcode Data <br>' + JSON.stringify(this.pay), 'note');
 
             // Populate form with scanned data
             this.payForm.patchValue({
                 payeePSP: this.pay.payeePSP,
-                payeeId: this.pay.payeeId,
-                payerId: this.pay.payerId,
-                payerPSP: this.pay.payerPSP,
+                payeeId: this.pay.payeeId.split('@').shift(),
+                // payerId: this.pay.payerId,
+                // payerPSP: this.pay.payerPSP,
                 userRef: this.pay.userRef,
                 amount: this.pay.amount
             })
