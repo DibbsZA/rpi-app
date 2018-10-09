@@ -88,7 +88,7 @@ export class PspSvcService {
         }
 
 
-        return this.httpClient.post(apiEndpoint, body, { headers: this.headers })
+        return this.httpClient.post(apiEndpoint, body)
         // return;
     }
 
