@@ -46,18 +46,20 @@ export class RequestPayAuthPage implements OnInit {
     // FIXME: Mock data for testing
     fcmPayload: any = {
         uniqueRef: '4c49eb1a5441',
-        payeeId: 'USER4@UBNK',
+        payeeId: 'APPDEV@UBNK',
         payeePSP: 'UBNK',
         payeeAccountNo: '',
         payerAccountNo: '',
-        payerName: 'User Three',
-        payerId: 'USER3@STDB',
+        payerName: 'DibbsZA',
+        payerId: 'DIBBSZA@STDB',
         payerPSP: 'STDB',
-        userRef: 'REF',
+        userRef: 'My Reference',
         amount: '12300',
         mpiHash: '4a18aefba736a9b4bf66435e1e51162df68d6a8bc13749031e4d7ad4',
         originatingDate: '2018-09-30 16:04:49.649000'
     };
+
+    qrCodeData = '4c49eb1a5441|APPDEV@UBNK|UBNK||DibbsZA|DIBBSZA@STDB|STDB|REF|12300|4a18aefba736a9b4bf66435e1e51162df68d6a8bc13749031e4d7ad4|2018-09-30 16:04:49.649000';
 
     constructor(
         private auth: AuthSvcService,
@@ -69,7 +71,7 @@ export class RequestPayAuthPage implements OnInit {
         private pspApiSvc: PspSvcService,
         private router: Router,
         private activeRoute: ActivatedRoute,
-        public alertController: AlertController
+        public alertController: AlertController,
     ) {
         this.user = this.auth.user;
     }
