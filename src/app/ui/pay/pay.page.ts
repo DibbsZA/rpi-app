@@ -160,6 +160,9 @@ export class PayPage implements OnInit {
 
     async doPay(secret) {
         this.pay = this.payForm.value;
+        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.userRef = this.pay.userRef.trim();
         this.pay.consentKey = secret;
         this.pay.payerName = this.userO.nickname;
 

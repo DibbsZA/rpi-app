@@ -45,6 +45,10 @@
                         <ion-label>Nickname</ion-label>
                         <ion-input type="text" placeholder="Nickname?" #nick [value]="user.nickname" [readonly]="!editMode"></ion-input>
                     </ion-item>
+                    <ion-item>
+                        <ion-label>Telegram ID</ion-label>
+                        <ion-input type="text" placeholder="Telegram ID" #nick [value]="user.telegramId" readonly></ion-input>
+                    </ion-item>
                 </ion-list>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="!editMode">
                     <ion-fab-button (click)="editProfile()">

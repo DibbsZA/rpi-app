@@ -168,6 +168,11 @@ export class RequestPayPage implements OnInit {
 
     buildPayRequest() {
         this.pay = this.payForm.value;
+
+        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.userRef = this.pay.userRef.trim();
+
         this.pay.payeeName = this.userO.nickname;
 
         // tslint:disable-next-line:prefer-const

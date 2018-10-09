@@ -109,7 +109,7 @@ export class PayAuthPage implements OnInit {
                                     this.accounts.push(element);
                                     if (element.default) {
                                         this.defaultAccount = element;
-                                        this.payForm.patchValue({ payerAccountNo: element.accountNo });
+                                        this.payForm.patchValue({ payeeAccountNo: element.accountNo });
                                     }
                                 });
                             })
@@ -191,6 +191,11 @@ export class PayAuthPage implements OnInit {
             return;
         }
         this.pay = this.payForm.value;
+
+        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.userRef = this.pay.userRef.trim();
+
         this.pay.mpiHash = this.fcmPayload.mpiHash;
 
         // tslint:disable-next-line:prefer-const

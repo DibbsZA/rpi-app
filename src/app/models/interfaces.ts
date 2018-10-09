@@ -18,8 +18,8 @@ export interface iUser {
     phone?: string | null;
     photoURL?: string | '/assets/img/sun-dog.png';
     zapId?: string | null;
-    authSecret?: string | null;
-    fcmTokens?: string | null;
+    telegramId?: string | null;
+    whatsappId?: string | null;
 }
 
 

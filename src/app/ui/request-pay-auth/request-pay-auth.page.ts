@@ -179,6 +179,10 @@ export class RequestPayAuthPage implements OnInit {
     }
 
 
+    overideAccount() {
+        this.useDefaultAccount = false;
+    }
+
     formatAmount(val) {
         if (val != null) {
             if (val.length > 0) {
@@ -202,6 +206,11 @@ export class RequestPayAuthPage implements OnInit {
     public doPay(secret) {
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
+
+        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.userRef = this.pay.userRef.trim();
+
         this.pay.payerName = this.userO.nickname;
 
         // tslint:disable-next-line:prefer-const
