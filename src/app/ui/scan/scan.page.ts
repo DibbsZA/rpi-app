@@ -14,6 +14,7 @@ import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
 import { tap } from 'rxjs/operators';
 import { formatNumber } from '@angular/common';
 import { sha224, Message, sha256 } from 'js-sha256';
+import { QrcodeService } from '../../core/qrcode.service';
 
 @Component({
     selector: 'app-scan',
@@ -27,7 +28,7 @@ export class ScanPage implements OnInit {
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
-    pay: msgPaymentInstruction;
+    pay: msgPSPPayment;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
@@ -50,6 +51,7 @@ export class ScanPage implements OnInit {
         private txnSvc: TxnSvcService,
         private pspApiSvc: PspSvcService,
         private router: Router,
+        private qrSvc: QrcodeService,
     ) {
         this.user = this.auth.user;
     }
@@ -138,8 +140,14 @@ export class ScanPage implements OnInit {
 
     scan() {
         this.barcodeScanner.scan().then(barcodeData => {
-            this.notify.update('Barcode Data <br>' + JSON.stringify(barcodeData), 'note');
+
             console.log('Barcode data', barcodeData);
+
+            //Decode barcode data
+            this.pay = this.qrSvc.decodeQR(barcodeData);
+            console.log(this.pay);
+            this.notify.update('Barcode Data <br>' + JSON.stringify(this.pay), 'note');
+
         }).catch(err => {
             this.notify.update('Barcode Data <br>' + JSON.stringify(err), 'error');
             console.log('Error', err);
