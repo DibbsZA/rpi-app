@@ -84,19 +84,19 @@ export class QrcodeService {
 
         let qrData: qrCodeSpec = {
             uniqueRef: '',
-            payerId: payload.payerId,
-            payerPSP: payload.payerPSP,
-            payerName: payload.payerName,
-            payerAccountNo: payload.payerAccountNo,
-            consentKey: payload.consentKey,
-            payeeId: payload.payeeId,
-            payeePSP: payload.payeePSP,
-            payeeName: payload.payeeName,
-            payeeAccountNo: payload.payeeAccountNo,
-            userRef: payload.userRef,
-            amount: payload.amount,
-            originatingDate: payload.originatingDate,
-            mpiHash: payload.mpiHash
+            payerId: payload.payerId || '',
+            payerPSP: payload.payerPSP || '',
+            payerName: payload.payerName || '',
+            payerAccountNo: payload.payerAccountNo || '',
+            consentKey: payload.consentKey || '',
+            payeeId: payload.payeeId || '',
+            payeePSP: payload.payeePSP || '',
+            payeeName: payload.payeeName || '',
+            payeeAccountNo: payload.payeeAccountNo || '',
+            userRef: payload.userRef || '',
+            amount: payload.amount || 0,
+            originatingDate: payload.originatingDate || '',
+            mpiHash: payload.mpiHash || ''
         }
 
         return qrData;
