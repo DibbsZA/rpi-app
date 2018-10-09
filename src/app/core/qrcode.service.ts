@@ -57,21 +57,22 @@ export class QrcodeService {
 
         let dataArray = qrdata.split('|');
 
-        let decoded: msgPSPPayment;
-        decoded.uniqueRef = dataArray.shift();
-        decoded.payerId = dataArray.shift();
-        decoded.payerPSP = dataArray.shift();
-        decoded.payerName = dataArray.shift();
-        decoded.payerAccountNo = dataArray.shift();
-        decoded.consentKey = dataArray.shift();
-        decoded.payeeId = dataArray.shift();
-        decoded.payeePSP = dataArray.shift();
-        decoded.payeeName = dataArray.shift();
-        decoded.payerAccountNo = dataArray.shift();
-        decoded.userRef = dataArray.shift();
-        decoded.amount = parseInt(dataArray.shift());
-        decoded.originatingDate = dataArray.shift();
-        decoded.mpiHash = dataArray.shift();
+        let decoded: msgPSPPayment = {
+            uniqueRef: dataArray.shift(),
+            payerId: dataArray.shift(),
+            payerPSP: dataArray.shift(),
+            payerName: dataArray.shift(),
+            payerAccountNo: dataArray.shift(),
+            consentKey: dataArray.shift(),
+            payeeId: dataArray.shift(),
+            payeePSP: dataArray.shift(),
+            payeeName: dataArray.shift(),
+            payeeAccountNo: dataArray.shift(),
+            userRef: dataArray.shift(),
+            amount: parseInt(dataArray.shift()),
+            originatingDate: dataArray.shift(),
+            mpiHash: dataArray.shift()
+        }
 
         console.log(decoded);
 
