@@ -4,7 +4,7 @@ import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataServiceService } from '../../core/data-service.service';
-import { msgPSPPayment } from '../../models/messages';
+import { msgPSPPayment, qrCodeSpec } from '../../models/messages';
 import { sha224 } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -15,6 +15,7 @@ import { formatNumber } from '@angular/common';
 import { UserServiceService } from '../../core/user-service.service';
 import { tap } from 'rxjs/operators';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { QrcodeService } from '../../core/qrcode.service';
 
 @Component({
     selector: 'app-request-pay',
@@ -51,6 +52,7 @@ export class RequestPayPage implements OnInit {
         private pspApiSvc: PspSvcService,
         private router: Router,
         private barcodeScanner: BarcodeScanner,
+        private qrSvc: QrcodeService
     ) {
         this.user = this.auth.user;
     }
@@ -258,7 +260,11 @@ export class RequestPayPage implements OnInit {
 
     showQR() {
         const txn = this.buildPayRequest();
-        this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, txn.payMessage)
+
+        // serialise payment data
+        const encoded = this.qrSvc.encodeQR(txn.payMessage);
+
+        this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, encoded)
             .then(r => {
                 this.notify.update(JSON.stringify(r), 'note');
                 this.encodedData = r;
