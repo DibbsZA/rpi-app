@@ -40,7 +40,7 @@ export class ScanPage implements OnInit {
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
-    scanComplete: false;
+    scanComplete = false;
 
     constructor(
         private barcodeScanner: BarcodeScanner,
