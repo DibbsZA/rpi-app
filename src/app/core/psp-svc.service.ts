@@ -37,11 +37,6 @@ export class PspSvcService {
 
     ) {
 
-        // this.headers = this.headers.append('Access-Control-Allow-Origin', '*');
-        // this.headers = this.headers.append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        // this.headers = this.headers.append('Content-Type', 'application/json');
-        // this.headers = this.headers.append('Accept', 'application/json');
-
     }
 
     public psp_paymentInstruction(psp: iProcessor, msgPayment: msgPSPPayment): Observable<any> {
@@ -89,7 +84,6 @@ export class PspSvcService {
 
 
         return this.httpClient.post(apiEndpoint, body)
-        // return;
     }
 
     public psp_paymentRequest(psp: iProcessor, msgPayment: msgPSPPayment): Observable<any> {

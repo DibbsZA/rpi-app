@@ -99,4 +99,12 @@ export class FcmService {
         }
     }
 
+    unregister() {
+        if (this.platform.is('cordova')) {
+            return this.firebaseNative.unregister();
+        } else {
+            return of(null);
+        }
+    }
+
 }

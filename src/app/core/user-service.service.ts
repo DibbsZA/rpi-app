@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+// import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import { iAccount, iUser } from '../models/interfaces';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 import { NotifyService } from './notify.service';
 
 @Injectable({
@@ -18,14 +18,7 @@ export class UserServiceService {
         private afs: AngularFirestore,
         public notify: NotifyService,
     ) {
-        // afAuth.authState.subscribe(user => {
-        //     this.user = user;
-        // });
     }
-
-    // public getLocalUserData(): iUser {
-    //     return JSON.parse(localStorage.getItem('user'));
-    // }
 
     public getUserData(uid): Promise<iUser> {
         const userRef: AngularFirestoreDocument<iUser> = this.afs.doc(
@@ -50,8 +43,7 @@ export class UserServiceService {
             phone: user.phone || null,
             pspId: user.pspId || null,
             zapId: user.zapId || null,
-            //  accounts: user.accounts || []
-            // fcmTokens: user.fcmTokens || null
+            telegramId: user.telegramId || null
         };
         userRef.set(data)
             .then(r => {

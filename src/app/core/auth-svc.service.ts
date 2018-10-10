@@ -12,6 +12,7 @@ import { switchMap, startWith, tap, filter, first } from 'rxjs/operators';
 import { iUser } from '../models/interfaces';
 import { UserServiceService } from './user-service.service';
 import { Platform } from '@ionic/angular';
+import { FcmService } from './fcm.service';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +23,7 @@ export class AuthSvcService {
     constructor(
         private afAuth: AngularFireAuth,
         private afs: AngularFirestore,
-        private router: Router,
+        private fcm: FcmService,
         private notify: NotifyService,
         private userSvc: UserServiceService,
         public platform: Platform
@@ -82,12 +83,13 @@ export class AuthSvcService {
 
     signOut(token) {
         this.notify.update('Deleting token: ' + token, 'info');
+        this.fcm.unregister();
         this.afs.doc(`devices/${token}`).delete();
+
 
         this.afAuth.auth.signOut().then(() => {
             this.user = null;
             navigator['app'].exitApp();
-            // this.router.navigate(['/about']);
         });
     }
 
