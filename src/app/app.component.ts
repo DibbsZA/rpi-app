@@ -62,24 +62,24 @@ export class AppComponent implements OnInit {
                                     }
                                     console.log('Message received. ');
                                     console.log(msg);
-                                    if (!msg.tap) {
-                                        const data: msgPSPPayment = msg;
-                                        if (data.function === 'sendAuthRequest') {
-                                            if (data.msgtype === 'payee-infoRequest') {
-                                                const stringyfied = JSON.stringify(msg);
-                                                const encoded = encodeURIComponent(stringyfied);
-                                                this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
-                                            } else if (data.msgtype === 'payer-paymentRequest') {
-                                                const stringyfied = JSON.stringify(msg);
-                                                const encoded = encodeURIComponent(stringyfied);
-                                                this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
-                                            }
-                                        } else {
-                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
+                                    // if (!msg.tap) {
+                                    const data: msgPSPPayment = msg;
+                                    if (data.function === 'sendAuthRequest') {
+                                        if (data.msgtype === 'payee-infoRequest') {
+                                            const stringyfied = JSON.stringify(data);
+                                            const encoded = encodeURIComponent(stringyfied);
+                                            this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
+                                        } else if (data.msgtype === 'payer-paymentRequest') {
+                                            const stringyfied = JSON.stringify(data);
+                                            const encoded = encodeURIComponent(stringyfied);
+                                            this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
                                         }
                                     } else {
-                                        this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
+                                        this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
                                     }
+                                    // } else {
+                                    // this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
+                                    // }
                                     this.messageSource.next(msg);
 
                                 })
