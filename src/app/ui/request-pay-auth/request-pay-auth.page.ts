@@ -45,21 +45,21 @@ export class RequestPayAuthPage implements OnInit {
 
     // FIXME: Mock data for testing
     fcmPayload: any = {
-        uniqueRef: '4c49eb1a5441',
-        payeeId: 'APPDEV@UBNK',
-        payeePSP: 'UBNK',
+        uniqueRef: '',
+        payeeId: '',
+        payeePSP: '',
         payeeAccountNo: '',
         payerAccountNo: '',
-        payerName: 'DibbsZA',
-        payerId: 'DIBBSZA@STDB',
-        payerPSP: 'STDB',
-        userRef: 'My Reference',
-        amount: '12300',
-        mpiHash: '4a18aefba736a9b4bf66435e1e51162df68d6a8bc13749031e4d7ad4',
-        originatingDate: '2018-09-30 16:04:49.649000'
+        payerName: '',
+        payerId: '',
+        payerPSP: '',
+        userRef: '',
+        amount: '',
+        mpiHash: '',
+        originatingDate: ''
     };
 
-    qrCodeData = '4c49eb1a5441|APPDEV@UBNK|UBNK||DibbsZA|DIBBSZA@STDB|STDB|REF|12300|4a18aefba736a9b4bf66435e1e51162df68d6a8bc13749031e4d7ad4|2018-09-30 16:04:49.649000';
+    qrCodeData = '';
 
     constructor(
         private auth: AuthSvcService,
@@ -105,21 +105,6 @@ export class RequestPayAuthPage implements OnInit {
                 } else {
                     this.payerPspLable = '@ ' + this.userO.pspId;
 
-                    this.userSvc.getUserAccounts(this.userO.uid)
-                        .pipe(
-                            // tslint:disable-next-line:no-shadowed-variable
-                            tap(x => {
-                                x.forEach(element => {
-                                    this.accounts.push(element);
-                                    if (element.default) {
-                                        this.defaultAccount = element;
-                                        this.payForm.patchValue({ payerAccountNo: element.accountNo });
-                                    }
-                                });
-                            })
-                        )
-                        .subscribe();
-
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
                             // tslint:disable-next-line:no-shadowed-variable
@@ -164,6 +149,21 @@ export class RequestPayAuthPage implements OnInit {
                         responseCode: ['APPROVED'],
                         responseDesc: ['Thanks!!']
                     });
+
+                    this.userSvc.getUserAccounts(this.userO.uid)
+                        .pipe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            tap(x => {
+                                x.forEach(element => {
+                                    this.accounts.push(element);
+                                    if (element.default) {
+                                        this.defaultAccount = element;
+                                        this.payForm.patchValue({ payerAccountNo: element.accountNo });
+                                    }
+                                });
+                            })
+                        )
+                        .subscribe();
 
                     this.payForm.valueChanges
                         // tslint:disable-next-line:no-shadowed-variable
@@ -242,11 +242,11 @@ export class RequestPayAuthPage implements OnInit {
 
 
         const confirmHash = sha224(hashInput);
-        if (confirmHash !== this.fcmPayload.mpiHash) {
-            // tslint:disable-next-line:quotemark
-            this.notify.update("Hashes don't Match!!", 'error');
-        }
-        console.log(txnMsg.mpiHash);
+        // if (confirmHash !== this.fcmPayload.mpiHash) {
+        //     // tslint:disable-next-line:quotemark
+        //     this.notify.update("Hashes don't Match!!", 'error');
+        // }
+        // console.log(txnMsg.mpiHash);
         this.pay.mpiHash = this.fcmPayload.mpiHash;
 
         const txn: iTransaction = {
@@ -265,7 +265,7 @@ export class RequestPayAuthPage implements OnInit {
             .subscribe(
                 x => {
                     // API Call succesfull
-                    this.notify.update(x, 'success');
+                    // this.notify.update(x, 'success');
 
                     // Handle Response? Should be of type msgConfirmation
                     // let result: msgConfirmation = x;

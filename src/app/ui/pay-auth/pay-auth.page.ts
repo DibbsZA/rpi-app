@@ -101,21 +101,6 @@ export class PayAuthPage implements OnInit {
                 } else {
                     this.payerPspLable = '@' + this.fcmPayload.pspId;
 
-                    this.userSvc.getUserAccounts(this.userO.uid)
-                        .pipe(
-                            // tslint:disable-next-line:no-shadowed-variable
-                            tap(x => {
-                                x.forEach(element => {
-                                    this.accounts.push(element);
-                                    if (element.default) {
-                                        this.defaultAccount = element;
-                                        this.payForm.patchValue({ payeeAccountNo: element.accountNo });
-                                    }
-                                });
-                            })
-                        )
-                        .subscribe();
-
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
                             // tslint:disable-next-line:no-shadowed-variable
@@ -156,6 +141,21 @@ export class PayAuthPage implements OnInit {
                         responseCode: ['APPROVED'],
                         responseDesc: ['Thanks!!']
                     });
+
+                    this.userSvc.getUserAccounts(this.userO.uid)
+                        .pipe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            tap(x => {
+                                x.forEach(element => {
+                                    this.accounts.push(element);
+                                    if (element.default) {
+                                        this.defaultAccount = element;
+                                        this.payForm.patchValue({ payeeAccountNo: element.accountNo });
+                                    }
+                                });
+                            })
+                        )
+                        .subscribe();
 
                     this.payForm.valueChanges
                         // tslint:disable-next-line:no-shadowed-variable
