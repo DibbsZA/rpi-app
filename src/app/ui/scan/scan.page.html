@@ -10,11 +10,13 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-card *ngIf="!ShowPin || !scanComplete">
-        <ion-card-content>
-            <ion-img class="scnImg" src="/assets/img/qr-4.png" (click)="scan()"></ion-img>
-        </ion-card-content>
-    </ion-card>
+    <ng-container *ngIf="!ShowPin">
+        <ion-card *ngIf="!scanComplete">
+            <ion-card-content>
+                <ion-img class="scnImg" src="/assets/img/qr-4.png" (click)="scan()"></ion-img>
+            </ion-card-content>
+        </ion-card>
+    </ng-container>
     <ng-template #loading>
         Loading Form...
         <ion-img src="/assets/img/down-arrow-gif-8.gif" style="width: 100%"></ion-img>
