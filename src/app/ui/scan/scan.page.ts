@@ -144,7 +144,7 @@ export class ScanPage implements OnInit {
 
             console.log('Barcode data', barcodeData);
 
-            this.notify.update('Barcode Data <br>' + JSON.stringify(barcodeData), 'note');
+            // this.notify.update('Barcode Data <br>' + JSON.stringify(barcodeData), 'note');
 
             if (barcodeData.cancelled) {
                 return;
@@ -167,6 +167,7 @@ export class ScanPage implements OnInit {
                 userRef: this.pay.userRef,
                 amount: this.pay.amount
             })
+            this.formatAmount(this.pay.amount);
 
         }).catch(err => {
             this.notify.update('Barcode Data <br>' + JSON.stringify(err), 'error');
