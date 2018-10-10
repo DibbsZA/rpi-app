@@ -75,7 +75,7 @@ export class AppComponent implements OnInit {
                                                 this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
                                             }
                                         } else {
-                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
                                         }
                                     }
                                     this.messageSource.next(msg);
