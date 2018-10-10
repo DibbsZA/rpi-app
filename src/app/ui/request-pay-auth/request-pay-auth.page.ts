@@ -209,8 +209,8 @@ export class RequestPayAuthPage implements OnInit {
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
 
-        this.pay.payeeId = this.pay.payeeId.trim();
-        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.payeeId = this.pay.payeeId.trim().toUpperCase();
+        this.pay.payerId = this.pay.payerId.trim().toUpperCase();
         this.pay.userRef = this.pay.userRef.trim();
 
         this.pay.payerName = this.userO.nickname;
@@ -224,10 +224,10 @@ export class RequestPayAuthPage implements OnInit {
 
         // TODO: This is not required on a clean form - but during testing am not cleaning the form on multiple submit
         if (!txnMsg.payeeId.includes('@')) {
-            txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
+            txnMsg.payeeId = txnMsg.payeeId + '@' + txnMsg.payeePSP.toUpperCase();
         }
         if (!txnMsg.payerId.includes('@')) {
-            txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
+            txnMsg.payerId = txnMsg.payerId + '@' + txnMsg.payerPSP.toUpperCase();
         }
 
         // txnMsg.originatingDate = new Date().toISOString();
@@ -263,7 +263,7 @@ export class RequestPayAuthPage implements OnInit {
 
         this.pspApiSvc.psp_paymentRequestResponse(this.myPSP, txnMsg)
             .subscribe(
-                x => {
+                async x => {
                     // API Call succesfull
                     // this.notify.update(x, 'success');
 
@@ -278,18 +278,15 @@ export class RequestPayAuthPage implements OnInit {
 
                     // Save the transaction to the users history.
                     // TODO: use result to set status of Txn: pending, failed, or complete?
-                    return this.txnSvc.savePayment(txn)
-                        .then(r => {
-                            this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
-                            console.log('Transaction saved!');
-                            console.log(r);
-
-                            return this.router.navigateByUrl('/history');
-                        });
+                    const r = await this.txnSvc.savePayment(txn);
+                    this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
+                    console.log('Transaction saved!');
+                    console.log(r);
+                    return this.router.navigateByUrl('/history');
                 },
                 e => {
                     // API Call threw error
-                    this.notify.update(e, 'error');
+                    this.notify.update(JSON.stringify(e), 'error');
                     return txn;
                     // TODO: Do I need to save failed requests to the PSP API?
 
