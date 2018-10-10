@@ -1,3 +1,3 @@
-# ZAP Mobile v 1.2.1
+# ZAP Mobile v 1.2.2
 
-First Native Build version!!!
+With QR Codes!!!!
