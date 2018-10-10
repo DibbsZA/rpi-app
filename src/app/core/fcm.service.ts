@@ -29,21 +29,16 @@ export class FcmService {
     async getToken() {
         let token;
 
-        if (this.platform.is('cordova')) {
-            const status = await this.firebaseNative.hasPermission();
+        if (this.platform.is('android')) {
 
-            if (status.isEnabled) {
-                console.log('messaging permission already granted');
-                return;
-            }
-
-            token = await this.firebaseNative.getToken();
-
-            if (this.platform.is('ios')) {
-                console.log('ios messaging get permission');
-                await this.firebaseNative.grantPermission();
-            }
+            token = await this.firebaseNative.getToken()
         }
+
+        if (this.platform.is('ios')) {
+            token = await this.firebaseNative.getToken();
+            const perm = await this.firebaseNative.grantPermission();
+        }
+
         if (token !== undefined) {
 
             console.log(token);

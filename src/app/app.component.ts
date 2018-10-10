@@ -77,6 +77,8 @@ export class AppComponent implements OnInit {
                                         } else {
                                             this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
                                         }
+                                    } else {
+                                        this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
                                     }
                                     this.messageSource.next(msg);
 
