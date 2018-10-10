@@ -313,11 +313,13 @@ export class RequestPayAuthPage implements OnInit {
                     cssClass: 'secondary',
                     handler: () => {
                         console.log('Confirm Cancel: blah');
+                        return false;
                     }
                 }, {
                     text: 'Don\'t Pay',
                     handler: () => {
                         console.log('Confirm decline');
+                        return true;
                     }
                 }
             ]

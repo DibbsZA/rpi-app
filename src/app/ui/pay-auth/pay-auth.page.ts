@@ -223,10 +223,10 @@ export class PayAuthPage implements OnInit {
         const hashInput = txnMsg.userRef + txnMsg.payeeId + txnMsg.payerId + txnMsg.amount.toString() + txnMsg.originatingDate;
         console.log(hashInput);
         const hashCheck = sha224(hashInput).toString();
-        if (hashCheck !== this.fcmPayload.mpiHash) {
-            this.notify.update('Form input fields don\'t match!', 'error');
-            return;
-        }
+        // if (hashCheck !== this.fcmPayload.mpiHash) {
+        //     this.notify.update('Form input fields don\'t match!', 'error');
+        //     return;
+        // }
 
         // txnMsg.mpiHash = sha224(hashInput);
         // console.log(txnMsg.mpiHash);

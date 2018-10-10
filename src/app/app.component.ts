@@ -65,12 +65,17 @@ export class AppComponent implements OnInit {
                                     if (!msg.tap) {
                                         const data: msgPSPPayment = msg;
                                         if (data.function === 'sendAuthRequest') {
-
-                                            const stringyfied = JSON.stringify(msg);
-                                            const encoded = encodeURIComponent(stringyfied);
-                                            this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
+                                            if (data.msgtype === 'payee-infoRequest') {
+                                                const stringyfied = JSON.stringify(msg);
+                                                const encoded = encodeURIComponent(stringyfied);
+                                                this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
+                                            } else if (data.msgtype === 'payer-paymentRequest') {
+                                                const stringyfied = JSON.stringify(msg);
+                                                const encoded = encodeURIComponent(stringyfied);
+                                                this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
+                                            }
                                         } else {
-                                            this.notify.update('Message: <br/>' + msg, 'note');
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
                                         }
                                     }
                                     this.messageSource.next(msg);
