@@ -7,10 +7,12 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 
 import { Observable, of } from 'rxjs';
-import { switchMap, startWith, tap, filter } from 'rxjs/operators';
+import { switchMap, startWith, tap, filter, first } from 'rxjs/operators';
 
 import { iUser } from '../models/interfaces';
 import { UserServiceService } from './user-service.service';
+import { Platform } from '@ionic/angular';
+import { FcmService } from './fcm.service';
 
 @Injectable({
     providedIn: 'root'
@@ -21,10 +23,10 @@ export class AuthSvcService {
     constructor(
         private afAuth: AngularFireAuth,
         private afs: AngularFirestore,
-        private router: Router,
+        private fcm: FcmService,
         private notify: NotifyService,
-        private userSvc: UserServiceService
-
+        private userSvc: UserServiceService,
+        public platform: Platform
     ) {
         this.user = this.afAuth.authState.pipe(
             switchMap(user => {
@@ -35,7 +37,10 @@ export class AuthSvcService {
                 }
             })
         );
+    }
 
+    async getCurrentUser(): Promise<any> {
+        return this.user.pipe(first()).toPromise();
     }
 
     //// Email/Password Auth ////
@@ -46,9 +51,7 @@ export class AuthSvcService {
                 this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
                 const newUser: iUser = {
                     uid: credential.user.uid,
-                    email: credential.user.email,
-                    accounts: [],
-                    fcmTokens: null
+                    email: credential.user.email
                 };
 
                 console.log('New User: ' + JSON.stringify(newUser));
@@ -62,13 +65,8 @@ export class AuthSvcService {
             .signInWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
                 this.notify.update('Welcome back to Z@P!', 'success');
+
                 return credential;
-                // this.updateUserData(credential.user);
-                // .then(r => {
-                //     console.log(r);
-                //     return credential.user;
-                // });
-                // return this.userSvc.getUserData(credential.user.uid);
             })
             .catch(error => this.handleError(error));
     }
@@ -83,10 +81,15 @@ export class AuthSvcService {
             .catch(error => this.handleError(error));
     }
 
-    signOut() {
+    signOut(token) {
+        this.notify.update('Deleting token: ' + token, 'info');
+        this.fcm.unregister();
+        this.afs.doc(`devices/${token}`).delete();
+
+
         this.afAuth.auth.signOut().then(() => {
             this.user = null;
-            this.router.navigate(['/about']);
+            navigator['app'].exitApp();
         });
     }
 

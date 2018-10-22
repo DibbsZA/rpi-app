@@ -11,15 +11,15 @@ import { msgPSPPayment, msgConfirmation } from './messages';
 export interface iUser {
     uid: string;
     email: string;
-    accounts: iAccount[];
+    accounts?: iAccount[];
     displayName?: string;
     nickname?: string | null;
     pspId?: string | null;
     phone?: string | null;
     photoURL?: string | '/assets/img/sun-dog.png';
     zapId?: string | null;
-    authSecret?: string | null;
-    fcmTokens?: string | null;
+    telegramId?: string | null;
+    whatsappId?: string | null;
 }
 
 
@@ -35,6 +35,9 @@ export interface iProcessor {
 export interface iAccount {
     accountNo?: string;
     accountAlias?: string;
+    uid?: string;
+    id?: string;
+    default?: boolean;
 }
 
 // tslint:disable-next-line:class-name

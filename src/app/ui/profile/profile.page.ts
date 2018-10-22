@@ -16,10 +16,11 @@ export class ProfilePage implements OnInit {
 
     userO: Observable<iUser>;
     dirtyUser: iUser;
-    editMode: boolean = false;
+    accounts: Observable<iAccount[]>;
+    editMode = false;
     processors: Observable<iProcessor[]>;
-    payerPspLable: string = '@psp';
-    payeePspLable: string = '@psp';
+    payerPspLable = '@psp';
+    payeePspLable = '@psp';
     progress = 0;
 
     constructor(
@@ -38,10 +39,14 @@ export class ProfilePage implements OnInit {
         this.processors = this.dataSvc.getProcessors();
         this.userO.subscribe(
             x => {
-                this.dirtyUser = x;
-                if (this.dirtyUser.pspId != null) {
-                    this.payerPspLable = '@' + this.dirtyUser.pspId;
+                this.accounts = this.userSvc.getUserAccounts(x.uid);
+                if (x !== null) {
+                    this.dirtyUser = x;
+                    if (this.dirtyUser.pspId != null) {
+                        this.payerPspLable = '@' + this.dirtyUser.pspId;
+                    }
                 }
+
             }
         );
     }
@@ -80,7 +85,7 @@ export class ProfilePage implements OnInit {
 
         this.userSvc.updateUserData(this.dirtyUser)
             .then(r => {
-                this.notify.update("Profile Updated. That's awesome!", 'success');
+                this.notify.update('Profile Updated. That\'s awesome!', 'success');
             });
 
     }
@@ -89,12 +94,12 @@ export class ProfilePage implements OnInit {
         this.router.navigate(['/account']);
     }
 
-    deleteAccount(e, acc: iAccount) {
+    deleteAccount(acc) {
 
-        var dirtyAccounts: iAccount[] = this.dirtyUser.accounts;
-        let index = dirtyAccounts.indexOf(acc);
-        this.dirtyUser.accounts.splice(index);
-        this.userSvc.updateUserData(this.dirtyUser)
+        console.log(acc);
+        this.userSvc.deleteUserAccount(acc);
+
+        // this.userSvc.updateUserData(this.dirtyUser)
         // .then(r => {
         //     this.notify.update("User Account Deleted", "info");
         // });
@@ -102,7 +107,7 @@ export class ProfilePage implements OnInit {
     }
 
     private payerPspSelect(psp) {
-        if (psp != undefined && psp != null) {
+        if (psp !== undefined && psp !== null) {
 
             this.payerPspLable = '@' + psp;
         }

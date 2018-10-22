@@ -29,7 +29,7 @@ export class NotifyService {
 
     }
 
-    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'action') {
+    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'paysuccess' | 'action') {
 
         const msg: Msg = { content, style };
         const msgContent: msgPSPPayment = content;
@@ -42,12 +42,21 @@ export class NotifyService {
 
         this._msgSource.next(msg);
         console.log(msg);
-        if (msg.style === 'action') {
-            this.router.navigate([msgContent.click_action.split('?').shift()], { queryParams: { msg: encoded } });
+        if (msg.style === 'auth') {
+            // this.router.navigate([msgContent.click_action.split('?').shift()], { queryParams: { msg: encoded } });
+            this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
 
         } else if (msg.style === 'error' || msg.style === 'note') {
 
             this.presentAlert(msg);
+        } else if (msg.style === 'paysuccess') {
+
+            msg.style = 'Success!';
+            msg.content = '<ion-img src="/assets/icons/success-1.png" style="width: 50%;"></ion-img>';
+
+            this.presentAlert(msg);
+            this.router.navigateByUrl('/history');
+
         } else {
             this.presentToast(msg.content);
         }

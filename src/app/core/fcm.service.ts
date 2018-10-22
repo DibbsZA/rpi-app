@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Firebase } from '@ionic-native/firebase/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Platform } from '@ionic/angular';
-import * as firebase from 'firebase';
-import { Subject } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthSvcService } from './auth-svc.service';
 import { NotifyService } from './notify.service';
-import { msgPaymentAuth, msgPSPPayment } from '../models/messages';
+import { tap } from 'rxjs/operators';
 
 
 @Injectable({
@@ -13,73 +13,98 @@ import { msgPaymentAuth, msgPSPPayment } from '../models/messages';
 })
 export class FcmService {
 
-    private messaging = firebase.messaging();
-    private messageSource = new Subject();
-    currentMessage = this.messageSource.asObservable();
-
+    currentToken: string;
 
     constructor(
+        public firebaseNative: Firebase,
+        public afs: AngularFirestore,
         private auth: AuthSvcService,
-        private afs: AngularFirestore,
         private platform: Platform,
-        public notify: NotifyService
+        private notify: NotifyService
     ) {
 
 
     }
 
-    // get permission to send messages
-    getPermission(user) {
-        this.messaging.requestPermission()
-            .then(() => {
-                // this.notify.update('Notify permission granted.', 'success');
-                return this.messaging.getToken()
-            })
-            .then(token => {
-                console.log(token)
-                // this.notify.update(token, 'success');
-                this.saveToken(user, token);
-            })
-            .catch((err) => {
-                this.notify.update('Unable to get permission to notify.', 'error')
-            });
+    async getToken() {
+        let token;
+
+        if (this.platform.is('android')) {
+
+            token = await this.firebaseNative.getToken()
+        }
+
+        if (this.platform.is('ios')) {
+            token = await this.firebaseNative.getToken();
+            const perm = await this.firebaseNative.grantPermission();
+        }
+
+        if (token !== undefined) {
+
+            console.log(token);
+            this.currentToken = token;
+            return this.saveTokenToFirestore(token);
+        }
     }
 
-    // Listen for token refresh
-    monitorRefresh(user) {
-        this.messaging.onTokenRefresh(() => {
-            this.messaging.getToken()
-                .then(refreshedToken => {
-                    this.notify.update('Registered for Push Notifications <br>' + refreshedToken, 'error');
-                    this.saveToken(user, refreshedToken)
-                })
-                .catch(err => this.notify.update('Unable to retrieve new token', 'error'));
-        });
+    public getCurrentToken() {
+        return this.currentToken;
     }
 
-    // save the permission token in firestore
-    private saveToken(user, token): void {
+    private async saveTokenToFirestore(token) {
+        // throw new Error('Method not implemented.');
+        if (!token) {
+            this.notify.update('no token on save', 'error');
+            return;
+        }
 
-        const userRef = this.afs.collection('users').doc(user.uid);
-        user.fcmTokens = token;
-        userRef.set(user);
+        const devicesRef = this.afs.collection('devices');
+        const user = await this.auth.getCurrentUser();
+
+        const docData = {
+            token,
+            userId: user.uid
+        };
+
+        return devicesRef.doc(token).set(docData);
         // .then(r => {
-        //     this.notify.update('Token saved.', 'success');
+        // this.notify.update('token saved <br /> ' + JSON.stringify(docData), 'note');
         // });
     }
 
+    // Listen for token refresh
+    public monitorTokenRefresh(): Observable<any> {
+        if (this.platform.is('cordova')) {
+            console.log('Getting messaging token');
+            return this.firebaseNative.onTokenRefresh()
+                .pipe(
+                    tap(token => {
+                        // this.notify.update('Native token refreshed <br>' + JSON.stringify(token), 'info');
+                        this.saveTokenToFirestore(token);
+                    })
+                );
+        } else {
+            console.log('No token for web app');
+            return of(null);
+        }
+    }
+
+
     // used to show message when app is open
-    receiveMessages() {
-        this.messaging.onMessage(payload => {
-            let data: msgPSPPayment = payload.data;
-            data.click_action = payload.notification.click_action;
-            data.msg_type = payload.data.msgtype;
+    listenToNotifications() {
+        if (this.platform.is('cordova')) {
+            return this.firebaseNative.onNotificationOpen();
+        } else {
+            return of(null);
+        }
+    }
 
-            console.log('Message received. ', payload);
-            this.notify.update(data, 'action');
-            this.messageSource.next(payload)
-        });
-
+    unregister() {
+        if (this.platform.is('cordova')) {
+            return this.firebaseNative.unregister();
+        } else {
+            return of(null);
+        }
     }
 
 }

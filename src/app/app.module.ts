@@ -8,16 +8,16 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { firebaseConfig } from './config';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Firebase } from '@ionic-native/firebase/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { ProfilePageModule } from './ui/profile/profile.module';
-import { ScanPageModule } from './ui/scan/scan.module';
-// import { PayPageModule } from './ui/pay/pay.module';
 import { PspSvcService } from './core/psp-svc.service';
 import { AuthSvcService } from './core/auth-svc.service';
 import { AccountPageModule } from './ui/account/account.module';
@@ -28,7 +28,9 @@ import { PaymentModule } from './ui/payment.module';
 
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
-import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
+import { FcmService } from './core/fcm.service';
+import { QrcodeService } from './core/qrcode.service';
+// import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -38,6 +40,7 @@ registerLocaleData(localeZa, 'en-ZA');
     declarations: [
         AppComponent,
         UserProfileComponent,
+        // FcmHandlerComponent,
         // ZapcurrencyPipe,
         // HoldableDirective,
     ],
@@ -55,8 +58,6 @@ registerLocaleData(localeZa, 'en-ZA');
         AngularFireAuthModule,
         HttpClientModule,
         ProfilePageModule,
-        ScanPageModule,
-        // PayPageModule,
         PaymentModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
@@ -66,8 +67,11 @@ registerLocaleData(localeZa, 'en-ZA');
         StatusBar,
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        Firebase,
         PspSvcService,
-        AuthSvcService
+        AuthSvcService,
+        FcmService,
+        QrcodeService,
     ],
     // exports: [
     //     ZapcurrencyPipe

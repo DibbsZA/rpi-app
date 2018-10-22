@@ -21,7 +21,7 @@ export class AccountEditComponent implements OnInit {
         private auth: AuthSvcService,
         private userSvc: UserServiceService,
         private notify: NotifyService,
-        private router: Router
+        private router: Router,
     ) {
         this.user = this.auth.user;
     }
@@ -31,18 +31,20 @@ export class AccountEditComponent implements OnInit {
             x => {
                 this.userO = x;
             }
-        )
+        );
     }
 
-    save(accountAlias, accountNo) {
+    save(accountAlias, accountNo, nominated) {
         this.newAccount = {
             accountAlias: accountAlias,
-            accountNo: accountNo
-        }
-        this.userO.accounts.push(this.newAccount);
-        this.userSvc.updateUserData(this.userO)
+            accountNo: accountNo,
+            uid: this.userO.uid,
+            default: nominated
+        };
+        // this.userO.accounts.push(this.newAccount);
+        this.userSvc.addUserAccount(this.newAccount)
             .then(r => {
-                this.notify.update('Account Added.', 'success')
+                this.notify.update('Account Added.', 'success');
                 return this.router.navigateByUrl('/profile');
             });
     }

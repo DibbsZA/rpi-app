@@ -13,7 +13,12 @@
                 <ion-label>Account</ion-label>
                 <ion-input type="number" placeholder="000000000" #accNo [value]=""></ion-input>
             </ion-item>
-            <ion-button (click)="save(accName.value, accNo.value)">
+
+            <ion-item>
+                <ion-label>Default?</ion-label>
+                <ion-checkbox slot="end" #nominated [checked]=""></ion-checkbox>
+            </ion-item>
+            <ion-button (click)="save(accName.value, accNo.value, nominated.checked)">
                 <ion-icon slot="start" name="add"></ion-icon>
                 Save New Account
             </ion-button>

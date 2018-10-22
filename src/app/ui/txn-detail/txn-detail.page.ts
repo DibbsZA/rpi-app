@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrettyJsonModule } from 'angular2-prettyjson';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { iTransaction } from '../../models/interfaces';
 import { Observable } from 'rxjs';
@@ -19,9 +19,10 @@ export class TxnDetailPage implements OnInit {
         payConfirm: null,
         direction: null,
         time: null
-    }
+    };
 
     constructor(
+        private router: Router,
         private route: ActivatedRoute,
         private txnSvc: TxnSvcService,
     ) {
@@ -36,4 +37,7 @@ export class TxnDetailPage implements OnInit {
             );
     }
 
+    genQR(txn) {
+        this.router.navigate(['show-qr/' + txn.id]);
+    }
 }

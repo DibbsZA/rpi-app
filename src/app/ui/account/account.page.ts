@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { UserServiceService } from '../../core/user-service.service';
-import { iUser } from '../../models/interfaces';
+// import { Router } from '@angular/router';
+// import { UserServiceService } from '../../core/user-service.service';
+// import { iUser } from '../../models/interfaces';
 
 @Component({
     selector: 'app-account',
@@ -11,8 +11,8 @@ import { iUser } from '../../models/interfaces';
 export class AccountPage implements OnInit {
 
     constructor(
-        private router: Router,
-        private userSvc: UserServiceService
+        // private router: Router,
+        // private userSvc: UserServiceService
     ) {
 
     }
@@ -20,9 +20,9 @@ export class AccountPage implements OnInit {
     ngOnInit() {
     }
 
-    gotoProfile() {
-        this.router.navigateByUrl('/profile');
-    }
+    // gotoProfile() {
+    //     this.router.navigateByUrl('/profile');
+    // }
 
 
 

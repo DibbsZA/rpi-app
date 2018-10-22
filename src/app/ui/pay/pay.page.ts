@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
+import { iUser, iProcessor, iTransaction, iAccount } from '../../models/interfaces';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -12,6 +12,8 @@ import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
 import { formatNumber } from '@angular/common';
+import { UserServiceService } from '../../core/user-service.service';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-pay',
@@ -20,6 +22,7 @@ import { formatNumber } from '@angular/common';
 })
 export class PayPage implements OnInit {
     processors: Observable<iProcessor[]>;
+    accounts: iAccount[] = [];
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
@@ -29,6 +32,9 @@ export class PayPage implements OnInit {
     payForm: FormGroup;
 
 
+    useDefaultAccount = true;
+    defaultAccount: iAccount;
+
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
@@ -36,6 +42,7 @@ export class PayPage implements OnInit {
     constructor(
         private auth: AuthSvcService,
         private dataSvc: DataServiceService,
+        private userSvc: UserServiceService,
         private fb: FormBuilder,
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
@@ -52,6 +59,9 @@ export class PayPage implements OnInit {
 
         this.user.subscribe(
             x => {
+                if (x === null) {
+                    return;
+                }
                 this.userO = x;
                 if (this.userO.pspId == null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
@@ -61,7 +71,8 @@ export class PayPage implements OnInit {
 
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
-                            x => { this.myPSP = x }
+                            // tslint:disable-next-line:no-shadowed-variable
+                            x => { this.myPSP = x; }
                         );
 
 
@@ -88,7 +99,23 @@ export class PayPage implements OnInit {
                         userRef: ['', [Validators.required]],
                     });
 
+                    this.userSvc.getUserAccounts(this.userO.uid)
+                        .pipe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            tap(x => {
+                                x.forEach(element => {
+                                    this.accounts.push(element);
+                                    if (element.default) {
+                                        this.defaultAccount = element;
+                                        this.payForm.patchValue({ payerAccountNo: element.accountNo });
+                                    }
+                                });
+                            })
+                        )
+                        .subscribe();
+
                     this.payForm.valueChanges
+                        // tslint:disable-next-line:no-shadowed-variable
                         .subscribe(x => {
                             console.log(x);
 
@@ -109,10 +136,11 @@ export class PayPage implements OnInit {
     formatAmount(val) {
         if (val != null) {
             if (val.length > 0) {
-                let amt_text: string = val;
-                let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
+                const amt_text: string = val;
+                // tslint:disable-next-line:radix
+                const amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
                 this.payForm.patchValue({ amount: amt_int });
-                let amt_dec = formatNumber(amt_int / 100, 'en-GB', '1.2');
+                const amt_dec = formatNumber(amt_int / 100, 'en-GB', '1.2');
                 this.payForm.patchValue({ amountdisplay: amt_dec });
             }
         }
@@ -121,15 +149,23 @@ export class PayPage implements OnInit {
     whatError(name: string) {
         // name = 'payForm.' + name;
         const ctrl = this.payForm.get(name);
-        const msg: string = "Error in " + name.toLocaleUpperCase() + ": </br>" + JSON.stringify(ctrl.errors) + " "
+        const msg: string = 'Error in ' + name.toLocaleUpperCase() + ': </br>' + JSON.stringify(ctrl.errors) + ' ';
         this.notify.update(msg, 'error');
+    }
+
+    overideAccount() {
+        this.useDefaultAccount = false;
     }
 
     async doPay(secret) {
         this.pay = this.payForm.value;
+        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.userRef = this.pay.userRef.trim();
         this.pay.consentKey = secret;
         this.pay.payerName = this.userO.nickname;
 
+        // tslint:disable-next-line:prefer-const
         let txnMsg: msgPSPPayment = this.pay;
 
         if (this.myPSP === null) {
@@ -145,7 +181,7 @@ export class PayPage implements OnInit {
         }
 
         txnMsg.originatingDate = new Date().toISOString();
-        let georgeDate: string = "";
+        let georgeDate = '';
         georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
         txnMsg.originatingDate = georgeDate;
 
@@ -172,7 +208,7 @@ export class PayPage implements OnInit {
         this.pspApiSvc.psp_paymentInstruction(this.myPSP, txnMsg)
             .subscribe(
                 x => {
-                    // API Call succesfull  
+                    // API Call succesfull
                     x.forEach(element => {
                         // this.notify.update(element.uniqueRef, 'success');
                         // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
@@ -198,11 +234,11 @@ export class PayPage implements OnInit {
                 e => {
                     // API Call threw error
                     this.notify.update(e, 'error');
-                    return txn
-                    // TODO: Do I need to save failed requests to the PSP API?
+                    return txn;
+                    // Do I need to save failed requests to the PSP API?
 
                 }
-            )
+            );
 
     }
 
@@ -215,7 +251,7 @@ export class PayPage implements OnInit {
 
         const m: Message = event.pin;
         const hashSecret = sha256.hmac(this.pay.payerPSP, m);
-        this.doPay(hashSecret)
+        this.doPay(hashSecret);
         // .then(r => {
         // return this.router.navigate(['history']);
         // });

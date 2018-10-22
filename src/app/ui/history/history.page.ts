@@ -40,13 +40,16 @@ export class HistoryPage implements OnInit {
 
         this.user.subscribe(
             x => {
-                this.userO = x;
-                if (this.userO.pspId == null) {
-                    this.notify.update('Please update your profile first!!!.', 'info');
-                    this.router.navigate(['/profile']);
+                if (x !== null) {
+                    this.userO = x;
+                    if (this.userO.pspId == null) {
+                        this.notify.update('Please update your profile first!!!.', 'info');
+                        this.router.navigate(['/profile']);
+                    }
+                    this.zapId = this.userO.zapId + '@' + this.userO.pspId;
+                    this.showData();
                 }
-                this.zapId = this.userO.zapId + '@' + this.userO.pspId;
-                this.showData();
+
             },
             e => {
 
@@ -72,7 +75,7 @@ export class HistoryPage implements OnInit {
             x => {
                 this.history = x;
 
-                let amount = x.map(res => res.payMessage.amount / 100);
+                const amount = x.map(res => res.payMessage.amount / 100);
 
 
                 // tslint:disable-next-line:prefer-const

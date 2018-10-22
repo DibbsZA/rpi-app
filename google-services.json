@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "393591030275",
+    "firebase_url": "https://zapmobile-954c4.firebaseio.com",
+    "project_id": "zapmobile-954c4",
+    "storage_bucket": "zapmobile-954c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393591030275:android:08c4828062a49975",
+        "android_client_info": {
+          "package_name": "com.bankservafrica.zapmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393591030275-r1o9bdftuqn5aeivq5tgdp5jlgehsjet.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bankservafrica.zapmobile",
+            "certificate_hash": "8edafbe4999662c6d43b0755511703f6721e2ea1"
+          }
+        },
+        {
+          "client_id": "393591030275-o80564tbaqu0616m7mrreeoe92lf1vr6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA64LzR17e0Bg1RNwoaeQ5hylzihXoYUJk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393591030275-o80564tbaqu0616m7mrreeoe92lf1vr6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "393591030275-ghv0h6i0gfu5gr5rh8rn4qsk34c8g9tv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bankservafrica.zapmobile"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

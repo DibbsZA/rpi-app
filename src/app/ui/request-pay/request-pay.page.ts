@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
+import { iUser, iProcessor, iTransaction, iAccount } from '../../models/interfaces';
 import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataServiceService } from '../../core/data-service.service';
-import { msgPaymentInstruction, msgPSPPayment, msgConfirmation } from '../../models/messages';
-import { sha256, sha224, Message } from 'js-sha256';
+import { msgPSPPayment, qrCodeSpec } from '../../models/messages';
+import { sha224 } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from '../../core/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
 import { PspSvcService } from '../../core/psp-svc.service';
 import { formatNumber } from '@angular/common';
+import { UserServiceService } from '../../core/user-service.service';
+import { tap } from 'rxjs/operators';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { QrcodeService } from '../../core/qrcode.service';
 
 @Component({
     selector: 'app-request-pay',
@@ -20,6 +24,7 @@ import { formatNumber } from '@angular/common';
 })
 export class RequestPayPage implements OnInit {
     processors: Observable<iProcessor[]>;
+    accounts: iAccount[] = [];
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
@@ -29,18 +34,25 @@ export class RequestPayPage implements OnInit {
     payForm: FormGroup;
 
 
+    useDefaultAccount = true;
+    defaultAccount: iAccount;
+
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
+    encodedData = {};
 
     constructor(
         private auth: AuthSvcService,
         private dataSvc: DataServiceService,
+        private userSvc: UserServiceService,
         private fb: FormBuilder,
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
         private pspApiSvc: PspSvcService,
-        private router: Router
+        private router: Router,
+        private barcodeScanner: BarcodeScanner,
+        private qrSvc: QrcodeService
     ) {
         this.user = this.auth.user;
     }
@@ -53,6 +65,9 @@ export class RequestPayPage implements OnInit {
 
         this.user.subscribe(
             x => {
+                if (x === null) {
+                    return;
+                }
                 this.userO = x;
                 if (this.userO.pspId == null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
@@ -62,9 +77,9 @@ export class RequestPayPage implements OnInit {
 
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
-                            x => { this.myPSP = x }
+                            // tslint:disable-next-line:no-shadowed-variable
+                            x => { this.myPSP = x; }
                         );
-
 
                     this.pay = {
                         uniqueRef: '',
@@ -88,19 +103,36 @@ export class RequestPayPage implements OnInit {
                         payerPSP: ['', [Validators.required]],
                         amountdisplay: [null],
                         amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
-                        userRef: ['', [Validators.required]],
+                        userRef: ['', [Validators.required]]
                     });
 
+                    this.userSvc.getUserAccounts(this.userO.uid)
+                        .pipe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            tap(x => {
+                                x.forEach(element => {
+                                    this.accounts.push(element);
+                                    if (element.default) {
+                                        this.defaultAccount = element;
+                                        this.payForm.patchValue({ payeeAccountNo: element.accountNo });
+                                    }
+                                });
+                            })
+                        )
+                        .subscribe();
+
                     this.payForm.valueChanges
-                        .subscribe(x => {
-                            this.pay = x;
-                            console.log(x);
-                            if (x.payerPSP != null) {
+                        .subscribe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            x => {
+                                this.pay = x;
+                                console.log(x);
+                                if (x.payerPSP != null) {
 
-                                this.payerPspLable = '@' + x.payerPSP;
+                                    this.payerPspLable = '@' + x.payerPSP;
 
-                            }
-                        });
+                                }
+                            });
 
                 }
 
@@ -111,27 +143,39 @@ export class RequestPayPage implements OnInit {
     formatAmount(val) {
         if (val != null) {
             if (val.length > 0) {
+                // tslint:disable-next-line:prefer-const
                 let amt_text: string = val;
-                let amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
+                // tslint:disable-next-line:radix
+                const amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
                 this.payForm.patchValue({ amount: amt_int });
-                let amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                const amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
                 this.payForm.patchValue({ amountdisplay: amt_dec });
             }
         }
     }
 
 
+    overideAccount() {
+        this.useDefaultAccount = false;
+    }
+
     public whatError(name: string) {
         // name = 'payForm.' + name;
         const ctrl = this.payForm.get(name);
-        const msg: string = "Error in " + name.toLocaleUpperCase() + ": </br>" + JSON.stringify(ctrl.errors) + " "
+        const msg: string = 'Error in ' + name.toLocaleUpperCase() + ': </br>' + JSON.stringify(ctrl.errors) + ' ';
         this.notify.update(msg, 'error');
     }
 
-    public doPayRequest() {
+    buildPayRequest() {
         this.pay = this.payForm.value;
+
+        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.payerId = this.pay.payerId.trim();
+        this.pay.userRef = this.pay.userRef.trim();
+
         this.pay.payeeName = this.userO.nickname;
 
+        // tslint:disable-next-line:prefer-const
         let txnMsg: msgPSPPayment = this.pay;
 
         if (this.myPSP === null) {
@@ -147,7 +191,7 @@ export class RequestPayPage implements OnInit {
         }
 
         txnMsg.originatingDate = new Date().toISOString();
-        let georgeDate: string = "";
+        let georgeDate = '';
         georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
         txnMsg.originatingDate = georgeDate;
 
@@ -167,14 +211,20 @@ export class RequestPayPage implements OnInit {
             payConfirm: {}
         };
 
+        return txn;
+    }
+
+    public doPayRequest() {
+
+        let txn = this.buildPayRequest();
         // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
         // console.log(this.myPSP);
 
 
-        this.pspApiSvc.psp_paymentRequest(this.myPSP, txnMsg)
+        this.pspApiSvc.psp_paymentRequest(this.myPSP, txn.payMessage)
             .subscribe(
                 x => {
-                    // API Call succesfull  
+                    // API Call succesfull
                     x.forEach(element => {
                         this.notify.update(element.uniqueRef, 'success');
                         // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
@@ -198,12 +248,30 @@ export class RequestPayPage implements OnInit {
                 e => {
                     // API Call threw error
                     this.notify.update(e, 'error');
-                    return txn
+                    return txn;
                     // TODO: Do I need to save failed requests to the PSP API?
 
                 }
-            )
+            );
 
     }
+
+    showQR() {
+        const txn = this.buildPayRequest();
+
+        // serialise payment data
+        const encoded = this.qrSvc.encodeQR(txn.payMessage);
+
+        this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, encoded)
+            .then(r => {
+                this.notify.update(JSON.stringify(r), 'note');
+                this.encodedData = r;
+            }).catch(err => {
+                this.notify.update('Encode failed <br>' + JSON.stringify(err), 'error');
+                console.log('Error', err);
+            });
+
+    }
+
 
 }

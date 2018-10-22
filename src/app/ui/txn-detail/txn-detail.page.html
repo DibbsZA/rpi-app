@@ -13,7 +13,12 @@
 </ion-header>
 
 <ion-content padding>
+
     <pre class="jsonData">
+
 {{ txn | json }}
 </pre>
+    <ion-button (click)="genQR(txn)">
+        Gen QR
+    </ion-button>
 </ion-content>

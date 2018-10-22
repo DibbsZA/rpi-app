@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+// import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import { iAccount, iUser } from '../models/interfaces';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
+import { NotifyService } from './notify.service';
 
 @Injectable({
     providedIn: 'root'
@@ -13,17 +14,11 @@ export class UserServiceService {
     private user: firebase.User;
 
     constructor(
-        private afAuth: AngularFireAuth,
+        // private afAuth: AngularFireAuth,
         private afs: AngularFirestore,
+        public notify: NotifyService,
     ) {
-        // afAuth.authState.subscribe(user => {
-        //     this.user = user;
-        // });
     }
-
-    // public getLocalUserData(): iUser {
-    //     return JSON.parse(localStorage.getItem('user'));
-    // }
 
     public getUserData(uid): Promise<iUser> {
         const userRef: AngularFirestoreDocument<iUser> = this.afs.doc(
@@ -48,8 +43,7 @@ export class UserServiceService {
             phone: user.phone || null,
             pspId: user.pspId || null,
             zapId: user.zapId || null,
-            accounts: user.accounts || [],
-            fcmTokens: user.fcmTokens || null
+            telegramId: user.telegramId || null
         };
         userRef.set(data)
             .then(r => {
@@ -60,7 +54,42 @@ export class UserServiceService {
     }
 
     public getUsers() {
-
         return this.afs.collection<iUser>('users').valueChanges();
     }
+
+    public getUserAccounts(userId) {
+        const colRef = this.afs.collection<iAccount>('accounts', ref => ref
+            .where('uid', '==', userId)
+            .orderBy('accountAlias'));
+
+        return colRef.valueChanges();
+        // return colRef.snapshotChanges();
+    }
+
+
+    public getUserDefaultAccount(userId) {
+        const colRef = this.afs.collection<iAccount>('accounts', ref => ref
+            .where('uid', '==', userId)
+            .where('default', '==', true));
+
+        return colRef.valueChanges();
+        // return colRef.snapshotChanges();
+    }
+
+    public addUserAccount(account: iAccount) {
+        const id = this.afs.createId();
+        account.id = id;
+        const colRef = this.afs.collection<iAccount>('accounts');
+        return colRef.doc(id).set(account);
+
+    }
+
+    public deleteUserAccount(acc) {
+        return this.afs.doc(`accounts/${acc.id}`).delete()
+            .then(() => {
+                this.notify.update('User Account \"' + acc.accountAlias + '\" deleted', 'info');
+                return;
+            });
+    }
+
 }

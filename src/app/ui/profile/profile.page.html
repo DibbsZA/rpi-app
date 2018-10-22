@@ -45,6 +45,10 @@
                         <ion-label>Nickname</ion-label>
                         <ion-input type="text" placeholder="Nickname?" #nick [value]="user.nickname" [readonly]="!editMode"></ion-input>
                     </ion-item>
+                    <ion-item>
+                        <ion-label>Telegram ID</ion-label>
+                        <ion-input type="text" placeholder="Telegram ID" #nick [value]="user.telegramId" readonly></ion-input>
+                    </ion-item>
                 </ion-list>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="!editMode">
                     <ion-fab-button (click)="editProfile()">
@@ -62,12 +66,13 @@
             <ion-card-content>
                 <ion-list lines="none">
                     <ion-item-divider>
-                        <ion-label>Accounts</ion-label>
+                        <ion-label>Accounts <span class="tiny">( checked = default )</span></ion-label>
                     </ion-item-divider>
-                    <ion-item-sliding *ngFor="let acc of user.accounts ">
+                    <ion-item-sliding *ngFor="let acc of accounts | async ">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
-                            {{acc.accountNo}}
+                            {{acc.accountNo}} &nbsp;
+                            <ion-toggle slot="end" [checked]="acc.default"></ion-toggle>
                         </ion-item>
                         <ion-item-options side="start">
                             <ion-item-option color="danger" (click)="deleteAccount(acc)">Delete</ion-item-option>

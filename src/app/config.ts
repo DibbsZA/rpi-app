@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class Config {
-    static
+    static;
 
 }
 
@@ -13,8 +13,8 @@ export const firebaseConfig = {
     projectId: "zapmobile-954c4",
     storageBucket: "zapmobile-954c4.appspot.com",
     messagingSenderId: "393591030275"
-}
+};
 
 export const options = {
 
-}
+};

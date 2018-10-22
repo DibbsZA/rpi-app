@@ -12,6 +12,8 @@ import { RequestPayAuthPage } from './request-pay-auth/request-pay-auth.page';
 import { ZapcurrencyPipe } from '../core/zapcurrency.pipe';
 import { PaySuccessComponent } from './pay-success/pay-success.component';
 import { AuthGuard } from '../core/auth.guard';
+import { ScanPage } from './scan/scan.page';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 
 const routes: Routes = [
@@ -19,7 +21,8 @@ const routes: Routes = [
     { path: 'payment/payauth', component: PayAuthPage, canActivate: [AuthGuard] },
     { path: 'payment/success', component: PaySuccessComponent, canActivate: [AuthGuard] },
     { path: 'payment/requestpay', component: RequestPayPage, canActivate: [AuthGuard] },
-    { path: 'payment/requestpayauth', component: RequestPayAuthPage, canActivate: [AuthGuard] }
+    { path: 'payment/requestpayauth', component: RequestPayAuthPage, canActivate: [AuthGuard] },
+    { path: 'payment/scan', component: ScanPage, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
@@ -36,7 +39,11 @@ const routes: Routes = [
         RequestPayAuthPage,
         PinComponent,
         ZapcurrencyPipe,
-        PaySuccessComponent
+        PaySuccessComponent,
+        ScanPage
+    ],
+    providers: [
+        BarcodeScanner
     ]
 })
 export class PaymentModule { }
