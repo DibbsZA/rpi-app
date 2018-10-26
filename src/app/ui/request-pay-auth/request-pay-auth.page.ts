@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { iUser, iProcessor, iTransaction, iAccount } from '../../models/interfaces';
-import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { DataServiceService } from '../../core/data-service.service';
 import { msgPSPPayment } from '../../models/messages';
 import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NotifyService } from '../../core/notify.service';
+import { NotifyService } from '../../services/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
-import { PspSvcService } from '../../core/psp-svc.service';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { formatNumber } from '@angular/common';
 import { tap } from 'rxjs/operators';
-import { UserServiceService } from '../../core/user-service.service';
+import { UserService } from '../../services/user.service';
+import { PspService } from '../../services/psp.service';
+import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
 
 
 @Component({
@@ -62,13 +62,13 @@ export class RequestPayAuthPage implements OnInit {
     qrCodeData = '';
 
     constructor(
-        private auth: AuthSvcService,
-        private dataSvc: DataServiceService,
-        private userSvc: UserServiceService,
+        private auth: AuthService,
+        private dataSvc: DataService,
+        private userSvc: UserService,
         private fb: FormBuilder,
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
-        private pspApiSvc: PspSvcService,
+        private pspApiSvc: PspService,
         private router: Router,
         private activeRoute: ActivatedRoute,
         public alertController: AlertController,

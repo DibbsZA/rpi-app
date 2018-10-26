@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
-import { AuthSvcService } from '../../core/auth-svc.service';
+import { AuthSvcService } from '../../services/auth.service';
 import { iUser, iTransaction } from '../../models/interfaces';
 import { Observable } from 'rxjs';
 import { TxnSvcService } from '../../core/txn-svc.service';
-import { UserServiceService } from '../../core/user-service.service';
+import { UserServiceService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { NotifyService } from '../../core/notify.service';
+import { NotifyService } from '../../services/notify.service';
 
 @Component({
     selector: 'app-history',

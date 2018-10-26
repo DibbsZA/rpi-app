@@ -5,7 +5,7 @@ import { iProcessor } from '../models/interfaces';
 @Injectable({
     providedIn: 'root'
 })
-export class DataServiceService {
+export class DataService {
 
     docRefProcessor: AngularFirestoreDocument<iProcessor>;
     colRefProcessor: AngularFirestoreCollection<iProcessor>;

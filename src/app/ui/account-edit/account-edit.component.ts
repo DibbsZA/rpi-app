@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { iUser, iAccount } from '../../models/interfaces';
-import { UserServiceService } from '../../core/user-service.service';
+import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { AuthSvcService } from '../../core/auth-svc.service';
+import { AuthSvcService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
-import { NotifyService } from '../../core/notify.service';
+import { NotifyService } from '../../services/notify.service';
 
 @Component({
     selector: 'app-account-edit',
@@ -19,7 +19,7 @@ export class AccountEditComponent implements OnInit {
 
     constructor(
         private auth: AuthSvcService,
-        private userSvc: UserServiceService,
+        private userSvc: UserService,
         private notify: NotifyService,
         private router: Router,
     ) {

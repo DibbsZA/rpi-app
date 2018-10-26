@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BarcodeScanner, BarcodeScannerOptions } from '@ionic-native/barcode-scanner/ngx';
-import { AuthSvcService } from '../../core/auth-svc.service';
-import { NotifyService } from '../../core/notify.service';
-import { UserServiceService } from '../../core/user-service.service';
+import { AuthSvcService } from '../../services/auth.service';
+import { NotifyService } from '../../services/notify.service';
+import { UserServiceService } from '../../services/user.service';
 import { Observable } from 'rxjs';
 import { iUser, iTransaction } from '../../models/interfaces';
 import { ActivatedRoute } from '@angular/router';

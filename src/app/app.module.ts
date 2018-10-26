@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, RouteReuseStrategy, Routes } from '@angular/router';
+import { RouteReuseStrategy } from '@angular/router';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
@@ -18,8 +18,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { ProfilePageModule } from './ui/profile/profile.module';
-import { PspSvcService } from './core/psp-svc.service';
-import { AuthSvcService } from './core/auth-svc.service';
+import { PspSvcService } from './services/psp.service';
+import { AuthSvcService } from './services/auth.service';
 import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -28,9 +28,8 @@ import { PaymentModule } from './ui/payment.module';
 
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
-import { FcmService } from './core/fcm.service';
+import { FcmService } from './services/fcm.service';
 import { QrcodeService } from './core/qrcode.service';
-// import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -40,9 +39,6 @@ registerLocaleData(localeZa, 'en-ZA');
     declarations: [
         AppComponent,
         UserProfileComponent,
-        // FcmHandlerComponent,
-        // ZapcurrencyPipe,
-        // HoldableDirective,
     ],
     entryComponents: [
 
@@ -73,9 +69,6 @@ registerLocaleData(localeZa, 'en-ZA');
         FcmService,
         QrcodeService,
     ],
-    // exports: [
-    //     ZapcurrencyPipe
-    // ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -16,5 +16,5 @@ export const firebaseConfig = {
 };
 
 export const options = {
-
+    pspApiUrl: ""
 };

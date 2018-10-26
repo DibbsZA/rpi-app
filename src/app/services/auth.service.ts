@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { auth } from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -7,31 +6,36 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 
 import { Observable, of } from 'rxjs';
-import { switchMap, startWith, tap, filter, first } from 'rxjs/operators';
+import { switchMap, first } from 'rxjs/operators';
 
-import { iUser } from '../models/interfaces';
-import { UserServiceService } from './user-service.service';
 import { Platform } from '@ionic/angular';
 import { FcmService } from './fcm.service';
+import { UserService } from './user.service';
+import { FirebaseUser, UserProfile } from '../models/interfaces.0.2';
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthSvcService {
-    user: Observable<iUser>;
+export class AuthService {
+    fbuser: Observable<FirebaseUser>;
 
     constructor(
         private afAuth: AngularFireAuth,
         private afs: AngularFirestore,
         private fcm: FcmService,
         private notify: NotifyService,
-        private userSvc: UserServiceService,
+        private userSvc: UserService,
         public platform: Platform
     ) {
-        this.user = this.afAuth.authState.pipe(
+        this.fbuser = this.afAuth.authState.pipe(
             switchMap(user => {
                 if (user) {
-                    return this.afs.doc<iUser>(`users/${user.uid}`).valueChanges();
+                    // FIXME: Do http call to get userProfile from PSP
+                    // FIXME: Get API Url from local storage or APP config?
+
+                    const apiEndpoint = psp.apiUrl + '/paymentInitiation';
+
+                    // return this.afs.doc<FirebaseUser>(`users/${user.uid}`).valueChanges();
                 } else {
                     return of(null);
                 }
@@ -40,7 +44,7 @@ export class AuthSvcService {
     }
 
     async getCurrentUser(): Promise<any> {
-        return this.user.pipe(first()).toPromise();
+        return this.fbuser.pipe(first()).toPromise();
     }
 
     //// Email/Password Auth ////
@@ -49,8 +53,8 @@ export class AuthSvcService {
             .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
                 this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
-                const newUser: iUser = {
-                    uid: credential.user.uid,
+                const newUser: UserProfile = {
+                    clientKey: credential.user.uid,
                     email: credential.user.email
                 };
 
@@ -72,13 +76,16 @@ export class AuthSvcService {
     }
 
     // Sends email allowing user to reset password
-    resetPassword(email: string) {
+    async resetPassword(email: string) {
         const fbAuth = auth();
 
-        return fbAuth
-            .sendPasswordResetEmail(email)
-            .then(() => this.notify.update('Password update email sent', 'info'))
-            .catch(error => this.handleError(error));
+        try {
+            await fbAuth.sendPasswordResetEmail(email);
+            return this.notify.update('Password update email sent', 'info');
+        }
+        catch (error) {
+            return this.handleError(error);
+        }
     }
 
     signOut(token) {
@@ -88,7 +95,7 @@ export class AuthSvcService {
 
 
         this.afAuth.auth.signOut().then(() => {
-            this.user = null;
+            this.fbuser = null;
             navigator['app'].exitApp();
         });
     }

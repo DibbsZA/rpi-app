@@ -3,7 +3,7 @@ import { Firebase } from '@ionic-native/firebase/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { AuthSvcService } from './auth-svc.service';
+// import { AuthSvcService } from './auth-svc.service';
 import { NotifyService } from './notify.service';
 import { tap } from 'rxjs/operators';
 
@@ -18,7 +18,7 @@ export class FcmService {
     constructor(
         public firebaseNative: Firebase,
         public afs: AngularFirestore,
-        private auth: AuthSvcService,
+        // private auth: AuthSvcService,
         private platform: Platform,
         private notify: NotifyService
     ) {
@@ -26,7 +26,7 @@ export class FcmService {
 
     }
 
-    async getToken() {
+    async getToken(user) {
         let token;
 
         if (this.platform.is('android')) {
@@ -43,7 +43,7 @@ export class FcmService {
 
             console.log(token);
             this.currentToken = token;
-            return this.saveTokenToFirestore(token);
+            return this.saveTokenToFirestore(token, user);
         }
     }
 
@@ -51,7 +51,7 @@ export class FcmService {
         return this.currentToken;
     }
 
-    private async saveTokenToFirestore(token) {
+    private async saveTokenToFirestore(token, user) {
         // throw new Error('Method not implemented.');
         if (!token) {
             this.notify.update('no token on save', 'error');
@@ -59,7 +59,7 @@ export class FcmService {
         }
 
         const devicesRef = this.afs.collection('devices');
-        const user = await this.auth.getCurrentUser();
+
 
         const docData = {
             token,
@@ -73,14 +73,14 @@ export class FcmService {
     }
 
     // Listen for token refresh
-    public monitorTokenRefresh(): Observable<any> {
+    public monitorTokenRefresh(user): Observable<any> {
         if (this.platform.is('cordova')) {
             console.log('Getting messaging token');
             return this.firebaseNative.onTokenRefresh()
                 .pipe(
                     tap(token => {
                         // this.notify.update('Native token refreshed <br>' + JSON.stringify(token), 'info');
-                        this.saveTokenToFirestore(token);
+                        this.saveTokenToFirestore(token, user);
                     })
                 );
         } else {

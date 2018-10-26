@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iProcessor, iTransaction, iAccount } from '../../models/interfaces';
-import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { DataServiceService } from '../../core/data-service.service';
-import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
 import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NotifyService } from '../../core/notify.service';
+import { NotifyService } from '../../services/notify.service';
 import { TxnSvcService } from '../../core/txn-svc.service';
-import { PspSvcService } from '../../core/psp-svc.service';
 import { formatNumber } from '@angular/common';
-import { UserServiceService } from '../../core/user-service.service';
 import { tap } from 'rxjs/operators';
+import { UserService } from '../../services/user.service';
+import { PspService } from '../../services/psp.service';
+import { PaymentInitiation, Processor, UserProfile, FirebaseUser } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
     selector: 'app-pay',
@@ -21,32 +20,32 @@ import { tap } from 'rxjs/operators';
     styleUrls: ['./pay.page.scss'],
 })
 export class PayPage implements OnInit {
-    processors: Observable<iProcessor[]>;
-    accounts: iAccount[] = [];
-    myPSP: iProcessor;
-    user: Observable<iUser>;
-    userO: iUser;
-    pay: msgPaymentInstruction;
+    processors: Observable<Processor[]>;
+    accounts: Account[] = [];
+    myPSP: Processor;
+    user: Observable<FirebaseUser>;
+    userO: UserProfile;
+    pay: PaymentInitiation;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
 
 
     useDefaultAccount = true;
-    defaultAccount: iAccount;
+    defaultAccount: Account;
 
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
 
     constructor(
-        private auth: AuthSvcService,
-        private dataSvc: DataServiceService,
-        private userSvc: UserServiceService,
+        private auth: AuthService,
+        private dataSvc: DataService,
+        private userSvc: UserService,
         private fb: FormBuilder,
         public notify: NotifyService,
         private txnSvc: TxnSvcService,
-        private pspApiSvc: PspSvcService,
+        private pspApiSvc: PspService,
         private router: Router,
     ) {
         this.user = this.auth.user;

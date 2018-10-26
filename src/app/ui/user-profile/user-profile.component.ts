@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
-import { Route, Router } from '@angular/router';
-import { AuthSvcService } from '../../core/auth-svc.service';
+import { Router } from '@angular/router';
+import { AuthSvcService } from '../../services/auth.service';
 import { MenuController } from '@ionic/angular';
-import { FcmService } from '../../core/fcm.service';
+import { FcmService } from '../../services/fcm.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -32,18 +31,12 @@ export class UserProfileComponent implements OnInit {
             });
     }
 
-    // replaced by fcm-handler
-    // tokenRefresh() {
-    //     this.fcmSvc.monitorTokenRefresh(this.userO);
-    // }
-
     openProfileEdit() {
         this.menu.close();
         this.router.navigateByUrl('/profile');
     }
 
     logout() {
-        // this.auth.signOut(this.fcmSvc.getCurrentToken());
         this.auth.signOut(this.token);
         this.menu.close();
         this.router.navigateByUrl('/');

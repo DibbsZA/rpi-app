@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { FcmService } from './core/fcm.service';
-import { NotifyService } from './core/notify.service';
-import { AuthSvcService } from './core/auth-svc.service';
+import { FcmService } from './services/fcm.service';
+import { NotifyService } from './services/notify.service';
+import { AuthSvcService } from './services/auth.service';
 import { tap } from 'rxjs/operators';
 import { msgPSPPayment } from './models/messages';
 import { Subject } from 'rxjs';
@@ -50,9 +50,9 @@ export class AppComponent implements OnInit {
                     this.loggedin = true;
 
                     if (user) {
-                        this.fcm.getToken();
+                        this.fcm.getToken(user);
 
-                        this.fcm.monitorTokenRefresh().subscribe();
+                        this.fcm.monitorTokenRefresh(user).subscribe();
 
                         this.fcm.listenToNotifications()
                             .pipe(

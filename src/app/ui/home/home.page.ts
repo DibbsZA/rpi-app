@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthSvcService } from '../../core/auth-svc.service';
+import { AuthSvcService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { iUser } from '../../models/interfaces';
-import { NotifyService } from '../../core/notify.service';
+import { NotifyService } from '../../services/notify.service';
 
 
 

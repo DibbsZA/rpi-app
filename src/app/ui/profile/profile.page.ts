@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthSvcService } from '../../core/auth-svc.service';
+import { AuthSvcService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { iUser, iAccount, iProcessor } from '../../models/interfaces';
-import { UserServiceService } from '../../core/user-service.service';
-import { DataServiceService } from '../../core/data-service.service';
-import { NotifyService } from '../../core/notify.service';
+import { UserServiceService } from '../../services/user.service';
+import { DataServiceService } from '../../services/data.service';
+import { NotifyService } from '../../services/notify.service';
 
 @Component({
     selector: 'app-profile',

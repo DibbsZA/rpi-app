@@ -1,17 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
-import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { DataServiceService } from '../../core/data-service.service';
-import { msgPSPPayment, msgConfirmation } from '../../models/messages';
-// import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormGroup } from '@angular/forms';
-import { NotifyService } from '../../core/notify.service';
-// import { TxnSvcService } from '../../core/txn-svc.service';
-// import { PspSvcService } from '../../core/psp-svc.service';
+import { NotifyService } from '../../services/notify.service';
 import { ActivatedRoute } from '@angular/router';
+import { Transaction } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
     selector: 'app-pay-success',
@@ -23,7 +20,7 @@ export class PaySuccessComponent implements OnInit {
     myPSP: iProcessor;
     user: Observable<iUser>;
     userO: iUser;
-    pay: msgPSPPayment;
+    pay: Transaction;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
@@ -50,8 +47,8 @@ export class PaySuccessComponent implements OnInit {
         originatingDate: '2018-09-30 16:04:49.649000'
     };
     constructor(
-        private auth: AuthSvcService,
-        private dataSvc: DataServiceService,
+        private auth: AuthService,
+        private dataSvc: DataService,
         // private fb: FormBuilder,
         public notify: NotifyService,
         // private txnSvc: TxnSvcService,
@@ -100,13 +97,11 @@ export class PaySuccessComponent implements OnInit {
                     _payeeId = _payeeId.split('@').shift();
 
                     this.pay = {
-                        uniqueRef: this.fcmPayload.uniqueRef,
+                        endToEndId: this.fcmPayload.endToEndId,
                         userRef: this.fcmPayload.userRef,
                         payerId: _payerId,
                         payerName: this.fcmPayload.payerName,
-                        payerPSP: this.fcmPayload.pspId,
                         payeeId: _payeeId,
-                        payeePSP: this.fcmPayload.payeePSP,
                         // payeeAccountNo: null,
                         amount: this.fcmPayload.amount,
                         originatingDate: this.fcmPayload.originatingDate,
