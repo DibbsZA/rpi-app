@@ -119,7 +119,7 @@ export interface UserProfile {
     preAuth?: string | null;
 }
 
-export interface Account {
+export interface AccountDetail {
     clientKey: string;
     accountRef: string;
     accountNo: string;
