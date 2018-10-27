@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { iUser } from '../models/interfaces';
-import { AuthSvcService } from '../services/auth.service';
+import { AuthService } from '../services/auth.service';
+import { UserProfile } from '../models/interfaces.0.2';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    user: Observable<iUser | null>;
+    user: Observable<UserProfile | null>;
     // loggedIn: boolean = true;
 
     constructor(
-        public auth: AuthSvcService,
+        public auth: AuthService,
         private router: Router
     ) {
         this.user = this.auth.user;
