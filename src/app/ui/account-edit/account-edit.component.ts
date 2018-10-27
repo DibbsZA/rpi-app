@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iAccount } from '../../models/interfaces';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { AuthSvcService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
+import { UserProfile, AccountDetail } from '../../models/interfaces.0.2';
 
 @Component({
     selector: 'app-account-edit',
@@ -13,12 +13,12 @@ import { NotifyService } from '../../services/notify.service';
 })
 export class AccountEditComponent implements OnInit {
 
-    user: Observable<iUser>;
-    userO: iUser;
-    newAccount: iAccount;
+    user: Observable<UserProfile>;
+    userO: UserProfile;
+    newAccount: AccountDetail;
 
     constructor(
-        private auth: AuthSvcService,
+        private auth: AuthService,
         private userSvc: UserService,
         private notify: NotifyService,
         private router: Router,
@@ -34,15 +34,15 @@ export class AccountEditComponent implements OnInit {
         );
     }
 
-    save(accountAlias, accountNo, nominated) {
+    save(accountAlias: string, accountNo: string, nominated: boolean) {
         this.newAccount = {
-            accountAlias: accountAlias,
-            accountNo: accountNo,
-            uid: this.userO.uid,
+            accountAlias: accountAlias.trim(),
+            accountNo: accountNo.trim(),
+            clientKey: this.userO.clientKey,
             default: nominated
         };
         // this.userO.accounts.push(this.newAccount);
-        this.userSvc.addUserAccount(this.newAccount)
+        this.userSvc.addClientAccount(this.newAccount)
             .then(r => {
                 this.notify.update('Account Added.', 'success');
                 return this.router.navigateByUrl('/profile');
