@@ -17,7 +17,7 @@ import { FirebaseUser, UserProfile } from '../models/interfaces.0.2';
     providedIn: 'root'
 })
 export class AuthService {
-    fbuser: Observable<FirebaseUser>;
+    user: Observable<UserProfile | null>;
 
     constructor(
         private afAuth: AngularFireAuth,
@@ -27,13 +27,13 @@ export class AuthService {
         private userSvc: UserService,
         public platform: Platform
     ) {
-        this.fbuser = this.afAuth.authState.pipe(
+        this.user = this.afAuth.authState.pipe(
             switchMap(user => {
                 if (user) {
                     // FIXME: Do http call to get userProfile from PSP
                     // FIXME: Get API Url from local storage or APP config?
 
-                    const apiEndpoint = psp.apiUrl + '/paymentInitiation';
+                    return userSvc.getUserData(user.uid);
 
                     // return this.afs.doc<FirebaseUser>(`users/${user.uid}`).valueChanges();
                 } else {
@@ -44,7 +44,7 @@ export class AuthService {
     }
 
     async getCurrentUser(): Promise<any> {
-        return this.fbuser.pipe(first()).toPromise();
+        return this.user.toPromise();
     }
 
     //// Email/Password Auth ////
@@ -95,7 +95,7 @@ export class AuthService {
 
 
         this.afAuth.auth.signOut().then(() => {
-            this.fbuser = null;
+            this.user = null;
             navigator['app'].exitApp();
         });
     }

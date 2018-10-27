@@ -28,7 +28,7 @@ export class UserService {
 
         const apiEndpoint = options.pspApiUrl + '/queryClient';
 
-        return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: uid } }).toPromise();
+        return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: uid } });
 
 
         // const userRef: AngularFirestoreDocument<UserProfile> = this.afs.doc(
