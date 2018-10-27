@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase/app';
-import { Account, UserProfile } from '../models/interfaces.0.2';
+import { UserProfile, AccountDetail } from '../models/interfaces.0.2';
 import { AngularFirestoreDocument, AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 import * as DataService from "./data.service";
 import { HttpClient } from '@angular/common/http';
+import { options } from "../config";
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
 
-    private user: firebase.User;
+    private fbUser: firebase.User;
+    private appUser: Observable<UserProfile>;
 
     constructor(
         // private afAuth: AngularFireAuth,
@@ -21,18 +24,27 @@ export class UserService {
     ) {
     }
 
-    public getUserData(uid): Promise<UserProfile> {
-        const userRef: AngularFirestoreDocument<UserProfile> = this.afs.doc(
-            `users/${uid}`
-        );
-        return userRef.valueChanges().toPromise();
+    public getUserData(uid) {
+
+        const apiEndpoint = options.pspApiUrl + '/queryClient';
+
+        return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: uid } }).toPromise();
+
+
+        // const userRef: AngularFirestoreDocument<UserProfile> = this.afs.doc(
+        //     `users/${uid}`
+        // );
+        // return userRef.valueChanges().toPromise();
+
     }
 
-    public async updateUserData(user: UserProfile) {
+    public updateUserData(user: UserProfile) {
 
-        const userRef: AngularFirestoreDocument<UserProfile> = this.afs.doc(
-            `users/${user.clientKey}`
-        );
+        // const userRef: AngularFirestoreDocument<UserProfile> = this.afs.doc(
+        //     `users/${user.clientKey}`
+        // );
+
+        const apiEndpoint = options.pspApiUrl + '/queryClient';
 
         // const accounts: iAccount = []
 
@@ -44,54 +56,70 @@ export class UserService {
             nickname: user.nickname || null,
             photoUrl: user.photoUrl || '/assets/img/sun-dog.png',
             mobileNo: user.mobileNo || null,
-            zapId: user.zapId || null,
+            zapId: user.zapId.toUpperCase() || null,
             telegramId: user.telegramId || null
         };
-        userRef.set(data)
-            .then(r => {
-                // localStorage.setItem('user', JSON.stringify(data));
-                console.log('User saved: ' + JSON.stringify(data));
-            });
-        return data;
+        // userRef.set(data)
+        //     .then(r => {
+        //         // localStorage.setItem('user', JSON.stringify(data));
+        //         console.log('User saved: ' + JSON.stringify(data));
+        //     });
+        // return data;
+
+        return this.httpClient.post<Response>(apiEndpoint, data).toPromise();
     }
 
-    public getUsers() {
-        return this.afs.collection<UserProfile>('users').valueChanges();
+    // public getUsers() {
+    //     return this.afs.collection<UserProfile>('users').valueChanges();
+    // }
+
+    public getUserAccounts(clientKey) {
+        const apiEndpoint = options.pspApiUrl + '/getClientAccounts';
+        return this.httpClient.get<AccountDetail[]>(apiEndpoint, { params: { clientKey: clientKey } });
+
+        // const colRef = this.afs.collection<Account>('accounts', ref => ref
+        //     .where('uid', '==', userId)
+        //     .orderBy('accountAlias'));
+
+        //     return colRef.valueChanges();
     }
 
-    public getUserAccounts(userId) {
-        const colRef = this.afs.collection<Account>('accounts', ref => ref
-            .where('uid', '==', userId)
-            .orderBy('accountAlias'));
+    // FIXME: Need to determine default account from above list which is probably already in memory
 
-        return colRef.valueChanges();
-        // return colRef.snapshotChanges();
+    // public getUserDefaultAccount(userId) {
+
+    //     const apiEndpoint = options.pspApiUrl + '/getClientAccounts';
+    //     return this.httpClient.get<AccountDetail>(apiEndpoint, { params: { clientKey: userId } });
+
+    //     // const colRef = this.afs.collection<Account>('accounts', ref => ref
+    //     //     .where('uid', '==', userId)
+    //     //     .where('default', '==', true));
+
+    //     // return colRef.valueChanges();
+    // }
+
+    public addClientAccount(account: AccountDetail) {
+        const apiEndpoint = options.pspApiUrl + '/addClientAccount';
+
+        return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
+
+        // const id = this.afs.createId();
+        // account.id = id;
+        // const colRef = this.afs.collection<Account>('accounts');
+        // return colRef.doc(id).set(account);
+
     }
 
+    public deleteClientAccount(account: AccountDetail) {
+        const apiEndpoint = options.pspApiUrl + '/deleteClientAccount';
 
-    public getUserDefaultAccount(userId) {
-        const colRef = this.afs.collection<Account>('accounts', ref => ref
-            .where('uid', '==', userId)
-            .where('default', '==', true));
+        return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
 
-        return colRef.valueChanges();
-        // return colRef.snapshotChanges();
-    }
-
-    public addUserAccount(account: Account) {
-        const id = this.afs.createId();
-        account.id = id;
-        const colRef = this.afs.collection<Account>('accounts');
-        return colRef.doc(id).set(account);
-
-    }
-
-    public deleteUserAccount(acc) {
-        return this.afs.doc(`accounts/${acc.id}`).delete()
-            .then(() => {
-                this.notify.update('User Account \"' + acc.accountAlias + '\" deleted', 'info');
-                return;
-            });
+        // return this.afs.doc(`accounts/${acc.id}`).delete()
+        //     .then(() => {
+        //         this.notify.update('User Account \"' + acc.accountAlias + '\" deleted', 'info');
+        //         return;
+        //     });
     }
 
 }
