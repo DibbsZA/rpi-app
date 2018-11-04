@@ -8,7 +8,7 @@ import { UserProfile } from '../models/interfaces.0.2';
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    user: Observable<UserProfile | null>;
+    user: Observable<any | null>;
     // loggedIn: boolean = true;
 
     constructor(
@@ -28,6 +28,7 @@ export class AuthGuard implements CanActivate {
         this.user.subscribe(
             x => {
 
+                console.log('AuthGuard: CanActivate -> x = ' + JSON.stringify(x));
                 if (x == null) {
                     loggedIn = false;
                     this.router.navigate(['/']);

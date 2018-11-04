@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthSvcService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { iUser, iAccount, iProcessor } from '../../models/interfaces';
-import { UserServiceService } from '../../services/user.service';
-import { DataServiceService } from '../../services/data.service';
 import { NotifyService } from '../../services/notify.service';
+import { UserProfile, AccountDetail, Processor } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
     selector: 'app-profile',
@@ -14,36 +14,55 @@ import { NotifyService } from '../../services/notify.service';
 })
 export class ProfilePage implements OnInit {
 
-    userO: Observable<iUser>;
-    dirtyUser: iUser;
-    accounts: Observable<iAccount[]>;
+    user: Observable<firebase.User>;
+    userO: UserProfile;
+    dirtyUser: UserProfile;
+    accounts: Observable<AccountDetail[]>;
     editMode = false;
-    processors: Observable<iProcessor[]>;
+    processors: Observable<Processor[]>;
     payerPspLable = '@psp';
     payeePspLable = '@psp';
     progress = 0;
+    myPsp: string = null;
 
     constructor(
-        public auth: AuthSvcService,
-        private dataSvc: DataServiceService,
+        public auth: AuthService,
+        private dataSvc: DataService,
         private router: Router,
         private notify: NotifyService,
-        private userSvc: UserServiceService,
+        private userSvc: UserService,
     ) {
-        this.userO = this.auth.user;
+        this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
 
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+        } else {
+            console.log("ProfilePage: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
 
         this.processors = this.dataSvc.getProcessors();
-        this.userO.subscribe(
-            x => {
-                this.accounts = this.userSvc.getUserAccounts(x.uid);
+        this.user.subscribe(
+            async x => {
+                console.log('profile: user -> x = ' + JSON.stringify(x));
                 if (x !== null) {
-                    this.dirtyUser = x;
-                    if (this.dirtyUser.pspId != null) {
-                        this.payerPspLable = '@' + this.dirtyUser.pspId;
+                    this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                    if (this.userO.queryLimit == null) {
+                        this.notify.update('Please update your profile first!!!.', 'info');
+                        this.router.navigate(['/profile']);
+                    }
+                    this.userO.pspId = this.myPsp;
+
+                    this.accounts = this.userSvc.getUserAccounts(x.uid, this.myPsp);
+                    this.dirtyUser = this.userO;
+
+                    if (this.dirtyUser.zapId != null && this.dirtyUser.zapId != '') {
+                        this.payerPspLable = '@' + this.dirtyUser.zapId.split('@').pop();
+                        this.dirtyUser.pspId = this.dirtyUser.zapId.split('@').pop();
                     }
                 }
 
@@ -76,14 +95,17 @@ export class ProfilePage implements OnInit {
 
     }
 
-    saveProfile(displayName, pspId: string, zapId: string, nickname) {
+    saveProfile(name: string, surname: string, pspId: string, zapId: string, nickname: string, mobileNo: string, telegramId: string) {
         this.editMode = false;
-        this.dirtyUser.displayName = displayName;
-        this.dirtyUser.nickname = nickname;
-        this.dirtyUser.zapId = zapId.toUpperCase();
-        this.dirtyUser.pspId = pspId.toUpperCase();
+        this.dirtyUser.name = name.trim();
+        this.dirtyUser.surname = surname.trim();
+        this.dirtyUser.nickname = nickname.trim();
+        this.dirtyUser.zapId = zapId.toUpperCase() + '@' + pspId.toUpperCase();
+        this.dirtyUser.mobileNo = mobileNo.trim();
+        this.dirtyUser.telegramId = telegramId.trim();
+        // this.dirtyUser.photoUrl = photoUrl.trim();
 
-        this.userSvc.updateUserData(this.dirtyUser)
+        this.userSvc.updateUserData(this.dirtyUser, this.myPsp)
             .then(r => {
                 this.notify.update('Profile Updated. That\'s awesome!', 'success');
             });
@@ -96,8 +118,9 @@ export class ProfilePage implements OnInit {
 
     deleteAccount(acc) {
 
+        acc.clientKey = this.userO.clientKey;
         console.log(acc);
-        this.userSvc.deleteUserAccount(acc);
+        this.userSvc.deleteClientAccount(acc, this.myPsp);
 
         // this.userSvc.updateUserData(this.dirtyUser)
         // .then(r => {

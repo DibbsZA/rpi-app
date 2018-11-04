@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AuthGuard } from './core/auth.guard';
-import { CanDeactivateGuard } from './core/can-deactivate-guard';
+import { AuthGuard } from './guards/auth.guard';
+import { CanDeactivateGuard } from './guards/can-deactivate-guard';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -11,9 +11,7 @@ const routes: Routes = [
     { path: 'profile', loadChildren: './ui/profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
     { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule', canActivate: [AuthGuard] },
     { path: 'history', loadChildren: './ui/history/history.module#HistoryPageModule', canActivate: [AuthGuard] },
-    { path: 'txn-detail/:id', loadChildren: './ui/txn-detail/txn-detail.module#TxnDetailPageModule', canActivate: [AuthGuard] },
-    { path: 'payment', loadChildren: './ui/payment.module#PaymentModule', canActivate: [AuthGuard] },
-    { path: 'show-qr/:id', loadChildren: './ui/show-qr/show-qr.module#ShowQrPageModule', canActivate: [AuthGuard] }
+    { path: 'payment', loadChildren: './ui/payment.module#PaymentModule', canActivate: [AuthGuard] }
 
 ];
 

@@ -18,7 +18,7 @@
         <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
         </ion-refresher-content>
     </ion-refresher>
-    <form [formGroup]="payForm" *ngIf="user | async; else loading" [hidden]="success" (ngSubmit)="this.showPin()">
+    <form [formGroup]="payForm" *ngIf="userO; else loading" [hidden]="success" (ngSubmit)="this.showPin()">
         <ng-container *ngIf="!ShowPin">
             <ion-card>
                 <ion-card-header>
@@ -34,7 +34,7 @@
                         <ion-item>
                             <ion-label>My ID</ion-label>
                             <ion-input type="text" readonly formControlName="payerId"></ion-input>
-                            {{payerPspLable}}
+                            <!-- {{payerPspLable}} -->
                         </ion-item>
                         <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
                             <ion-label>

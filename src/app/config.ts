@@ -16,5 +16,5 @@ export const firebaseConfig = {
 };
 
 export const options = {
-    pspApiUrl: ""
+    pspApiUrl: "https://cloud-dev.bankservafrica.com/PSP/v0.2.0/"
 };

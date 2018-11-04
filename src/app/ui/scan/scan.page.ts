@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { AuthSvcService } from '../../services/auth.service';
 import { NotifyService } from '../../services/notify.service';
-import { UserServiceService } from '../../services/user.service';
 import { Observable } from 'rxjs';
-import { iUser, iAccount, iProcessor, iTransaction } from '../../models/interfaces';
-import { DataServiceService } from '../../services/data.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TxnSvcService } from '../../core/txn-svc.service';
-import { PspSvcService } from '../../services/psp.service';
 import { Router } from '@angular/router';
-import { msgPaymentInstruction, msgPSPPayment } from '../../models/messages';
 import { tap } from 'rxjs/operators';
 import { formatNumber } from '@angular/common';
 import { sha224, Message, sha256 } from 'js-sha256';
-import { QrcodeService } from '../../core/qrcode.service';
+import { QrcodeService } from '../../services/qrcode.service';
+import { AccountDetail, Processor, UserProfile, Transaction, PaymentInitiation } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { DataService } from '../../services/data.service';
+import { PspService } from '../../services/psp.service';
 
 @Component({
     selector: 'app-scan',
@@ -23,38 +21,47 @@ import { QrcodeService } from '../../core/qrcode.service';
 })
 export class ScanPage implements OnInit {
 
-    processors: Observable<iProcessor[]>;
-    accounts: iAccount[] = [];
-    myPSP: iProcessor;
-    user: Observable<iUser>;
-    userO: iUser;
-    pay: msgPSPPayment;
+    processors: Observable<Processor[]>;
+    accounts: AccountDetail[] = [];
+    myPSP: Processor;
+    user: Observable<firebase.User>;
+    userO: UserProfile;
+    pay: PaymentInitiation;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
 
 
     useDefaultAccount = true;
-    defaultAccount: iAccount;
+    defaultAccount: AccountDetail;
 
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
     scanComplete = false;
+    myPsp: string;
 
     constructor(
         private barcodeScanner: BarcodeScanner,
-        private auth: AuthSvcService,
+        private auth: AuthService,
         private notify: NotifyService,
-        private userSvc: UserServiceService,
-        private dataSvc: DataServiceService,
+        private userSvc: UserService,
+        private dataSvc: DataService,
         private fb: FormBuilder,
-        private txnSvc: TxnSvcService,
-        private pspApiSvc: PspSvcService,
+        // private txnSvc: TxnService,
+        private pspApiSvc: PspService,
         private router: Router,
         private qrSvc: QrcodeService,
     ) {
         this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
+
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+        } else {
+            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
@@ -63,16 +70,17 @@ export class ScanPage implements OnInit {
         this.processors = this.dataSvc.getProcessors();
 
         this.user.subscribe(
-            x => {
+            async x => {
                 if (x === null) {
                     return;
                 }
-                this.userO = x;
-                if (this.userO.pspId == null) {
+                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                if (this.userO.queryLimit == null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
+
                 } else {
-                    this.payerPspLable = '@' + this.userO.pspId;
+                    this.userO.pspId = this.myPsp;
 
                     this.dataSvc.getProcessor(this.userO.pspId)
                         .subscribe(
@@ -83,19 +91,22 @@ export class ScanPage implements OnInit {
 
                     this.pay = {
                         userRef: null,
-                        payerId: this.userO.zapId,
-                        payerAccountNo: null,
-                        payerPSP: this.userO.pspId,
+                        channel: '00',
+                        clientKey: this.userO.clientKey,
+                        payerName: this.userO.nickname,
+                        payerAccountRef: null,
                         consentKey: null,
                         payeeId: null,
-                        payeePSP: null,
-                        amount: null
+                        amount: null,
+                        originatingDate: '',
+                        payeeMobileNo: '',
+                        payeeEmail: ''
                     };
 
                     this.payForm = this.fb.group({
-                        payerId: this.userO.zapId,
-                        payerAccountNo: ['', [Validators.required]],
-                        payerPSP: this.userO.pspId,
+                        payerId: this.userO.zapId.split('@').shift(),
+                        payerAccountRef: ['', [Validators.required]],
+                        payerPSP: this.userO.zapId.split('@').pop(),
                         consentKey: null,
                         payeeId: ['', [Validators.required]],
                         payeePSP: ['', [Validators.required]],
@@ -104,7 +115,7 @@ export class ScanPage implements OnInit {
                         userRef: ['', [Validators.required]],
                     });
 
-                    this.userSvc.getUserAccounts(this.userO.uid)
+                    this.userSvc.getUserAccounts(this.userO.clientKey, this.myPsp)
                         .pipe(
                             // tslint:disable-next-line:no-shadowed-variable
                             tap(x => {
@@ -112,7 +123,7 @@ export class ScanPage implements OnInit {
                                     this.accounts.push(element);
                                     if (element.default) {
                                         this.defaultAccount = element;
-                                        this.payForm.patchValue({ payerAccountNo: element.accountNo });
+                                        this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
                                 });
                             })
@@ -151,7 +162,13 @@ export class ScanPage implements OnInit {
             // hold existing this.pay values
             let _pay = this.pay;
             //Decode barcode data
-            this.pay = this.qrSvc.decodeQR(barcodeData.text);
+            const decodedQr = this.qrSvc.decodeQR(barcodeData.text);
+            this.pay.payeeId = decodedQr.payeeId;
+            this.pay.payeeMobileNo = decodedQr.payeeMobileNo;
+            this.pay.payeeEmail = decodedQr.payeeEmail;
+            this.pay.amount = decodedQr.amount.toString();
+            this.pay.userRef = decodedQr.userRef;
+
             console.log(this.pay);
 
             this.scanComplete = true;
@@ -159,7 +176,7 @@ export class ScanPage implements OnInit {
 
             // Populate form with scanned data
             this.payForm.patchValue({
-                payeePSP: this.pay.payeePSP,
+                payeePSP: this.pay.payeeId.split('@').pop(),
                 payeeId: this.pay.payeeId.split('@').shift(),
                 // payerId: this.pay.payerId,
                 // payerPSP: this.pay.payerPSP,
@@ -177,8 +194,8 @@ export class ScanPage implements OnInit {
 
     formatAmount(val) {
         if (val != null) {
-            if (val.length > 0) {
-                const amt_text: string = val;
+            const amt_text: string = val;
+            if (amt_text.length > 0) {
                 // tslint:disable-next-line:radix
                 const amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
                 this.payForm.patchValue({ amount: amt_int });
@@ -205,83 +222,50 @@ export class ScanPage implements OnInit {
         this.pay.consentKey = secret;
         this.pay.payerName = this.userO.nickname;
 
-        // tslint:disable-next-line:prefer-const
-        let txnMsg: msgPSPPayment = this.pay;
-
         if (this.myPSP === null) {
             console.log('no result for PSP lookup yet');
         }
 
         // TODO: This is not required on a clean form - but during testing am not cleaning the form on multiple submit
-        if (!txnMsg.payeeId.includes('@')) {
-            txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
-        }
-        if (!txnMsg.payerId.includes('@')) {
-            txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
-        }
+        // if (!txnMsg.payeeId.includes('@')) {
+        //     txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
+        // }
+        // if (!txnMsg.payerId.includes('@')) {
+        //     txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
+        // }
 
-        txnMsg.originatingDate = new Date().toISOString();
+        this.pay.originatingDate = new Date().toISOString();
         let georgeDate = '';
-        georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
-        txnMsg.originatingDate = georgeDate;
+        georgeDate = this.pay.originatingDate.replace('T', ' ').replace('Z', '000');
+        this.pay.originatingDate = georgeDate;
 
-        //  FIXME: Double check that payerId format & date format as this will affect the output!!!!!!!!!
-        // Create mpiHash
-        const hashInput = txnMsg.userRef + txnMsg.payeeId + txnMsg.payerId + txnMsg.amount.toString() + txnMsg.originatingDate;
-        console.log(hashInput);
-
-        txnMsg.mpiHash = sha224(hashInput);
-        console.log(txnMsg.mpiHash);
-
-        const txn: iTransaction = {
-            txnOwner: txnMsg.payerId,   // full ZAPID@PSP
-            time: new Date().toISOString(),
-            direction: 'outward',
-            payMessage: txnMsg,
-            payConfirm: {}
-        };
+        // Deprecated
+        // const txn: Transaction = {
+        //     txnOwner: txnMsg.payerId,   // full ZAPID@PSP
+        //     time: new Date().toISOString(),
+        //     direction: 'outward',
+        //     payMessage: txnMsg,
+        //     payConfirm: {}
+        // };
 
         // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
-        console.log(txnMsg);
+        console.log(this.pay);
 
 
-        this.pspApiSvc.psp_paymentInstruction(this.myPSP, txnMsg)
+        this.pspApiSvc.psp_paymentInitiation(this.myPSP, this.pay)
             .subscribe(
                 x => {
-                    // API Call succesfull
-                    x.forEach(element => {
-                        // this.notify.update(element.uniqueRef, 'success');
-                        // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
-                        txn.payConfirm.responseCode = element.responseCode;  // I assume if it worked this is a 200
-                        txn.payConfirm.uniqueRef = element.uniqueRef;
-                        txn.payConfirm.responseDesc = element.responseDesc;
-
-                        // Save the transaction to the users history.
-                        // TODO: use result to set status of Txn: pending, failed, or complete?
-                        return this.txnSvc.savePayment(txn)
-                            .then(r => {
-                                this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
-                                console.log('Transaction saved!');
-                                console.log(r);
-
-                                return txn;
-                            });
-
-                    });
+                    if (x.responseStatus != "RJCT") {
+                        this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
+                    } else {
+                        this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
+                    }
 
 
-                },
-                e => {
-                    // API Call threw error
-                    this.notify.update(e, 'error');
-                    return txn;
-                    // Do I need to save failed requests to the PSP API?
+                });
 
-                }
-            );
 
     }
-
 
     eventCapture(event) {
         this.ShowPin = false;
@@ -290,7 +274,7 @@ export class ScanPage implements OnInit {
         this.Pin = event.pin;
 
         const m: Message = event.pin;
-        const hashSecret = sha256.hmac(this.pay.payerPSP, m);
+        const hashSecret = sha256.hmac(this.pay.clientKey, m);
         this.doPay(hashSecret);
         // .then(r => {
         // return this.router.navigate(['history']);

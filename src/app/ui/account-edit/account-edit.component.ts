@@ -13,9 +13,11 @@ import { UserProfile, AccountDetail } from '../../models/interfaces.0.2';
 })
 export class AccountEditComponent implements OnInit {
 
-    user: Observable<UserProfile>;
-    userO: UserProfile;
+    user: Observable<firebase.User>;
+    userProfile: Observable<UserProfile>;
+    userO: firebase.User;
     newAccount: AccountDetail;
+    myPsp: string = null;
 
     constructor(
         private auth: AuthService,
@@ -24,6 +26,14 @@ export class AccountEditComponent implements OnInit {
         private router: Router,
     ) {
         this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
+
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+        } else {
+            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
@@ -38,11 +48,11 @@ export class AccountEditComponent implements OnInit {
         this.newAccount = {
             accountAlias: accountAlias.trim(),
             accountNo: accountNo.trim(),
-            clientKey: this.userO.clientKey,
+            clientKey: this.userO.uid,
             default: nominated
         };
         // this.userO.accounts.push(this.newAccount);
-        this.userSvc.addClientAccount(this.newAccount)
+        this.userSvc.addClientAccount(this.newAccount, this.myPsp)
             .then(r => {
                 this.notify.update('Account Added.', 'success');
                 return this.router.navigateByUrl('/profile');

@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content padding>
-    <ng-container *ngIf="user | async; else loading">
+    <ng-container *ngIf="userO; else loading">
         <pre class="jsonData">
 
 {{ fcmPayload | json }}

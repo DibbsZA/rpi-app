@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthSvcService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { NotifyService } from '../../services/notify.service';
 
@@ -9,14 +9,16 @@ import { NotifyService } from '../../services/notify.service';
     styleUrls: ['./registration.page.scss'],
 })
 export class RegistrationPage implements OnInit {
+    myPsp: string;
 
     constructor(
-        public auth: AuthSvcService,
+        public auth: AuthService,
         private router: Router,
         public notify: NotifyService
     ) { }
 
     ngOnInit() {
+
 
     }
 
@@ -24,10 +26,20 @@ export class RegistrationPage implements OnInit {
     //     return this.router.navigate(['/home']);
     // }
 
-    register(email, pwd) {
+    register(email, pwd, pspId) {
 
+        let ls = localStorage.getItem('myPSP');
 
-        this.auth.emailSignUp(email, pwd)
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+
+        } else {
+            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            localStorage.setItem('myPSP', pspId);
+            this.myPsp = pspId;
+        }
+
+        this.auth.emailSignUp(email, pwd, this.myPsp)
             .then((res) => {
                 console.log(res);
                 if (res !== undefined) {

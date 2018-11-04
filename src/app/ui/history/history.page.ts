@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
-import { AuthSvcService } from '../../services/auth.service';
-import { iUser, iTransaction } from '../../models/interfaces';
 import { Observable } from 'rxjs';
-import { TxnSvcService } from '../../core/txn-svc.service';
-import { UserServiceService } from '../../services/user.service';
 import { Router } from '@angular/router';
 import { NotifyService } from '../../services/notify.service';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { PspService } from '../../services/psp.service';
+import { DataService } from '../../services/data.service';
+import { UserProfile, Transaction, Processor } from '../../models/interfaces.0.2';
+import { ModalController } from '@ionic/angular';
+import { TxnDetailComponent } from '../txn-detail/txn-detail.component';
 
 @Component({
     selector: 'app-history',
@@ -14,21 +17,26 @@ import { NotifyService } from '../../services/notify.service';
     styleUrls: ['./history.page.scss'],
 })
 export class HistoryPage implements OnInit {
-    user: Observable<iUser>;
-    userO: iUser;
+    user: Observable<firebase.User>;
+    userO: UserProfile;
     zapId: string;
-    users: iUser[];
-    history: iTransaction[];
+    users: UserProfile[];
+    history: Transaction[];
 
     chart = [];
+    processors: Observable<Processor[]>;
+    myPSP: Processor;
+    myPsp: string;
 
 
     constructor(
-        public auth: AuthSvcService,
-        public userSvc: UserServiceService,
-        public txnSvc: TxnSvcService,
+        public auth: AuthService,
+        public userSvc: UserService,
+        public pspSvc: PspService,
+        public dataSvc: DataService,
         private router: Router,
         private notify: NotifyService,
+        public modalController: ModalController
 
     ) {
 
@@ -37,17 +45,35 @@ export class HistoryPage implements OnInit {
 
     ngOnInit() {
 
+        this.processors = this.dataSvc.getProcessors();
+
+        let ls = localStorage.getItem('myPSP');
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+        } else {
+            this.notify.update('No PSP record? Try loggin in again.', 'error');
+            return;
+        }
 
         this.user.subscribe(
-            x => {
+            async x => {
                 if (x !== null) {
-                    this.userO = x;
-                    if (this.userO.pspId == null) {
+                    this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                    if (this.userO.queryLimit == null) {
                         this.notify.update('Please update your profile first!!!.', 'info');
                         this.router.navigate(['/profile']);
                     }
-                    this.zapId = this.userO.zapId + '@' + this.userO.pspId;
-                    this.showData();
+                    this.userO.pspId = this.myPsp;
+
+                    this.dataSvc.getProcessor(this.userO.pspId)
+                        .subscribe(
+                            // tslint:disable-next-line:no-shadowed-variable
+                            x => {
+                                this.myPSP = x;
+                                this.showData();
+                            }
+
+                        );
                 }
 
             },
@@ -71,18 +97,21 @@ export class HistoryPage implements OnInit {
 
     showData() {
         // this.history = this.txnSvc.getUserTxnHistory(this.zapId);
-        this.txnSvc.getUserTxnHistory(this.zapId).subscribe(
+        this.pspSvc.admin_TxnHistory(this.myPSP, this.userO.clientKey).subscribe(
             x => {
-                this.history = x;
+                if (x.responseStatus != '') {
+                    return;
+                }
 
-                const amount = x.map(res => res.payMessage.amount / 100);
+                this.history = x;
+                const amount = x.map(res => res.amount / 100);
 
 
                 // tslint:disable-next-line:prefer-const
                 let txnDates = [];
 
                 x.forEach(r => {
-                    const jsdate = new Date(r.time);
+                    const jsdate = new Date(r.originatingDate);
                     // txnDates.push(jsdate.toLocaleDateString('en', { year: 'numeric', month: 'short', day: 'numeric' }));
                     txnDates.push(jsdate.toLocaleDateString());
                 });
@@ -127,14 +156,24 @@ export class HistoryPage implements OnInit {
 
     isInward(direction): boolean {
 
-        if (direction === 'inward') {
-            return true;
-        } else {
+        if (direction === 'paymentRequest') {
             return false;
+        } else {
+            return true;
         }
     }
 
     viewDetail(txn) {
-        this.router.navigate(['txn-detail/' + txn.id]);
+        this.presentModal(txn);
+    }
+
+    async presentModal(txn) {
+        const modal = await this.modalController.create({
+            component: TxnDetailComponent,
+            componentProps: { txn: JSON.stringify(txn) }
+        });
+
+        await modal.present();
+
     }
 }

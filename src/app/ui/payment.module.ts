@@ -9,11 +9,12 @@ import { PinComponent } from './pin/pin.component';
 import { PayPage } from './pay/pay.page';
 import { RequestPayPage } from './request-pay/request-pay.page';
 import { RequestPayAuthPage } from './request-pay-auth/request-pay-auth.page';
-import { ZapcurrencyPipe } from '../core/zapcurrency.pipe';
 import { PaySuccessComponent } from './pay-success/pay-success.component';
-import { AuthGuard } from '../core/auth.guard';
 import { ScanPage } from './scan/scan.page';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { AuthGuard } from '../guards/auth.guard';
+import { ZapcurrencyPipe } from '../pipes/zapcurrency.pipe';
+import { TxnDetailComponent } from './txn-detail/txn-detail.component';
 
 
 const routes: Routes = [
@@ -40,7 +41,8 @@ const routes: Routes = [
         PinComponent,
         ZapcurrencyPipe,
         PaySuccessComponent,
-        ScanPage
+        ScanPage,
+        TxnDetailComponent
     ],
     providers: [
         BarcodeScanner

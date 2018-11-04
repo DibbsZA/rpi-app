@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 // import { map, catchError } from "rxjs/operators";
 
-import { Transaction, Processor, PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation } from '../models/interfaces.0.2';
+import { Processor, PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse, Transaction } from '../models/interfaces.0.2';
 
 
 
@@ -18,7 +18,7 @@ import { Transaction, Processor, PaymentRequestInitiation, PaymentRequestRespons
 })
 export class PspService {
 
-    msgPayment: Transaction;
+    // msgPayment: Transaction;
 
     constructor(
         public httpClient: HttpClient
@@ -26,7 +26,7 @@ export class PspService {
 
     }
 
-    public psp_paymentInitiation(psp: Processor, msgPayment: Transaction): Observable<any> {
+    public psp_paymentInitiation(psp: Processor, msgPayment: PaymentInitiation) {
 
         const apiEndpoint = psp.apiUrl + '/paymentInitiation';
 
@@ -44,11 +44,11 @@ export class PspService {
             "payeeEmail": msgPayment.payeeEmail
         }
 
-        return this.httpClient.post(apiEndpoint, body);
+        return this.httpClient.post<ApiResponse>(apiEndpoint, body);
 
     }
 
-    public psp_paymentInstructionResponse(psp: Processor, msgPayment: Transaction): Observable<any> {
+    public psp_paymentInstructionResponse(psp: Processor, msgPayment: PaymentInstructionResponse) {
 
         const apiEndpoint = psp.apiUrl + '/paymentAuth';
         const body: PaymentInstructionResponse = {
@@ -59,10 +59,10 @@ export class PspService {
             "responseStatus": msgPayment.responseStatus
         }
 
-        return this.httpClient.post(apiEndpoint, body)
+        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
     }
 
-    public psp_paymentRequest(psp: Processor, msgPayment: Transaction): Observable<any> {
+    public psp_paymentRequest(psp: Processor, msgPayment: PaymentRequestInitiation) {
 
         const apiEndpoint = psp.apiUrl + '/paymentRequest';
 
@@ -79,10 +79,10 @@ export class PspService {
             "userRef": msgPayment.userRef,
         }
 
-        return this.httpClient.post(apiEndpoint, body)
+        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
     }
 
-    public psp_paymentRequestResponse(psp: Processor, msgPayment: Transaction): Observable<any> {
+    public psp_paymentRequestResponse(psp: Processor, msgPayment: PaymentRequestResponse) {
 
         const apiEndpoint = psp.apiUrl + '/paymentRequestResponse';
         const body: PaymentRequestResponse = {
@@ -94,6 +94,13 @@ export class PspService {
             "responseStatus": msgPayment.responseStatus
         }
 
-        return this.httpClient.post(apiEndpoint, body)
+        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+    }
+
+
+    public admin_TxnHistory(psp: Processor, clientKey: string) {
+        const apiEndpoint = psp.apiUrl + '/txnHistory';
+
+        return this.httpClient.get<Transaction[] & ApiResponse>(apiEndpoint, { params: { clientKey: clientKey } });
     }
 }

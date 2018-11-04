@@ -25,7 +25,7 @@
     <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
     </ion-refresher-content>
 </ion-refresher> -->
-    <form [formGroup]="payForm" *ngIf="user | async; else loading" [hidden]="success" (ngSubmit)="this.showPin()">
+    <form [formGroup]="payForm" *ngIf="userO; else loading" [hidden]="success" (ngSubmit)="this.showPin()">
         <ng-container *ngIf="!ShowPin">
             <ion-card>
                 <ion-card-header>
@@ -49,18 +49,18 @@
                             </ion-label>
                             <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
                         </ion-item>
-                        <ion-input hidden type="text" formControlName="payerAccountNo"></ion-input>
+                        <ion-input hidden type="text" formControlName="payerAccountRef"></ion-input>
                         <ion-item *ngIf="!useDefaultAccount">
                             <ion-label>
                                 From Account?
                             </ion-label>
-                            <ion-select required="true" formControlName="payerAccountNo" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountNo">
+                            <ion-select required="true" formControlName="payerAccountRef" placeholder="Select Acct">
+                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountRef">
                                     {{acc.accountAlias}}
                                 </ion-select-option>
                             </ion-select>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerAccountNo.valid"
-                                (click)="whatError('payerAccountNo')">!</ion-badge>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerAccountRef.valid"
+                                (click)="whatError('payerAccountRef')">!</ion-badge>
                         </ion-item>
                         <ion-item>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>

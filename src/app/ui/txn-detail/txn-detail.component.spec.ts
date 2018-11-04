@@ -1,22 +1,20 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShowQrPage } from './show-qr.page';
+import { TxnDetailComponent } from './txn-detail.component';
 
-describe('ShowQrPage', () => {
-  let component: ShowQrPage;
-  let fixture: ComponentFixture<ShowQrPage>;
+describe('TxnDetailComponent', () => {
+  let component: TxnDetailComponent;
+  let fixture: ComponentFixture<TxnDetailComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShowQrPage ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      declarations: [ TxnDetailComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ShowQrPage);
+    fixture = TestBed.createComponent(TxnDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

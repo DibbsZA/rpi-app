@@ -3,9 +3,9 @@ import { Firebase } from '@ionic-native/firebase/ngx';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-// import { AuthSvcService } from './auth-svc.service';
 import { NotifyService } from './notify.service';
 import { tap } from 'rxjs/operators';
+import { UserProfile } from '../models/interfaces.0.2';
 
 
 @Injectable({
@@ -18,7 +18,6 @@ export class FcmService {
     constructor(
         public firebaseNative: Firebase,
         public afs: AngularFirestore,
-        // private auth: AuthSvcService,
         private platform: Platform,
         private notify: NotifyService
     ) {
@@ -51,7 +50,7 @@ export class FcmService {
         return this.currentToken;
     }
 
-    private async saveTokenToFirestore(token, user) {
+    private async saveTokenToFirestore(token, user: firebase.User) {
         // throw new Error('Method not implemented.');
         if (!token) {
             this.notify.update('no token on save', 'error');

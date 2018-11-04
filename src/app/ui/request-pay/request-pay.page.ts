@@ -1,21 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iProcessor, iTransaction, iAccount } from '../../models/interfaces';
-import { AuthSvcService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { DataServiceService } from '../../services/data.service';
-import { msgPSPPayment, qrCodeSpec } from '../../models/messages';
-import { sha224 } from 'js-sha256';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from '../../services/notify.service';
-import { TxnSvcService } from '../../core/txn-svc.service';
 import { formatNumber } from '@angular/common';
 import { tap } from 'rxjs/operators';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { QrcodeService } from '../../core/qrcode.service';
+import { QrcodeService } from '../../services/qrcode.service';
 import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
+import { Transaction, Processor, UserProfile, AccountDetail, PaymentRequestInitiation, ChannelCode } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
     selector: 'app-request-pay',
@@ -23,38 +20,46 @@ import { PspService } from '../../services/psp.service';
     styleUrls: ['./request-pay.page.scss'],
 })
 export class RequestPayPage implements OnInit {
-    processors: Observable<iProcessor[]>;
-    accounts: iAccount[] = [];
-    myPSP: iProcessor;
-    user: Observable<iUser>;
-    userO: iUser;
-    pay: msgPSPPayment;
+    processors: Observable<Processor[]>;
+    accounts: AccountDetail[] = [];
+    myPSP: Processor;
+    user: Observable<firebase.User>;
+    userO: UserProfile;
+    pay: PaymentRequestInitiation;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
 
 
     useDefaultAccount = true;
-    defaultAccount: iAccount;
+    defaultAccount: AccountDetail;
 
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
     encodedData = {};
+    myPsp: string;
 
     constructor(
-        private auth: AuthSvcService,
-        private dataSvc: DataServiceService,
+        private auth: AuthService,
+        private dataSvc: DataService,
         private userSvc: UserService,
         private fb: FormBuilder,
         public notify: NotifyService,
-        private txnSvc: TxnSvcService,
         private pspApiSvc: PspService,
         private router: Router,
         private barcodeScanner: BarcodeScanner,
         private qrSvc: QrcodeService
     ) {
         this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
+
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+        } else {
+            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
@@ -64,15 +69,17 @@ export class RequestPayPage implements OnInit {
 
 
         this.user.subscribe(
-            x => {
+            async x => {
                 if (x === null) {
                     return;
                 }
-                this.userO = x;
-                if (this.userO.pspId == null) {
+                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                if (this.userO.queryLimit == null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
+
                 } else {
+                    this.userO.pspId = this.myPsp;
                     this.payeePspLable = '@' + this.userO.pspId;
 
                     this.dataSvc.getProcessor(this.userO.pspId)
@@ -82,20 +89,20 @@ export class RequestPayPage implements OnInit {
                         );
 
                     this.pay = {
-                        uniqueRef: '',
+                        channel: ChannelCode.App,
+                        originatingDate: '',
+                        clientKey: this.userO.clientKey,
                         userRef: null,
-                        payeeId: this.userO.zapId,
-                        payeeAccountNo: null,
+                        payeeAccountRef: null,
                         payeeName: this.userO.nickname,
-                        payeePSP: this.userO.pspId,
-                        consentKey: null,
                         payerId: null,
-                        payerPSP: null,
+                        payerMobileNo: '',
+                        payerEmail: '',
                         amount: null
                     };
 
                     this.payForm = this.fb.group({
-                        payeeId: this.userO.zapId,
+                        payeeId: this.userO.zapId.split('@').shift(),
                         payeeAccountNo: ['', [Validators.required]],
                         payeePSP: this.userO.pspId,
                         consentKey: null,
@@ -106,7 +113,7 @@ export class RequestPayPage implements OnInit {
                         userRef: ['', [Validators.required]]
                     });
 
-                    this.userSvc.getUserAccounts(this.userO.uid)
+                    this.userSvc.getUserAccounts(this.userO.clientKey, this.myPsp)
                         .pipe(
                             // tslint:disable-next-line:no-shadowed-variable
                             tap(x => {
@@ -114,7 +121,7 @@ export class RequestPayPage implements OnInit {
                                     this.accounts.push(element);
                                     if (element.default) {
                                         this.defaultAccount = element;
-                                        this.payForm.patchValue({ payeeAccountNo: element.accountNo });
+                                        this.payForm.patchValue({ payeeAccountRef: element.accountRef });
                                     }
                                 });
                             })
@@ -142,13 +149,12 @@ export class RequestPayPage implements OnInit {
 
     formatAmount(val) {
         if (val != null) {
-            if (val.length > 0) {
-                // tslint:disable-next-line:prefer-const
-                let amt_text: string = val;
+            const amt_text: string = val;
+            if (amt_text.length > 0) {
                 // tslint:disable-next-line:radix
                 const amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
                 this.payForm.patchValue({ amount: amt_int });
-                const amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
+                const amt_dec = formatNumber(amt_int / 100, 'en-GB', '1.2');
                 this.payForm.patchValue({ amountdisplay: amt_dec });
             }
         }
@@ -159,59 +165,53 @@ export class RequestPayPage implements OnInit {
         this.useDefaultAccount = false;
     }
 
-    public whatError(name: string) {
+    public whatError(formCtrlName: string) {
         // name = 'payForm.' + name;
-        const ctrl = this.payForm.get(name);
-        const msg: string = 'Error in ' + name.toLocaleUpperCase() + ': </br>' + JSON.stringify(ctrl.errors) + ' ';
+        const ctrl = this.payForm.get(formCtrlName);
+        const msg: string = 'Error in ' + formCtrlName.toLocaleUpperCase() + ': </br>' + JSON.stringify(ctrl.errors) + ' ';
         this.notify.update(msg, 'error');
     }
 
     buildPayRequest() {
         this.pay = this.payForm.value;
 
-        this.pay.payeeId = this.pay.payeeId.trim();
+        // this.pay.payeeId = this.pay.payeeId.trim();
         this.pay.payerId = this.pay.payerId.trim();
         this.pay.userRef = this.pay.userRef.trim();
 
         this.pay.payeeName = this.userO.nickname;
 
         // tslint:disable-next-line:prefer-const
-        let txnMsg: msgPSPPayment = this.pay;
+        let txnMsg: PaymentRequestInitiation = this.pay;
 
         if (this.myPSP === null) {
             console.log('no result for PSP lookup yet');
         }
 
         // TODO: This is not required on a clean form - but during testing am not cleaning the form on multiple submit
-        if (!txnMsg.payeeId.includes('@')) {
-            txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
-        }
-        if (!txnMsg.payerId.includes('@')) {
-            txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
-        }
+        // if (!txnMsg.payeeId.includes('@')) {
+        //     txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
+        // }
+        // if (!txnMsg.payerId.includes('@')) {
+        //     txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
+        // }
 
         txnMsg.originatingDate = new Date().toISOString();
         let georgeDate = '';
         georgeDate = txnMsg.originatingDate.replace('T', ' ').replace('Z', '000');
         txnMsg.originatingDate = georgeDate;
 
-        //  FIXME: Double check that payerId format & date format as this will affect the output!!!!!!!!!
-        // Create mpiHash
-        const hashInput = txnMsg.userRef + txnMsg.payeeId + txnMsg.payerId + txnMsg.amount.toString() + txnMsg.originatingDate;
-        console.log(hashInput);
 
-        txnMsg.mpiHash = sha224(hashInput);
-        console.log(txnMsg.mpiHash);
+        // deprecated
+        // const txn: TransactionHistory = {
+        //     txnOwner: txnMsg.payeeId,   // full ZAPID@PSP
+        //     time: new Date().toISOString(),
+        //     direction: 'inward',
+        //     payMessage: txnMsg,
+        //     payConfirm: {}
+        // };
 
-        const txn: iTransaction = {
-            txnOwner: txnMsg.payeeId,   // full ZAPID@PSP
-            time: new Date().toISOString(),
-            direction: 'inward',
-            payMessage: txnMsg,
-            payConfirm: {}
-        };
-
-        return txn;
+        return txnMsg;
     }
 
     public doPayRequest() {
@@ -221,38 +221,17 @@ export class RequestPayPage implements OnInit {
         // console.log(this.myPSP);
 
 
-        this.pspApiSvc.psp_paymentRequest(this.myPSP, txn.payMessage)
+        this.pspApiSvc.psp_paymentRequest(this.myPSP, txn)
             .subscribe(
                 x => {
-                    // API Call succesfull
-                    x.forEach(element => {
-                        this.notify.update(element.uniqueRef, 'success');
-                        // TODO: Do I set these on the http response or leave it to be updated at the END of the payment cycle?
-                        txn.payConfirm.responseCode = element.responseCode;  // I assume if it worked this is a 200
-                        txn.payConfirm.uniqueRef = element.uniqueRef;
-                        txn.payConfirm.responseDesc = element.responseDesc;
+                    if (x.responseStatus != "RJCT") {
+                        this.notify.update('Payment Requested from ' + this.pay.payerId + '. Id: ' + x.endToEndId, 'info');
+                    } else {
+                        this.notify.update('Payment Request from ' + this.pay.payerId + ' failed. Id: ' + x.endToEndId, 'error');
+                    }
 
-                        // Save the transaction to the users history.
-                        // TODO: use result to set status of Txn: pending, failed, or complete?
-                        return this.txnSvc.savePayment(txn)
-                            .then(r => {
-                                this.notify.update('Payment to ' + this.pay.payeeId + ' submitted.', 'info');
-                                console.log('Transaction saved!');
-                                console.log(r);
 
-                                return txn;
-                            });
-
-                    });
-                },
-                e => {
-                    // API Call threw error
-                    this.notify.update(e, 'error');
-                    return txn;
-                    // TODO: Do I need to save failed requests to the PSP API?
-
-                }
-            );
+                });
 
     }
 
@@ -260,7 +239,7 @@ export class RequestPayPage implements OnInit {
         const txn = this.buildPayRequest();
 
         // serialise payment data
-        const encoded = this.qrSvc.encodeQR(txn.payMessage);
+        const encoded = this.qrSvc.encodeQR(txn);
 
         this.barcodeScanner.encode(this.barcodeScanner.Encode.TEXT_TYPE, encoded)
             .then(r => {

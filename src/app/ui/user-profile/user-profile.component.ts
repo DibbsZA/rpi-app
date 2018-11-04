@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { iUser } from '../../models/interfaces';
 import { Router } from '@angular/router';
-import { AuthSvcService } from '../../services/auth.service';
 import { MenuController } from '@ionic/angular';
 import { FcmService } from '../../services/fcm.service';
+import { AuthService } from '../../services/auth.service';
+import { UserProfile } from '../../models/interfaces.0.2';
+import { UserService } from '../../services/user.service';
+import { Observable } from 'rxjs';
+import { NotifyService } from '../../services/notify.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -12,22 +16,50 @@ import { FcmService } from '../../services/fcm.service';
 })
 export class UserProfileComponent implements OnInit {
 
-    userO: iUser;
+    user: Observable<firebase.User>;
+    userO: UserProfile;
     token: string;
+    myPsp: string;
 
     constructor(
-        public auth: AuthSvcService,
+        public auth: AuthService,
+        public userSvc: UserService,
         private router: Router,
         public menu: MenuController,
         private fcmSvc: FcmService,
+        private notify: NotifyService,
     ) {
-        this.auth.user.subscribe(x => { this.userO = x; });
+        this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
+
+        if (ls != undefined && ls != null) {
+            this.myPsp = ls;
+        } else {
+            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
-        this.fcmSvc.firebaseNative.getToken()
-            .then(t => {
-                this.token = t;
+
+        this.user.subscribe(
+            async x => {
+                if (x === null) {
+                    return;
+                }
+                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                if (this.userO.queryLimit == null) {
+                    this.notify.update('Please update your profile first!!!.', 'info');
+                    this.router.navigate(['/profile']);
+
+                } else {
+                    this.userO.pspId = this.myPsp;
+
+                    this.fcmSvc.firebaseNative.getToken()
+                        .then(t => {
+                            this.token = t;
+                        });
+                }
             });
     }
 

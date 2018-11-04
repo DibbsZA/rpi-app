@@ -18,8 +18,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { ProfilePageModule } from './ui/profile/profile.module';
-import { PspSvcService } from './services/psp.service';
-import { AuthSvcService } from './services/auth.service';
+import { PspService } from './services/psp.service';
+import { AuthService } from './services/auth.service';
 import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -29,7 +29,7 @@ import { PaymentModule } from './ui/payment.module';
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
 import { FcmService } from './services/fcm.service';
-import { QrcodeService } from './core/qrcode.service';
+import { QrcodeService } from './services/qrcode.service';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -64,8 +64,8 @@ registerLocaleData(localeZa, 'en-ZA');
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         Firebase,
-        PspSvcService,
-        AuthSvcService,
+        PspService,
+        AuthService,
         FcmService,
         QrcodeService,
     ],

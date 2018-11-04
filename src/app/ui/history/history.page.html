@@ -28,13 +28,13 @@
 
         <div class="txnItem" *ngFor='let txn of history' (click)="viewDetail(txn)">
             <ion-item>
-                <ion-icon slot="start" color="success" name="md-cloud-download" *ngIf="isInward(txn.direction)"></ion-icon>
-                <ion-icon slot="end" color="success" name="md-cloud-upload" *ngIf="!isInward(txn.direction)"></ion-icon>
-                <ion-label class="txnHeader">Paid => <b>{{ txn.payMessage.payeeId }}</b></ion-label>
+                <ion-icon slot="start" color="success" name="md-cloud-download" *ngIf="isInward(txn.paymentType)"></ion-icon>
+                <ion-icon slot="end" color="success" name="md-cloud-upload" *ngIf="!isInward(txn.paymentType)"></ion-icon>
+                <ion-label class="txnHeader">Paid => <b>{{ txn.payeeId }}</b></ion-label>
             </ion-item>
             <ion-item detail>
-                <span class="txnRef"><b>Ref:</b> {{txn.payMessage.userRef}} </span>
-                <span slot="end" class="txnAmount">{{txn.payMessage.amount/100 | currency:'R
+                <span class="txnRef"><b>Ref:</b> {{txn.userRef}} </span>
+                <span slot="end" class="txnAmount">{{txn.amount/100 | currency:'R
                     ':'symbol':'1.2-2'}}</span>
             </ion-item>
         </div>

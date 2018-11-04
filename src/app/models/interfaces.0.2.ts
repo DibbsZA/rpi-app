@@ -49,7 +49,7 @@ export interface PaymentRequestResponse {
     responseStatus: string;
 }
 
-export interface Response {
+export interface ApiResponse {
     responseCode: string;
     responseDesc: string;
     responseStatus: string;
@@ -67,14 +67,15 @@ export interface Transaction {
     payerMobileNo?: string | null;
     payerEmail?: string | null;
     payerName?: string | null;
-    payerAccountRef: number | null;
+    payerAccountRef?: number | null;
     consentKey?: string | null;
     payeeId?: string | null;
     payeeMobileNo?: string | null;
     payeeEmail?: string | null;
     payeeName?: string | null;
-    payeeAccountRef: number | null;
+    payeeAccountRef?: number | null;
     userRef?: string | null;
+    paymentType?: string | null;
     responseStatus?: string | null;
     responseCode?: string | null;
     responseDesc?: string | null;
@@ -83,17 +84,11 @@ export interface Transaction {
 export interface QrcodeSpec {
 
     endToEndId: string;
-    channel: string;
-    originatingDate: string;
+    originatingDate?: string;
     payerId?: string | null;
-    payerPSP?: string | null;
     payerName?: string | null;
-    payerAccountNo?: string | null;
-    consentKey?: string | null;
     payeeId: string | null;
-    payeePSP: string | null;
     payeeName?: string | null;
-    payeeAccountNo?: string | null;
     userRef?: string | null;
     amount?: number | null;
 }
@@ -108,20 +103,21 @@ export interface FirebaseUser {
 export interface UserProfile {
     clientKey: string;
     email: string;
-    name?: string | null;
-    surname?: string | null;
-    zapId?: string | null;
-    nickname?: string | null;
-    mobileNo?: string | null;
-    telegramId?: string | null;
-    photoUrl?: string | null;
-    queryLimit?: string | null;
-    preAuth?: string | null;
+    name?: string | '';
+    surname?: string | '';
+    zapId?: string | '';
+    pspId?: string | '';
+    nickname?: string | '';
+    mobileNo?: string | '';
+    telegramId?: string | '';
+    photoUrl?: string | '';
+    queryLimit?: number | '';
+    preAuth?: boolean | '';
 }
 
 export interface AccountDetail {
     clientKey: string;
-    accountRef: string;
+    accountRef?: string;
     accountNo: string;
     accountAlias: string;
     default: boolean;
@@ -139,4 +135,12 @@ export enum ChannelCode {
     MobileNo = '02',
     Telegram = '10',
     WhatsApp = '11'
+}
+
+export enum ResponseStatus {
+    ACPT = 'ACCP',
+    ACPW = 'ACPW',
+    RJCT = 'RJCT',
+    DECL = 'DECL',
+    AUTH = 'AUTH',
 }

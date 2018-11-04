@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthSvcService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { iUser } from '../../models/interfaces';
 import { NotifyService } from '../../services/notify.service';
+import { UserProfile } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 
 
 
@@ -14,35 +15,59 @@ import { NotifyService } from '../../services/notify.service';
 })
 export class HomePage implements OnInit {
 
-    user: Observable<iUser | null>;
+    user: Observable<firebase.User | null>;
+    myPsp: string = null;
+    userO: UserProfile;
 
     // client = {} as iUser;
 
     constructor(
-        public auth: AuthSvcService,
+        public auth: AuthService,
         private router: Router,
-        public notify: NotifyService
+        public notify: NotifyService,
+        public userSvc: UserService,
     ) {
         this.user = this.auth.user;
     }
 
     ngOnInit(): void {
-        if (this.user !== null) {
-            this.user.subscribe(
-                x => {
-                    console.log(x);
-                    if (x != null) {
-                        return this.afterSignIn();
-                    }
-                },
-                e => {
-                    console.error(e);
-                });
+
+        if (localStorage.getItem('myPSP') != undefined) {
+            this.myPsp = localStorage.getItem('myPSP');
+
+            if (this.user !== null) {
+                this.user.subscribe(
+                    async x => {
+                        console.log(x);
+                        if (x != null) {
+
+
+                            this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+
+                            if (this.userO.queryLimit != undefined) {
+                                return this.afterSignIn();
+                            } else {
+                                this.notify.update('Please update your profile first!!!.', 'info');
+                                this.router.navigate(['/profile']);
+                            }
+
+                        }
+                    },
+                    e => {
+                        console.error(e);
+                    });
+            }
+
         }
+
+
 
     }
 
-    async login(email, pwd) {
+    async login(email, pwd, pspId) {
+        pspId = 'STDB';
+        localStorage.setItem('myPSP', pspId);
+
 
         return this.auth.emailLogin(email, pwd)
             .then(result => {

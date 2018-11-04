@@ -4,7 +4,7 @@ import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { FcmService } from './services/fcm.service';
 import { NotifyService } from './services/notify.service';
-import { AuthSvcService } from './services/auth.service';
+import { AuthService } from './services/auth.service';
 import { tap } from 'rxjs/operators';
 import { msgPSPPayment } from './models/messages';
 import { Subject } from 'rxjs';
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
         private menu: MenuController,
         public fcm: FcmService,
         public notify: NotifyService,
-        public auth: AuthSvcService,
+        public auth: AuthService,
         public router: Router,
     ) {
 

@@ -11,13 +11,16 @@ import { switchMap, first } from 'rxjs/operators';
 import { Platform } from '@ionic/angular';
 import { FcmService } from './fcm.service';
 import { UserService } from './user.service';
-import { FirebaseUser, UserProfile } from '../models/interfaces.0.2';
+import { UserProfile, FirebaseUser } from '../models/interfaces.0.2';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    user: Observable<UserProfile | null>;
+
+    user: Observable<firebase.User | null>;
+    userProfile: UserProfile;
+    myPsp: string = null;
 
     constructor(
         private afAuth: AngularFireAuth,
@@ -29,14 +32,52 @@ export class AuthService {
     ) {
         this.user = this.afAuth.authState.pipe(
             switchMap(user => {
+                console.log('AuthSvc: Init -> user = ' + JSON.stringify(user));
                 if (user) {
-                    // FIXME: Do http call to get userProfile from PSP
-                    // FIXME: Get API Url from local storage or APP config?
 
-                    return userSvc.getUserData(user.uid);
+                    return of(user);
+
+                    // let ls = localStorage.getItem('myPSP');
+
+                    // if (ls != undefined && ls != null) {
+                    //     this.myPsp = ls;
+
+                    //     this.userProfile = {
+                    //         clientKey: user.uid,
+                    //         email: user.email,
+                    //         name: '',
+                    //         surname: '',
+                    //         nickname: '',
+                    //         mobileNo: '',
+                    //         telegramId: '',
+                    //         zapId: '',
+                    //         pspId: ls
+                    //     }
+
+                    //     userSvc.getUserData(user.uid, this.myPsp)
+                    //         .subscribe(
+                    //             x => {
+                    //                 console.log('Auth: getUserData -> x = ' + JSON.stringify(x));
+
+                    //                 this.userProfile = x;
+                    //                 this.userProfile.pspId = ls;
+                    //                 return of(this.userProfile);
+                    //             },
+                    //             e => {
+
+                    //                 console.log('Auth: getUserData -> e = ' + JSON.stringify(e));
+                    //                 return of(this.userProfile);
+                    //             }
+                    //         );
+                    // } else {
+                    //     console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+                    //     return of(null);
+                    // }
+
 
                     // return this.afs.doc<FirebaseUser>(`users/${user.uid}`).valueChanges();
                 } else {
+                    console.log("AuthSvc: User Not Logged in!!!!!");
                     return of(null);
                 }
             })
@@ -48,20 +89,52 @@ export class AuthService {
     }
 
     //// Email/Password Auth ////
-    async emailSignUp(email: string, password: string) {
-        return this.afAuth.auth
-            .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
-            .then(credential => {
-                this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
+    async emailSignUp(email: string, password: string, pspId: string) {
+
+        if (this.userProfile != null) {
+
+            if (this.userProfile.queryLimit === undefined) {
                 const newUser: UserProfile = {
-                    clientKey: credential.user.uid,
-                    email: credential.user.email
+                    clientKey: this.userProfile.clientKey,
+                    email: this.userProfile.email,
+                    name: '',
+                    surname: '',
+                    nickname: '',
+                    mobileNo: '',
+                    telegramId: '',
+                    zapId: '',
+                    pspId: pspId
                 };
 
                 console.log('New User: ' + JSON.stringify(newUser));
-                return this.userSvc.updateUserData(newUser);
-            })
-            .catch(error => this.handleError(error));
+                return this.userSvc.registerUser(newUser, pspId);
+            }
+
+
+        } else {
+
+            return this.afAuth.auth
+                .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
+                .then(credential => {
+                    this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
+                    // localStorage.setItem('myPSP', pspId);
+                    const newUser: UserProfile = {
+                        clientKey: credential.user.uid,
+                        email: credential.user.email,
+                        name: '',
+                        surname: '',
+                        nickname: '',
+                        mobileNo: '',
+                        telegramId: '',
+                        zapId: '',
+                        pspId: pspId
+                    };
+
+                    console.log('New User: ' + JSON.stringify(newUser));
+                    return this.userSvc.registerUser(newUser, pspId);
+                })
+                .catch(error => this.handleError(error));
+        }
     }
 
     async emailLogin(email: string, password: string) {

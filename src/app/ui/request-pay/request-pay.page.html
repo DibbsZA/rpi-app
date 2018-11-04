@@ -12,15 +12,16 @@
 <ion-content padding>
     <ng-template #loading>
         Loading Form...
-        <ion-img src="/assets/img/down-arrow-gif-8.gif" style="width: 100%"></ion-img>
+        <!-- <ion-img src="/assets/img/down-arrow-gif-8.gif" style="width: 100%"></ion-img> -->
     </ng-template>
-    <form [formGroup]="payForm" *ngIf="user | async" [hidden]="success" (ngSubmit)="this.doPayRequest()">
+    <form [formGroup]="payForm" *ngIf="userO" [hidden]="success" (ngSubmit)="this.doPayRequest()">
         <ng-container>
             <ion-card>
                 <ion-card-header>
                     <ion-card-subtitle>Request payment from</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
+                    <!-- TODO: Use Tab switcher to display either ZapID or MobileNo or Email Form -->
                     <ion-list lines="none">
                         <ion-item>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerPSP.valid" (click)="whatError('payerPSP')">!</ion-badge>
@@ -63,18 +64,18 @@
                             </ion-label>
                             <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
                         </ion-item>
-                        <ion-input hidden type="text" formControlName="payeeAccountNo"></ion-input>
+                        <ion-input hidden type="text" formControlName="payeeAccountRef"></ion-input>
                         <ion-item *ngIf="!useDefaultAccount">
                             <ion-label>
                                 Into Account?
                             </ion-label>
-                            <ion-select required="true" formControlName="payeeAccountNo" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountNo">
+                            <ion-select required="true" formControlName="payeeAccountRef" placeholder="Select Acct">
+                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountRef">
                                     {{acc.accountAlias}}
                                 </ion-select-option>
                             </ion-select>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeAccountNo.valid"
-                                (click)="whatError('payeeAccountNo')">!</ion-badge>
+                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeAccountRef.valid"
+                                (click)="whatError('payeeAccountRef')">!</ion-badge>
                         </ion-item>
                         <ion-item>
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
