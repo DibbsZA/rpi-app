@@ -1,6 +1,6 @@
 {
     "$schema": "./node_modules/@angular-devkit/core/src/workspace/workspace-schema.json",
-    "version": 1.203,
+    "version": 1.300,
     "defaultProject": "app",
     "projects": {
         "app": {

@@ -1,3 +1,3 @@
-# ZAP Mobile v 1.2.3
+# ZAP Mobile v 1.3.0
 
 With QR Codes!!!!
