@@ -90,7 +90,6 @@ export class AuthService {
 
     //// Email/Password Auth ////
     async emailSignUp(email: string, password: string, pspId: string) {
-
         if (this.userProfile != null) {
 
             if (this.userProfile.queryLimit === undefined) {
@@ -112,7 +111,6 @@ export class AuthService {
 
 
         } else {
-
             return this.afAuth.auth
                 .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
                 .then(credential => {
@@ -137,10 +135,11 @@ export class AuthService {
         }
     }
 
-    async emailLogin(email: string, password: string) {
+    async emailLogin(email: string, password: string, pspId) {
         return this.afAuth.auth
             .signInWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
+                // localStorage.setItem('myPSP', pspId);
                 this.notify.update('Welcome back to Z@P!', 'success');
 
                 return credential;
@@ -162,6 +161,7 @@ export class AuthService {
     }
 
     signOut(token) {
+        localStorage.removeItem('myPSP');
         this.notify.update('Deleting token: ' + token, 'info');
         this.fcm.unregister();
         this.afs.doc(`devices/${token}`).delete();
