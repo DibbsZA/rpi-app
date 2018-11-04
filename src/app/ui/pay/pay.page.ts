@@ -9,9 +9,10 @@ import { formatNumber } from '@angular/common';
 import { tap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
-import { PaymentInitiation, Processor, UserProfile, AccountDetail } from '../../models/interfaces.0.2';
+import { PaymentInitiation, Processor, UserProfile, AccountDetail, ChannelCode } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
+import { options } from '../../config';
 
 @Component({
     selector: 'app-pay',
@@ -30,6 +31,7 @@ export class PayPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
+    apiUrl: string = options.pspApiUrl;
 
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
@@ -37,6 +39,10 @@ export class PayPage implements OnInit {
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
+    recipientZAP: boolean = false;
+    recipientMobile: boolean = true;
+    recipientEmail: boolean = true;
+    recipient: string = 'zap';
 
     constructor(
         private auth: AuthService,
@@ -54,7 +60,7 @@ export class PayPage implements OnInit {
         if (ls != undefined && ls != null) {
             this.myPsp = ls;
         } else {
-            console.log("ProfilePage: Can't read the PSP name from localstorage!!!!!");
+            console.log("PayPage: Can't read the PSP name from localstorage!!!!!");
             return;
         }
     }
@@ -87,7 +93,7 @@ export class PayPage implements OnInit {
 
                     this.pay = {
                         userRef: null,
-                        channel: '00',
+                        channel: ChannelCode.App,
                         clientKey: this.userO.clientKey,
                         payerName: this.userO.nickname,
                         payerAccountRef: null,
@@ -101,11 +107,13 @@ export class PayPage implements OnInit {
 
                     this.payForm = this.fb.group({
                         payerId: this.userO.zapId,
-                        payerAccountNo: ['', [Validators.required]],
+                        payerAccountRef: ['', [Validators.required]],
                         payerPSP: this.userO.pspId,
                         consentKey: null,
-                        payeeId: ['', [Validators.required]],
-                        payeePSP: ['', [Validators.required]],
+                        payeeId: [''],
+                        payeeMobileNo: [''],
+                        payeeEmail: [''],
+                        payeePSP: [''],
                         amountdisplay: [null],
                         amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
@@ -117,7 +125,7 @@ export class PayPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.default) {
+                                    if (element.accountRef == this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
@@ -165,44 +173,83 @@ export class PayPage implements OnInit {
         this.notify.update(msg, 'error');
     }
 
+    segmentChanged(ev: any) {
+        console.log('Segment changed', ev);
+
+        this.recipient = ev.detail.value;
+        switch (ev.detail.value) {
+            case 'zap':
+
+                this.recipientZAP = false;
+                this.recipientMobile = true;
+                this.recipientEmail = true;
+                break;
+
+            case 'mobile':
+
+                this.recipientMobile = false;
+                this.recipientZAP = true;
+                this.recipientEmail = true;
+                break;
+
+            case 'email':
+
+                this.recipientEmail = false;
+                this.recipientZAP = true;
+                this.recipientMobile = true;
+                break;
+
+            default:
+                this.recipientZAP = false;
+                this.recipientMobile = true;
+                this.recipientEmail = true;
+                break;
+        }
+    }
+
     overideAccount() {
         this.useDefaultAccount = false;
     }
 
     async doPay(secret) {
         this.pay = this.payForm.value;
-        this.pay.payeeId = this.pay.payeeId.trim();
+        this.pay.clientKey = this.userO.clientKey;
+
+        if (this.pay.payeeId != '') {
+            this.pay.payeeId = this.pay.payeeId.trim().toUpperCase() + '@' + this.payForm.get('payeePSP').value;
+        }
+
         this.pay.payeeMobileNo = this.pay.payeeMobileNo.trim();
         this.pay.payeeEmail = this.pay.payeeEmail.trim();
         this.pay.userRef = this.pay.userRef.trim();
         this.pay.consentKey = secret;
         this.pay.payerName = this.userO.nickname;
 
-        if (this.myPSP === null) {
-            console.log('no result for PSP lookup yet');
-        }
-
-
         this.pay.originatingDate = new Date().toISOString();
         let georgeDate = '';
         georgeDate = this.pay.originatingDate.replace('T', ' ').replace('Z', '000');
         this.pay.originatingDate = georgeDate;
 
-
         console.log(this.pay);
 
+        if (this.pay.payeeId != '' || this.pay.payeeMobileNo != '' || this.pay.payeeEmail != '') {
+            this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
+                .subscribe(
+                    x => {
+                        if (x.responseStatus != "RJCT") {
+                            this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
+                        } else {
+                            this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
+                        }
 
-        this.pspApiSvc.psp_paymentInitiation(this.myPSP, this.pay)
-            .subscribe(
-                x => {
-                    if (x.responseStatus != "RJCT") {
-                        this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
-                    } else {
-                        this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
-                    }
+
+                    });
+        } else {
+            this.notify.update('A valid recipient data field must be supplied. \n Z@P Id, Mobile No or Email address', 'error');
+        }
 
 
-                });
+
 
     }
 
