@@ -113,6 +113,7 @@ export interface UserProfile {
     photoUrl?: string | '';
     queryLimit?: number | '';
     preAuth?: boolean | '';
+    accountRef?: string | '1';
 }
 
 export interface AccountDetail {
