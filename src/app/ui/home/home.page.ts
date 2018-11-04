@@ -65,11 +65,10 @@ export class HomePage implements OnInit {
     }
 
     async login(email, pwd, pspId) {
-        pspId = 'STDB';
+        pspId = pspId;
         localStorage.setItem('myPSP', pspId);
 
-
-        return this.auth.emailLogin(email, pwd)
+        return this.auth.emailLogin(email, pwd, pspId)
             .then(result => {
                 console.log(result);
                 if (result) {

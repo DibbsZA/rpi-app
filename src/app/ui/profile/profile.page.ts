@@ -61,7 +61,7 @@ export class ProfilePage implements OnInit {
                     this.dirtyUser = this.userO;
 
                     if (this.dirtyUser.zapId != null && this.dirtyUser.zapId != '') {
-                        this.payerPspLable = '@' + this.dirtyUser.zapId.split('@').pop();
+                        // this.payerPspLable = '@' + this.dirtyUser.zapId.split('@').pop();
                         this.dirtyUser.pspId = this.dirtyUser.zapId.split('@').pop();
                     }
                 }
@@ -95,15 +95,16 @@ export class ProfilePage implements OnInit {
 
     }
 
-    saveProfile(name: string, surname: string, pspId: string, zapId: string, nickname: string, mobileNo: string, telegramId: string) {
+    saveProfile(name: string, surname: string, email, pspId: string, zapId: string, nickname: string, mobileNo: string, telegramId: string, photoUrl) {
         this.editMode = false;
         this.dirtyUser.name = name.trim();
         this.dirtyUser.surname = surname.trim();
+        this.dirtyUser.email = email.trim()
         this.dirtyUser.nickname = nickname.trim();
-        this.dirtyUser.zapId = zapId.toUpperCase() + '@' + pspId.toUpperCase();
+        this.dirtyUser.zapId = zapId.toUpperCase();
         this.dirtyUser.mobileNo = mobileNo.trim();
         this.dirtyUser.telegramId = telegramId.trim();
-        // this.dirtyUser.photoUrl = photoUrl.trim();
+        this.dirtyUser.photoUrl = photoUrl.trim();
 
         this.userSvc.updateUserData(this.dirtyUser, this.myPsp)
             .then(r => {
@@ -129,11 +130,11 @@ export class ProfilePage implements OnInit {
 
     }
 
-    private payerPspSelect(psp) {
-        if (psp !== undefined && psp !== null) {
+    // private payerPspSelect(psp) {
+    //     if (psp !== undefined && psp !== null) {
 
-            this.payerPspLable = '@' + psp;
-        }
-    }
+    //         this.payerPspLable = '@' + psp;
+    //     }
+    // }
 
 }

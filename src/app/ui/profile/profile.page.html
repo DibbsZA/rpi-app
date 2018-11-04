@@ -18,7 +18,7 @@
         <ion-card>
             <ion-card-content>
                 <div (click)="editProfile()" class="profile">
-                    <img [src]="userO.photoURL" class="imgAvatar">
+                    <img [src]="userO.photoUrl" class="imgAvatar">
                     <ion-input type="text" hidden #photoUrl [value]="userO.photoUrl" readonly></ion-input>
                 </div>
                 <ion-list lines="none">
@@ -30,7 +30,7 @@
                     </ion-item>
                     <ion-item>
                         <ion-label>E-Mail</ion-label>
-                        <ion-input type="email" placeholder="Email" [value]="userO.email" readonly></ion-input>
+                        <ion-input type="email" placeholder="Email" #email [value]="userO.email" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>My PSP</ion-label>
@@ -52,7 +52,7 @@
                     <ion-item>
                         <ion-label>Mobile No</ion-label>
                         <ion-input type="text" placeholder="Mobile No (27xxxxxxxxx)" #mobileNo [value]="userO.mobileNo"
-                            readonly></ion-input>
+                            [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>Telegram ID</ion-label>
@@ -66,7 +66,7 @@
                     </ion-fab-button>
                 </ion-fab>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="editMode">
-                    <ion-fab-button color="danger" (click)="saveProfile(name.value, surname.value, pspid.value, zapid.value, nick.value, mobileNo.value, telegramId.value)">
+                    <ion-fab-button color="danger" (click)="saveProfile(name.value, surname.value, email.value, pspid.value, zapid.value, nick.value, mobileNo.value, telegramId.value, photoUrl.value)">
                         <ion-icon name="save"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>

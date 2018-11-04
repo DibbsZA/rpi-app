@@ -18,6 +18,7 @@ export class UserProfileComponent implements OnInit {
 
     user: Observable<firebase.User>;
     userO: UserProfile;
+    userObservable: Observable<UserProfile[]>;
     token: string;
     myPsp: string;
 
@@ -29,6 +30,7 @@ export class UserProfileComponent implements OnInit {
         private fcmSvc: FcmService,
         private notify: NotifyService,
     ) {
+
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
@@ -47,6 +49,7 @@ export class UserProfileComponent implements OnInit {
                 if (x === null) {
                     return;
                 }
+                this.userObservable = this.userSvc.observeUsers(x.uid, this.myPsp);
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
                 if (this.userO.queryLimit == null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
