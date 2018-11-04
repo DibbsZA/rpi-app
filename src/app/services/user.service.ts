@@ -5,7 +5,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 import { HttpClient } from '@angular/common/http';
 import { options } from "../config";
-import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -45,6 +44,7 @@ export class UserService {
     }
 
     public registerUser(user: UserProfile, pspId) {
+        localStorage.setItem('myPSP', JSON.stringify(pspId));
         const apiEndpoint = options.pspApiUrl + pspId + '/addClient';
 
         let data: UserProfile = {
