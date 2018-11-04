@@ -6,9 +6,9 @@ import { FcmService } from './services/fcm.service';
 import { NotifyService } from './services/notify.service';
 import { AuthService } from './services/auth.service';
 import { tap } from 'rxjs/operators';
-import { msgPSPPayment } from './models/messages';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { Transaction } from './models/interfaces.0.2';
 
 @Component({
     selector: 'app-root',
@@ -63,23 +63,26 @@ export class AppComponent implements OnInit {
                                     console.log('Message received. ');
                                     console.log(msg);
                                     // if (!msg.tap) {
-                                    const data: msgPSPPayment = msg;
-                                    if (data.function === 'sendAuthRequest') {
-                                        if (data.msgtype === 'payee-infoRequest') {
-                                            const stringyfied = JSON.stringify(data);
-                                            const encoded = encodeURIComponent(stringyfied);
-                                            this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
-                                        } else if (data.msgtype === 'payer-paymentRequest') {
-                                            const stringyfied = JSON.stringify(data);
-                                            const encoded = encodeURIComponent(stringyfied);
-                                            this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
+                                    const data: Transaction = msg;
+                                    if (data.paymentType === 'PI') {
+                                        const stringyfied = JSON.stringify(data);
+                                        const encoded = encodeURIComponent(stringyfied);
+                                        this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
+                                    } else if (data.paymentType === 'PR') {
+                                        const stringyfied = JSON.stringify(data);
+                                        const encoded = encodeURIComponent(stringyfied);
+                                        this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
+                                    } else if (data.paymentType === 'PS') {
+                                        if (data.responseStatus === 'ACCP') {
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
+                                        } else {
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'error');
                                         }
+
+                                        // }
                                     } else {
-                                        this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
+                                        this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
                                     }
-                                    // } else {
-                                    // this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
-                                    // }
                                     this.messageSource.next(msg);
 
                                 })
