@@ -6,13 +6,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { formatNumber } from '@angular/common';
-import { sha224, Message, sha256 } from 'js-sha256';
+import { Message, sha256 } from 'js-sha256';
 import { QrcodeService } from '../../services/qrcode.service';
-import { AccountDetail, Processor, UserProfile, Transaction, PaymentInitiation } from '../../models/interfaces.0.2';
+import { AccountDetail, Processor, UserProfile, PaymentInitiation } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { DataService } from '../../services/data.service';
 import { PspService } from '../../services/psp.service';
+import { options } from '../../config';
 
 @Component({
     selector: 'app-scan',
@@ -31,6 +32,7 @@ export class ScanPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
+    apiUrl: string = options.pspApiUrl;
 
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
@@ -48,7 +50,6 @@ export class ScanPage implements OnInit {
         private userSvc: UserService,
         private dataSvc: DataService,
         private fb: FormBuilder,
-        // private txnSvc: TxnService,
         private pspApiSvc: PspService,
         private router: Router,
         private qrSvc: QrcodeService,
@@ -59,7 +60,7 @@ export class ScanPage implements OnInit {
         if (ls != undefined && ls != null) {
             this.myPsp = ls;
         } else {
-            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            console.log("ScanPage: Can't read the PSP name from localstorage!!!!!");
             return;
         }
     }
@@ -104,12 +105,14 @@ export class ScanPage implements OnInit {
                     };
 
                     this.payForm = this.fb.group({
-                        payerId: this.userO.zapId.split('@').shift(),
+                        payerId: this.userO.zapId,
                         payerAccountRef: ['', [Validators.required]],
-                        payerPSP: this.userO.zapId.split('@').pop(),
+                        payerPSP: this.userO.pspId,
                         consentKey: null,
-                        payeeId: ['', [Validators.required]],
-                        payeePSP: ['', [Validators.required]],
+                        payeeId: [''],
+                        payeeMobileNo: [''],
+                        payeeEmail: [''],
+                        payeePSP: [''],
                         amountdisplay: [null],
                         amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
@@ -121,7 +124,7 @@ export class ScanPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.default) {
+                                    if (element.accountRef == this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
@@ -219,50 +222,42 @@ export class ScanPage implements OnInit {
 
     async doPay(secret) {
         this.pay = this.payForm.value;
-        this.pay.consentKey = secret;
-        this.pay.payerName = this.userO.nickname;
+        this.pay.clientKey = this.userO.clientKey;
 
-        if (this.myPSP === null) {
-            console.log('no result for PSP lookup yet');
+        if (this.pay.payeeId != '') {
+            this.pay.payeeId = this.pay.payeeId.split('@').shift().trim().toUpperCase() + '@' + this.payForm.get('payeePSP').value;
         }
 
-        // TODO: This is not required on a clean form - but during testing am not cleaning the form on multiple submit
-        // if (!txnMsg.payeeId.includes('@')) {
-        //     txnMsg.payeeId = txnMsg.payeeId.toUpperCase() + '@' + txnMsg.payeePSP.toUpperCase();
-        // }
-        // if (!txnMsg.payerId.includes('@')) {
-        //     txnMsg.payerId = txnMsg.payerId.toUpperCase() + '@' + txnMsg.payerPSP.toUpperCase();
-        // }
+        this.pay.payeeMobileNo = this.pay.payeeMobileNo.trim();
+        this.pay.payeeEmail = this.pay.payeeEmail.trim();
+        this.pay.userRef = this.pay.userRef.trim();
+        this.pay.consentKey = secret;
+        this.pay.payerName = this.userO.nickname;
 
         this.pay.originatingDate = new Date().toISOString();
         let georgeDate = '';
         georgeDate = this.pay.originatingDate.replace('T', ' ').replace('Z', '000');
         this.pay.originatingDate = georgeDate;
 
-        // Deprecated
-        // const txn: Transaction = {
-        //     txnOwner: txnMsg.payerId,   // full ZAPID@PSP
-        //     time: new Date().toISOString(),
-        //     direction: 'outward',
-        //     payMessage: txnMsg,
-        //     payConfirm: {}
-        // };
-
-        // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
         console.log(this.pay);
 
 
-        this.pspApiSvc.psp_paymentInitiation(this.myPSP, this.pay)
-            .subscribe(
-                x => {
-                    if (x.responseStatus != "RJCT") {
-                        this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
-                    } else {
-                        this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
-                    }
+        if (this.pay.payeeId != '' || this.pay.payeeMobileNo != '' || this.pay.payeeEmail != '') {
+            this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
+                .subscribe(
+                    x => {
+                        if (x.responseStatus != "RJCT") {
+                            this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
+                        } else {
+                            this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
+                        }
 
 
-                });
+                    });
+        } else {
+            this.notify.update('A valid recipient data field must be supplied. \n Z@P Id, Mobile No or Email address', 'error');
+        }
+
 
 
     }
