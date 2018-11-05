@@ -42,7 +42,7 @@
             <ng-container *ngIf="!ShowPin">
                 <ion-card>
                     <ion-card-header>
-                        <ion-card-subtitle>Your details</ion-card-subtitle>
+                        <ion-card-subtitle>Payment Request details</ion-card-subtitle>
                     </ion-card-header>
                     <ion-card-content>
                         <ion-list lines="none">
@@ -75,11 +75,10 @@
                                         {{acc.accountAlias}}
                                     </ion-select-option>
                                 </ion-select>
-                                <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerAccountNo.valid"
-                                    (click)="whatError('payerAccountNo')">!</ion-badge>
+                                <!-- <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerAccountNo.valid" (click)="whatError('payerAccountNo')">!</ion-badge> -->
                             </ion-item>
                             <ion-item>
-                                <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
+                                <!-- <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge> -->
                                 <ion-label>Description</ion-label>
                                 <ion-input formControlName="userRef" type="text" placeholder="Payment reference"
                                     required="true" readonly></ion-input>

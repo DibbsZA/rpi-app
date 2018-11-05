@@ -78,7 +78,7 @@
                     <ion-item-divider>
                         <ion-label>Accounts <span class="tiny">( checked = default )</span></ion-label>
                     </ion-item-divider>
-                    <ion-item-sliding *ngFor="let acc of accounts | async ">
+                    <ion-item-sliding *ngFor="let acc of accounts | async">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
                             {{acc.accountNo}} &nbsp;
