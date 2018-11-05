@@ -14,6 +14,7 @@ import { PspService } from '../../services/psp.service';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 import { UserProfile, Processor, AccountDetail, PaymentRequestResponse, Transaction, ResponseStatus } from '../../models/interfaces.0.2';
+import { options } from '../../config';
 
 
 @Component({
@@ -33,6 +34,8 @@ export class RequestPayAuthPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
+    apiUrl: string = options.pspApiUrl;
+
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
 
@@ -43,14 +46,14 @@ export class RequestPayAuthPage implements OnInit {
     authorised = false;
 
     // FIXME: Mock data for testing
-    fcmPayload: Transaction = {
+    fcmPayload: any = {
         endToEndId: '',
         payeeId: '',
-        payerName: '',
-        payerId: '',
+        payeeName: '',
         userRef: '',
-        amount: null,
-        originatingDate: ''
+        amount: '',
+        originatingDate: '',
+        paymentType: ''
     };
 
     qrCodeData = '';
@@ -72,7 +75,7 @@ export class RequestPayAuthPage implements OnInit {
         if (ls != undefined && ls != null) {
             this.myPsp = ls;
         } else {
-            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            console.log("RequestPayAuth: Can't read the PSP name from localstorage!!!!!");
             return;
         }
     }
@@ -94,7 +97,7 @@ export class RequestPayAuthPage implements OnInit {
         });
 
         this.payeePspLable = '@ ' + this.fcmPayload.payeeId.split('@').pop();
-        this.processors = this.dataSvc.getProcessors();
+        // this.processors = this.dataSvc.getProcessors();
 
 
         this.user.subscribe(
@@ -106,13 +109,13 @@ export class RequestPayAuthPage implements OnInit {
 
                 } else {
                     this.userO.pspId = this.myPsp;
-                    this.payerPspLable = '@ ' + this.userO.pspId;
+                    // this.payerPspLable = '@ ' + this.userO.pspId;
 
-                    this.dataSvc.getProcessor(this.userO.pspId)
-                        .subscribe(
-                            // tslint:disable-next-line:no-shadowed-variable
-                            x => { this.myPSP = x; }
-                        );
+                    // this.dataSvc.getProcessor(this.userO.pspId)
+                    //     .subscribe(
+                    //         // tslint:disable-next-line:no-shadowed-variable
+                    //         x => { this.myPSP = x; }
+                    //     );
 
                     // let _payerId: string = this.fcmPayload.payerId;
                     let _payeeId: string = this.fcmPayload.payeeId;
@@ -136,13 +139,10 @@ export class RequestPayAuthPage implements OnInit {
                         payerName: [this.userO.nickname],
                         payeeName: [this.fcmPayload.payeeName],
                         payeeId: [_payeeId, [Validators.required]],
-                        payeePSP: [this.fcmPayload.payeeId.split('@').pop(), [Validators.required]],
-                        amount: [this.fcmPayload.amount, [Validators.required, Validators.min(100), Validators.max(100000)]],
-                        userRef: [this.fcmPayload.userRef, [Validators.required]],
-                        originatingDate: [this.fcmPayload.originatingDate],
-                        responseCode: [200],
-                        responseDesc: ['Thanks for the reminder!!'],
-                        responseStatus: [ResponseStatus.AUTH]
+                        payeePSP: [this.fcmPayload.payeeId.split('@').pop()],
+                        amount: [parseInt(this.fcmPayload.amount)],
+                        userRef: [this.fcmPayload.userRef],
+                        originatingDate: [this.fcmPayload.originatingDate]
                     });
 
                     this.userSvc.getUserAccounts(this.userO.clientKey, this.myPsp)
@@ -151,7 +151,7 @@ export class RequestPayAuthPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.default) {
+                                    if (element.accountRef == this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
@@ -199,13 +199,9 @@ export class RequestPayAuthPage implements OnInit {
     public doPay(secret) {
         this.pay = this.payForm.value;
         this.pay.consentKey = secret;
-
-        if (this.myPSP === null) {
-            console.log('no result for PSP lookup yet');
-        }
+        this.pay.responseStatus = ResponseStatus.ACPT
 
         console.log(this.pay);
-
 
         this.pspApiSvc.psp_paymentRequestResponse(this.myPSP, this.pay)
             .subscribe(

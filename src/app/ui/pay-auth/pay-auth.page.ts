@@ -13,6 +13,7 @@ import { PspService } from '../../services/psp.service';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 import { Processor, AccountDetail, UserProfile, PaymentInstructionResponse, Transaction, ResponseStatus } from '../../models/interfaces.0.2';
+import { options } from '../../config';
 
 @Component({
     selector: 'app-pay-auth',
@@ -30,6 +31,8 @@ export class PayAuthPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
+    apiUrl: string = options.pspApiUrl;
+
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
 
@@ -41,14 +44,13 @@ export class PayAuthPage implements OnInit {
 
     // FIXME: Mock data for testing
     fcmPayload: any = {
-        endToEndId: '',
-        payeeId: '',
-        payeeAccountRef: null,
         payerName: '',
         payerId: '',
+        endToEndId: '',
+        originatingDate: '',
+        amount: '',
         userRef: '',
-        amount: null,
-        originatingDate: ''
+        paymentType: ''
     };
     myPsp: string = null;
 
@@ -105,43 +107,28 @@ export class PayAuthPage implements OnInit {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
                 } else {
-                    this.payerPspLable = '@' + this.fcmPayload.pspId;
+                    // this.payerPspLable = '@' + this.fcmPayload.pspId;
 
-                    this.dataSvc.getProcessor(this.userO.pspId)
-                        .subscribe(
-                            // tslint:disable-next-line:no-shadowed-variable
-                            x => { this.myPSP = x; }
-                        );
+                    // this.dataSvc.getProcessor(this.userO.pspId)
+                    //     .subscribe(
+                    //         // tslint:disable-next-line:no-shadowed-variable
+                    //         x => { this.myPSP = x; }
+                    //     );
 
                     let _payerId: string = this.fcmPayload.payerId;
-                    let _payeeId: string = this.fcmPayload.payeeId;
+                    // let _payeeId: string = this.fcmPayload.payeeId;
                     _payerId = _payerId.split('@').shift();
                     let _payerPSP = _payerId.split('@').pop();
-                    _payeeId = _payeeId.split('@').shift();
-                    let _payeePSP = _payerId.split('@').pop();
+                    // _payeeId = _payeeId.split('@').shift();
+                    // let _payeePSP = _payerId.split('@').pop();
 
                     this.pay = {
                         endToEndId: this.fcmPayload.endToEndId,
                         clientKey: this.userO.clientKey,
                         originatingDate: this.fcmPayload.originatingDate,
                         payeeAccountRef: null,
-                        responseStatus: ResponseStatus.AUTH
+                        responseStatus: ResponseStatus.ACPT,
                     };
-
-                    this.payForm = this.fb.group({
-                        endToEndId: [this.fcmPayload.endToEndId, Validators.required],
-                        payerId: [_payerId],
-                        payeeAccounRef: ['', [Validators.required]],
-                        payerPSP: [_payerPSP],
-                        payerName: [this.fcmPayload.payerName],
-                        payeeId: [_payeeId, [Validators.required]],
-                        payeePSP: [_payeePSP, [Validators.required]],
-                        amount: [this.fcmPayload.amount, [Validators.required, Validators.min(100), Validators.max(100000)]],
-                        userRef: [this.fcmPayload.userRef, [Validators.required]],
-                        originatingDate: [this.fcmPayload.originatingDate],
-                        responseCode: ['200'],
-                        responseDesc: ['Thanks!!']
-                    });
 
                     this.userSvc.getUserAccounts(this.userO.clientKey, this.myPsp)
                         .pipe(
@@ -149,20 +136,21 @@ export class PayAuthPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.default) {
+                                    if (element.accountRef == this.userO.accountRef) {
                                         this.defaultAccount = element;
-                                        this.payForm.patchValue({ payeeAccountRef: element.accountRef });
+                                        this.pay.payeeAccountRef = element.accountRef;
+                                        this.doPay(null);
                                     }
                                 });
                             })
                         )
                         .subscribe();
 
-                    this.payForm.valueChanges
-                        // tslint:disable-next-line:no-shadowed-variable
-                        .subscribe(x => {
-                            console.log(x);
-                        });
+                    // this.payForm.valueChanges
+                    //     // tslint:disable-next-line:no-shadowed-variable
+                    //     .subscribe(x => {
+                    //         console.log(x);
+                    //     });
 
                 }
 
@@ -183,14 +171,14 @@ export class PayAuthPage implements OnInit {
     }
 
     public doPay(authorised) {
-        if (!authorised) {
-            return;
-        }
-        this.pay = this.payForm.value;
+        // if (!authorised) {
+        //     return;
+        // }
+        // this.pay = this.payForm.value;
 
-        if (this.myPSP === null) {
-            console.log('no result for PSP lookup yet');
-        }
+        // if (this.myPSP === null) {
+        //     console.log('no result for PSP lookup yet');
+        // }
 
         this.pspApiSvc.psp_paymentInstructionResponse(this.myPSP, this.pay)
             .subscribe(

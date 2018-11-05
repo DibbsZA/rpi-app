@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content padding>
-    <ng-container *ngIf="user | async; else loading">
+    <ng-container *ngIf="userO | async; else loading">
         <ion-card *ngIf="!authorised">
             <ion-card-header>
                 <ion-card-subtitle>Do you want to recieve this payment?</ion-card-subtitle>
@@ -38,17 +38,21 @@
 
             </ion-card-content>
         </ion-card>
-        <form *ngIf="authorised" [formGroup]="payForm" [hidden]="success" (ngSubmit)="doPay(authorised)">
+        <!-- <form *ngIf="authorised" [formGroup]="payForm" [hidden]="success" (ngSubmit)="doPay(authorised)">
             <ion-card>
                 <ion-card-header>
-                    <ion-card-subtitle>Incomming payment details</ion-card-subtitle>
+                    <ion-card-subtitle>Incoming payment details</ion-card-subtitle>
                 </ion-card-header>
                 <ion-card-content>
                     <ion-list lines="none">
-                        <!-- <ion-item> -->
-                        <!-- <ion-label>Payer PSP</ion-label> -->
                         <ion-input type="text" readonly formControlName="payerPSP" hidden></ion-input>
-                        <!-- </ion-item> -->
+                        <ion-item>
+                            <ion-label>
+                                Amount
+                            </ion-label>
+                            <ion-input class="largeAmount" type="text" placeholder="R0.00" [value]="pay.amount | zapcurrency"
+                                readonly="true"></ion-input>
+                        </ion-item>
                         <ion-item>
                             <ion-label>From</ion-label>
                             <ion-input type="text" readonly formControlName="payerId"></ion-input>
@@ -57,13 +61,6 @@
                         <ion-item>
                             <ion-label>Description</ion-label>
                             <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"
-                                readonly="true"></ion-input>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label>
-                                Amount
-                            </ion-label>
-                            <ion-input class="largeAmount" type="text" placeholder="R0.00" [value]="fcmPayload.amount | zapcurrency"
                                 readonly="true"></ion-input>
                         </ion-item>
                         <ion-input formControlName="amount" type="number" required="true" hidden></ion-input>
@@ -85,10 +82,7 @@
                             <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
                             {{payeePspLable}}
                         </ion-item>
-                        <!-- <ion-item> -->
-                        <!-- <ion-label>Recipient PSP</ion-label> -->
                         <ion-input type="text" readonly formControlName="payeePSP" hidden></ion-input>
-                        <!-- </ion-item> -->
                         <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
                             <ion-label>
                                 Into Account?
@@ -118,14 +112,14 @@
             </ion-button>
             <div *ngIf="!payForm.valid">
                 <span class="errorMsg">Form incomplete or invalid. Tap the red badge to see why.</span>
-            </div>
-            <!-- <label *ngIf="myPSP" class="errorMsg"> {{myPSP.apiUrl}} </label> -->
+            </div>            
+        </form> -->
 
-        </form>
+        <label *ngIf="apiUrl" class="errorMsg">{{apiUrl}}{{myPsp}}</label>
 
-        <!-- <pre class="jsonData">
+        <pre class="jsonData">
 {{ fcmPayload | json }}
-</pre> -->
+</pre>
     </ng-container>
     <ng-template #loading>
         Loading Form...

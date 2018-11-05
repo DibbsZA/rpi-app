@@ -50,7 +50,6 @@ export class PayPage implements OnInit {
         private userSvc: UserService,
         private fb: FormBuilder,
         public notify: NotifyService,
-        // private txnSvc: TxnSvcService,
         private pspApiSvc: PspService,
         private router: Router,
     ) {

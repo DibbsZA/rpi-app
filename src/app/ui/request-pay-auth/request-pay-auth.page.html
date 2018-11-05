@@ -46,15 +46,19 @@
                     </ion-card-header>
                     <ion-card-content>
                         <ion-list lines="none">
-                            <!-- <ion-item> -->
-                            <!-- <ion-label>My PSP</ion-label> -->
                             <ion-input hidden type="text" readonly formControlName="payerPSP"></ion-input>
-                            <!-- </ion-item> -->
                             <ion-item>
-                                <ion-label>My ID</ion-label>
-                                <ion-input type="text" readonly formControlName="payerId"></ion-input>
-                                {{payerPspLable}}
+                                <ion-label stacked>
+                                    Amount
+                                </ion-label>
+                                <ion-input class="largeAmount" type="text" placeholder="0.00" [value]="pay.amount | zapcurrency"
+                                    readonly="true"></ion-input>
                             </ion-item>
+                            <!-- <ion-item> -->
+                            <!-- <ion-label>My ID</ion-label> -->
+                            <ion-input type="text" readonly formControlName="payerId"></ion-input>
+                            <!-- {{payerPspLable}} -->
+                            <!-- </ion-item> -->
                             <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
                                 <ion-label>
                                     From Account?
@@ -78,14 +82,7 @@
                                 <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
                                 <ion-label>Description</ion-label>
                                 <ion-input formControlName="userRef" type="text" placeholder="Payment reference"
-                                    required="true"></ion-input>
-                            </ion-item>
-                            <ion-item>
-                                <ion-label stacked>
-                                    Amount
-                                </ion-label>
-                                <ion-input class="largeAmount" type="text" placeholder="0.00" [value]="fcmPayload.amount | zapcurrency"
-                                    readonly="true"></ion-input>
+                                    required="true" readonly></ion-input>
                             </ion-item>
                         </ion-list>
                     </ion-card-content>
@@ -105,15 +102,7 @@
                                 <ion-input #zapid readonly formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id"></ion-input>
                                 {{payeePspLable}}
                             </ion-item>
-                            <!-- <ion-item> -->
-                            <!-- <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeePSP.valid" (click)="whatError('payeePSP')">!</ion-badge> -->
-                            <!-- <ion-label>Recipient PSP</ion-label> -->
                             <ion-input hidden type="text" readonly formControlName="payeePSP"></ion-input>
-
-                            <!-- <ion-select placeholder="Select PSP" formControlName="payeePSP">
-                                <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
-                            </ion-select> -->
-                            <!-- </ion-item> -->
                         </ion-list>
                     </ion-card-content>
                 </ion-card>
