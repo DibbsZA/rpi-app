@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import { UserProfile, AccountDetail } from '../models/interfaces.0.2';
-import { AngularFirestore } from '@angular/fire/firestore';
+// import { AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 import { HttpClient } from '@angular/common/http';
 import { options } from "../config";
@@ -23,7 +23,7 @@ export class UserService {
     public observeUsers(clientKey, pspId) {
 
         const apiEndpoint = options.pspApiUrl + pspId + '/queryClient';
-        return this.httpClient.get<UserProfile[]>(apiEndpoint, { params: { clientKey: clientKey } });
+        return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: clientKey } });
 
     }
 
@@ -31,11 +31,11 @@ export class UserService {
 
         const apiEndpoint = options.pspApiUrl + pspId + '/queryClient';
 
-        return this.httpClient.get<UserProfile[]>(apiEndpoint, { params: { clientKey: clientKey } }).toPromise()
+        return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: clientKey } }).toPromise()
             .then(
                 r => {
-                    if (r.length > 0) {
-                        let u = r.shift();
+                    if (r != null) {
+                        let u = r;
                         return u;
                     }
                 }
@@ -74,7 +74,7 @@ export class UserService {
             data.telegramId = user.telegramId.trimRight();
         };
         data.queryLimit = 10;
-        data.preAuth = false;
+        // data.preAuth = false;
 
         return this.httpClient.post<Response>(apiEndpoint, data).toPromise();
 
@@ -108,7 +108,7 @@ export class UserService {
             data.telegramId = user.telegramId.trimRight();
         };
         data.queryLimit = 10;
-        data.preAuth = false;
+        // data.preAuth = false;
 
         // userRef.set(data)
         //     .then(r => {
@@ -145,7 +145,7 @@ export class UserService {
     // }
 
     public addClientAccount(account: AccountDetail, pspId) {
-        const apiEndpoint = options.pspApiUrl + pspId + '/addClientAccounts';
+        const apiEndpoint = options.pspApiUrl + pspId + '/addClientAccount';
 
         return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
 

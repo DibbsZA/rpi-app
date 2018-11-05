@@ -18,7 +18,7 @@ export class UserProfileComponent implements OnInit {
 
     user: Observable<firebase.User>;
     userO: UserProfile;
-    userObservable: Observable<UserProfile[]>;
+    userObservable: Observable<UserProfile>;
     token: string;
     myPsp: string;
 

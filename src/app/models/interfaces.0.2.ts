@@ -112,7 +112,6 @@ export interface UserProfile {
     telegramId?: string | '';
     photoUrl?: string | '';
     queryLimit?: number | '';
-    preAuth?: boolean | '';
     accountRef?: string | '1';
 }
 
