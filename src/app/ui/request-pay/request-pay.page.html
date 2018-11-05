@@ -109,6 +109,7 @@
                             <!-- <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeMobileNo.valid"                                (click)="whatError('payeeMobileNo')">!</ion-badge> -->
                             <ion-label>Mobile No:</ion-label>
                             <ion-input formControlName="payerMobileNo" type="tel" inputmode="tel" placeholder="27xxxxxxxxx"></ion-input>
+                            <ion-icon slot="end" name="search" (click)="selectContact()"></ion-icon>
                         </ion-item>
                     </ion-list>
                     <ion-list lines="none" [hidden]="recipientEmail">
@@ -144,7 +145,12 @@
                 <span class="errorMsg">Form incomplete or invalid.</span>
             </div>
             <label *ngIf="myPSP" class="errorMsg"> {{apiUrl}}{{myPsp}} </label>
+            <label> {{firstNumber}} </label>
         </ng-container>
 
     </form>
+    <pre>
+
+{{ selectedContact | json }}
+</pre>
 </ion-content>

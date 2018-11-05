@@ -114,6 +114,7 @@
                             <ion-label>Mobile No:</ion-label>
                             <ion-input formControlName="payeeMobileNo" type="tel" inputmode="tel" placeholder="27xxxxxxxxx"
                                 #zapid></ion-input>
+                            <ion-icon slot="end" name="search" (click)="selectContact()"></ion-icon>
                         </ion-item>
                     </ion-list>
                     <ion-list lines="none" [hidden]="recipientEmail">
@@ -134,6 +135,8 @@
                 <span class="errorMsg">Form incomplete or invalid.</span>
             </div>
             <label *ngIf="myPSP" class="errorMsg"> {{apiUrl}}{{myPsp}} </label>
+            <label> {{selectedNumber}} </label>
+
         </ng-container>
 
         <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
