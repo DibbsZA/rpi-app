@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { options } from "../config";
-// import { map, catchError } from "rxjs/operators";
+import { map, catchError } from "rxjs/operators";
 
-import { Processor, PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse, Transaction } from '../models/interfaces.0.2';
+import { PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse, Transaction } from '../models/interfaces.0.2';
+import { ErrorhandlerService } from './errorhandler.service';
 
 
 
@@ -22,7 +23,8 @@ export class PspService {
     // msgPayment: Transaction;
 
     constructor(
-        public httpClient: HttpClient
+        public httpClient: HttpClient,
+        public errorHandler: ErrorhandlerService,
     ) {
 
     }
@@ -45,13 +47,14 @@ export class PspService {
             "payeeEmail": msgPayment.payeeEmail
         }
 
-        return this.httpClient.post<ApiResponse>(apiEndpoint, body);
+        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+            .pipe(catchError(this.errorHandler.handleError));
 
     }
 
     public psp_paymentInstructionResponse(pspId, msgPayment: PaymentInstructionResponse) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/paymentAuth';
+        const apiEndpoint = options.pspApiUrl + pspId + '/paymentInstructionResponse';
         const body: PaymentInstructionResponse = {
             "endToEndId": msgPayment.endToEndId,
             "originatingDate": msgPayment.originatingDate,
@@ -61,6 +64,7 @@ export class PspService {
         }
 
         return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+            .pipe(catchError(this.errorHandler.handleError));
     }
 
     public psp_paymentRequest(pspId, msgPayment: PaymentRequestInitiation) {
@@ -81,6 +85,7 @@ export class PspService {
         }
 
         return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+            .pipe(catchError(this.errorHandler.handleError));
     }
 
     public psp_paymentRequestResponse(pspId, msgPayment: PaymentRequestResponse) {
@@ -96,12 +101,13 @@ export class PspService {
         }
 
         return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+            .pipe(catchError(this.errorHandler.handleError));
     }
 
 
     public admin_TxnHistory(pspId, clientKey: string) {
         const apiEndpoint = options.pspApiUrl + pspId + '/txnHistory';
 
-        return this.httpClient.get<Transaction[] & ApiResponse>(apiEndpoint, { params: { clientKey: clientKey } });
+        return this.httpClient.get<Transaction[]>(apiEndpoint, { params: { clientKey: clientKey } });
     }
 }
