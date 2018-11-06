@@ -76,6 +76,7 @@ export class AppComponent implements OnInit {
                                         const encoded = encodeURIComponent(stringyfied);
                                         this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
                                     } else if (data.paymentType === 'PS') {
+                                        this.router.navigate(['/history']);
                                         if (data.responseStatus === 'ACCP') {
                                             this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
                                         } else {
