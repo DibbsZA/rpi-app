@@ -40,10 +40,10 @@ export class PayPage implements OnInit {
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
-    recipientZAP: boolean = false;
-    recipientMobile: boolean = true;
-    recipientEmail: boolean = true;
-    recipient: string = 'zap';
+    recipientZAP = false;
+    recipientMobile = true;
+    recipientEmail = true;
+    recipient = 'zap';
     selectedContact: Contact;
     selectedNumber: string;
 
@@ -58,12 +58,12 @@ export class PayPage implements OnInit {
         private contact: Contacts
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
+        const ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls != null) {
             this.myPsp = ls;
         } else {
-            console.log("PayPage: Can't read the PSP name from localstorage!!!!!");
+            console.log('PayPage: Can\'t read the PSP name from localstorage!!!!!');
             return;
         }
     }
@@ -128,7 +128,7 @@ export class PayPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.accountRef == this.userO.accountRef) {
+                                    if (element.accountRef === this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
@@ -219,7 +219,7 @@ export class PayPage implements OnInit {
                 this.selectedNumber = p.value;
                 this.notify.update('Selected Phone: ' + this.selectedNumber, 'info');
             }
-        })
+        });
     }
 
     overideAccount() {
@@ -230,7 +230,7 @@ export class PayPage implements OnInit {
         this.pay = this.payForm.value;
         this.pay.clientKey = this.userO.clientKey;
 
-        if (this.pay.payeeId != '') {
+        if (this.pay.payeeId !== '') {
             this.pay.payeeId = this.pay.payeeId.trim().toUpperCase() + '@' + this.payForm.get('payeePSP').value;
         }
 
@@ -247,11 +247,11 @@ export class PayPage implements OnInit {
 
         console.log(this.pay);
 
-        if (this.pay.payeeId != '' || this.pay.payeeMobileNo != '' || this.pay.payeeEmail != '') {
+        if (this.pay.payeeId !== '' || this.pay.payeeMobileNo !== '' || this.pay.payeeEmail !== '') {
             this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
                 .subscribe(
                     x => {
-                        if (x.responseStatus != "RJCT") {
+                        if (x.responseStatus !== 'RJCT') {
                             this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
                         } else {
                             this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
