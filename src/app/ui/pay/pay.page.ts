@@ -12,7 +12,7 @@ import { PspService } from '../../services/psp.service';
 import { PaymentInitiation, Processor, UserProfile, AccountDetail, ChannelCode } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
-import { Contacts, Contact } from '@ionic-native/contacts/ngx';
+// import { Contacts, Contact } from '@ionic-native/contacts/ngx';
 import { options } from '../../config';
 
 @Component({
@@ -44,8 +44,8 @@ export class PayPage implements OnInit {
     recipientMobile = true;
     recipientEmail = true;
     recipient = 'zap';
-    selectedContact: Contact;
-    selectedNumber: string;
+    // selectedContact: Contact;
+    // selectedNumber: string;
 
     constructor(
         private auth: AuthService,
@@ -55,7 +55,7 @@ export class PayPage implements OnInit {
         public notify: NotifyService,
         private pspApiSvc: PspService,
         private router: Router,
-        private contact: Contacts
+        // private contact: Contacts
     ) {
         this.user = this.auth.user;
         const ls = localStorage.getItem('myPSP');
@@ -211,16 +211,16 @@ export class PayPage implements OnInit {
     }
 
 
-    async selectContact() {
-        this.selectedContact = await this.contact.pickContact();
-        this.selectedContact.phoneNumbers.forEach(p => {
-            if (p.pref) {
-                this.payForm.patchValue({ payeeMobileNo: p.value });
-                this.selectedNumber = p.value;
-                this.notify.update('Selected Phone: ' + this.selectedNumber, 'info');
-            }
-        });
-    }
+    // async selectContact() {
+    //     this.selectedContact = await this.contact.pickContact();
+    //     this.selectedContact.phoneNumbers.forEach(p => {
+    //         if (p.pref) {
+    //             this.payForm.patchValue({ payeeMobileNo: p.value });
+    //             this.selectedNumber = p.value;
+    //             this.notify.update('Selected Phone: ' + this.selectedNumber, 'info');
+    //         }
+    //     });
+    // }
 
     overideAccount() {
         this.useDefaultAccount = false;

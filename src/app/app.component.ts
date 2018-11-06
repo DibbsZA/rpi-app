@@ -9,6 +9,7 @@ import { tap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { Transaction } from './models/interfaces.0.2';
+import { options } from './config';
 
 @Component({
     selector: 'app-root',
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit {
         { title: 'Profile', url: '/profile', icon: 'contact', loggedin: true },
         { title: 'About', url: '/about', icon: 'information-circle-outline' }
     ];
+    appVersion: string;
 
     constructor(
         private platform: Platform,
@@ -44,6 +46,7 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.platform.ready().then(() => {
+            this.appVersion = options.version;
             this.splashScreen.hide();
             this.auth.user
                 .subscribe(user => {

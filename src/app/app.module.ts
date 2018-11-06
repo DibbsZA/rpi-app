@@ -31,7 +31,7 @@ import localeZa from '@angular/common/locales/en-ZA';
 import { FcmService } from './services/fcm.service';
 import { QrcodeService } from './services/qrcode.service';
 
-import { Contacts } from '@ionic-native/contacts/ngx';
+// import { Contacts } from '@ionic-native/contacts/ngx';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -70,7 +70,7 @@ registerLocaleData(localeZa, 'en-ZA');
         AuthService,
         FcmService,
         QrcodeService,
-        Contacts,
+        // Contacts,
     ],
     bootstrap: [AppComponent]
 })

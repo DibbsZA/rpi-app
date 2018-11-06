@@ -10,10 +10,9 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { QrcodeService } from '../../services/qrcode.service';
 import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
-import { Transaction, Processor, UserProfile, AccountDetail, PaymentRequestInitiation, ChannelCode } from '../../models/interfaces.0.2';
+import { Processor, UserProfile, AccountDetail, PaymentRequestInitiation, ChannelCode } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
-import { Contacts, Contact } from '@ionic-native/contacts/ngx';
 import { options } from "../../config";
 
 @Component({
@@ -47,8 +46,9 @@ export class RequestPayPage implements OnInit {
     recipientMobile: boolean = true;
     recipientEmail: boolean = true;
     recipient: string = 'zap';
-    selectedContact: Contact;
-    firstNumber: string;
+    // selectedContact: Contact;
+    // firstNumber: string;
+    // selectedContactNumbers: IContactField[];
 
     constructor(
         private auth: AuthService,
@@ -60,7 +60,7 @@ export class RequestPayPage implements OnInit {
         private router: Router,
         private barcodeScanner: BarcodeScanner,
         private qrSvc: QrcodeService,
-        private contact: Contacts
+        // private contact: Contacts
     ) {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
@@ -221,12 +221,13 @@ export class RequestPayPage implements OnInit {
     }
 
 
-    async selectContact() {
-        this.selectedContact = await this.contact.pickContact();
-        this.firstNumber = this.selectedContact.phoneNumbers.shift().value;
-        this.payForm.patchValue({ payerMobileNo: this.firstNumber });
-        this.notify.update('Selected Phone: ' + this.firstNumber, 'info');
-    }
+    // async selectContact() {
+    //     this.selectedContact = await this.contact.pickContact();
+    //     this.selectedContactNumbers = this.selectedContact.phoneNumbers;
+    //     this.firstNumber = this.selectedContact.phoneNumbers.shift().value;
+    //     this.payForm.patchValue({ payerMobileNo: this.firstNumber });
+    //     this.notify.update('Selected Phonenumbers: \n' + JSON.stringify(this.selectedContactNumbers), 'note');
+    // }
 
     buildPayRequest() {
         this.pay = this.payForm.value;
