@@ -28,9 +28,9 @@
 
         <div class="txnItem" *ngFor='let txn of history' (click)="viewDetail(txn)">
             <ion-item>
-                <ion-icon slot="start" color="success" name="md-cloud-download" *ngIf="isInward(txn.paymentType)"></ion-icon>
-                <ion-icon slot="end" color="success" name="md-cloud-upload" *ngIf="!isInward(txn.paymentType)"></ion-icon>
-                <ion-label class="txnHeader">Paid => <b>{{ txn.payeeId }}</b></ion-label>
+                <ion-icon slot="start" color="success" name="md-cloud-download" *ngIf="!isInward(txn.paymentType)"></ion-icon>
+                <ion-icon slot="end" color="success" name="md-cloud-upload" *ngIf="isInward(txn.paymentType)"></ion-icon>
+                <ion-label class="txnHeader">Date: <b>{{ txn.originatingDate }}</b></ion-label>
             </ion-item>
             <ion-item detail>
                 <span class="txnRef"><b>Ref:</b> {{txn.userRef}} </span>

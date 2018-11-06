@@ -41,22 +41,23 @@ export class HistoryPage implements OnInit {
     ) {
 
         this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
+
+        if (ls !== undefined && ls !== null) {
+            this.myPsp = ls;
+        } else {
+            console.log("HistoryPage: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
 
         this.processors = this.dataSvc.getProcessors();
 
-        let ls = localStorage.getItem('myPSP');
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            this.notify.update('No PSP record? Try loggin in again.', 'error');
-            return;
-        }
-
         this.user.subscribe(
             async x => {
+                console.log('profile: user -> x = ' + JSON.stringify(x));
                 if (x !== null) {
                     this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
                     if (this.userO.queryLimit === null) {
@@ -76,9 +77,6 @@ export class HistoryPage implements OnInit {
                         );
                 }
 
-            },
-            e => {
-
             }
         );
 
@@ -97,11 +95,11 @@ export class HistoryPage implements OnInit {
 
     showData() {
         // this.history = this.txnSvc.getUserTxnHistory(this.zapId);
-        this.pspSvc.admin_TxnHistory(this.myPSP, this.userO.clientKey).subscribe(
+        this.pspSvc.admin_TxnHistory(this.myPsp, this.userO.clientKey).subscribe(
             x => {
-                if (x.responseStatus !== '') {
-                    return;
-                }
+                // if (x.responseStatus !== '') {
+                //     return;
+                // }
 
                 this.history = x;
                 const amount = x.map(res => res.amount / 100);
@@ -156,7 +154,7 @@ export class HistoryPage implements OnInit {
 
     isInward(direction): boolean {
 
-        if (direction === 'paymentRequest') {
+        if (direction === 'R') {
             return false;
         } else {
             return true;
