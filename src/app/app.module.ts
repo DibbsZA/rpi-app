@@ -17,7 +17,6 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
-import { ProfilePageModule } from './ui/profile/profile.module';
 import { PspService } from './services/psp.service';
 import { AuthService } from './services/auth.service';
 import { AccountPageModule } from './ui/account/account.module';
@@ -30,6 +29,11 @@ import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
 import { FcmService } from './services/fcm.service';
 import { QrcodeService } from './services/qrcode.service';
+import { HistoryPage } from './ui/history/history.page';
+import { ProfilePage } from './ui/profile/profile.page';
+import { RegistrationPage } from './ui/registration/registration.page';
+import { HomePage } from './ui/home/home.page';
+import { AboutPage } from './ui/about/about.page';
 
 // import { Contacts } from '@ionic-native/contacts/ngx';
 
@@ -40,7 +44,12 @@ registerLocaleData(localeZa, 'en-ZA');
 @NgModule({
     declarations: [
         AppComponent,
+        HomePage,
+        RegistrationPage,
+        AboutPage,
         UserProfileComponent,
+        HistoryPage,
+        ProfilePage,
     ],
     entryComponents: [
 
@@ -55,7 +64,6 @@ registerLocaleData(localeZa, 'en-ZA');
         AngularFirestoreModule,
         AngularFireAuthModule,
         HttpClientModule,
-        ProfilePageModule,
         PaymentModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
