@@ -51,8 +51,7 @@
                                 <ion-label stacked>
                                     Amount
                                 </ion-label>
-                                <ion-input class="largeAmount" type="text" placeholder="0.00" [value]="pay.amount | zapcurrency"
-                                    readonly="true"></ion-input>
+                                <ion-input class="largeAmount" formControlName="amount" type="text" readonly></ion-input>
                             </ion-item>
                             <!-- <ion-item> -->
                             <!-- <ion-label>My ID</ion-label> -->
@@ -116,7 +115,7 @@
                 <label *ngIf="myPSP" class="errorMsg"> {{myPSP.apiUrl}} </label>
             </ng-container>
 
-            <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
+            <app-pin *ngIf="ShowPin" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
         </form>
     </ng-container>
     <ng-template #loading>

@@ -251,11 +251,18 @@ export class PayPage implements OnInit {
             this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
                 .subscribe(
                     x => {
-                        if (x.responseStatus !== 'RJCT') {
-                            this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
-                        } else {
-                            this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
-                        }
+                        this.notify.update('Payment to ' + this.pay.payeeId + ' submitted', 'info');
+                        return this.router.navigateByUrl('/history');
+                        // if (x !== null) {
+                        //     if (x.responseStatus !== 'RJCT') {
+                        //         this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
+                        //     } else {
+                        //         this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
+                        //     }
+                        // } else {
+                        //     this.notify.update('Nor response on Payment Initiation!!', 'error');
+                        // }
+
 
 
                     });
@@ -272,7 +279,7 @@ export class PayPage implements OnInit {
     eventCapture(event) {
         this.ShowPin = false;
 
-        this.myPSP.apiUrl = event.pspUrl;
+        // this.myPSP.apiUrl = event.pspUrl;
         this.Pin = event.pin;
 
         const m: Message = event.pin;

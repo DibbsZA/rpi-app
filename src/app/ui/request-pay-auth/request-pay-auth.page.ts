@@ -92,7 +92,8 @@ export class RequestPayAuthPage implements OnInit {
 
                     this.fcmPayload = JSON.parse(queryParams.msg);
                 }
-                console.log(this.fcmPayload);
+                this.notify.update(JSON.stringify(this.fcmPayload), 'note');
+                // console.log(this.fcmPayload);
             }
         });
 
@@ -176,19 +177,6 @@ export class RequestPayAuthPage implements OnInit {
         this.useDefaultAccount = false;
     }
 
-    formatAmount(val) {
-        if (val !== null) {
-            if (val.length > 0) {
-                const amt_text: string = val;
-                // tslint:disable-next-line:radix
-                const amt_int = parseInt(amt_text.replace('.', '').replace(',', ''));
-                this.payForm.patchValue({ amount: amt_int });
-                const amt_dec = formatNumber(amt_int / 100, 'en', '1.2');
-                this.payForm.patchValue({ amountdisplay: amt_dec });
-            }
-        }
-    }
-
     public whatError(name: string) {
         // name = 'payForm.' + name;
         const ctrl = this.payForm.get(name);
@@ -198,19 +186,21 @@ export class RequestPayAuthPage implements OnInit {
 
     public doPay(secret) {
         this.pay = this.payForm.value;
+        this.pay.clientKey = this.userO.clientKey;
         this.pay.consentKey = secret;
         this.pay.responseStatus = ResponseStatus.ACPT
 
         console.log(this.pay);
 
-        this.pspApiSvc.psp_paymentRequestResponse(this.myPSP, this.pay)
+        this.pspApiSvc.psp_paymentRequestResponse(this.myPsp, this.pay)
             .subscribe(
                 x => {
-                    if (x.responseStatus !== "RJCT") {
-                        this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' authorised. Id: ' + x.endToEndId, 'info');
-                    } else {
-                        this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
-                    }
+                    this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' authorised.', 'info');
+                    // if (x.responseStatus !== "RJCT") {
+                    //     this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' authorised. Id: ' + x.endToEndId, 'info');
+                    // } else {
+                    //     this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
+                    // }
 
                 });
 
@@ -249,7 +239,7 @@ export class RequestPayAuthPage implements OnInit {
     eventCapture(event) {
         this.ShowPin = false;
 
-        this.myPSP.apiUrl = event.pspUrl;
+        // this.myPSP.apiUrl = event.pspUrl;
         this.Pin = event.pin;
 
         const m: Message = event.pin;

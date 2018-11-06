@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content padding>
-    <ng-container *ngIf="userO | async; else loading">
+    <ng-container *ngIf="userO; else loading">
         <ion-card *ngIf="!authorised">
             <ion-card-header>
                 <ion-card-subtitle>Do you want to recieve this payment?</ion-card-subtitle>
@@ -118,6 +118,7 @@
         <label *ngIf="apiUrl" class="errorMsg">{{apiUrl}}{{myPsp}}</label>
 
         <pre class="jsonData">
+
 {{ fcmPayload | json }}
 </pre>
     </ng-container>

@@ -92,7 +92,8 @@ export class PayAuthPage implements OnInit {
 
                     this.fcmPayload = JSON.parse(queryParams.msg);
                 }
-                console.log(this.fcmPayload);
+                this.notify.update(JSON.stringify(this.fcmPayload), 'note');
+                // console.log(this.fcmPayload);
             }
         });
 
@@ -126,7 +127,7 @@ export class PayAuthPage implements OnInit {
                         endToEndId: this.fcmPayload.endToEndId,
                         clientKey: this.userO.clientKey,
                         originatingDate: this.fcmPayload.originatingDate,
-                        payeeAccountRef: null,
+                        payeeAccountRef: this.userO.accountRef,
                         responseStatus: ResponseStatus.ACPT,
                     };
 
@@ -139,7 +140,6 @@ export class PayAuthPage implements OnInit {
                                     if (element.accountRef === this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.pay.payeeAccountRef = element.accountRef;
-                                        this.doPay(null);
                                     }
                                 });
                             })
@@ -180,14 +180,18 @@ export class PayAuthPage implements OnInit {
         //     console.log('no result for PSP lookup yet');
         // }
 
-        this.pspApiSvc.psp_paymentInstructionResponse(this.myPSP, this.pay)
+        this.pspApiSvc.psp_paymentInstructionResponse(this.myPsp, this.pay)
             .subscribe(
                 x => {
-                    if (x.responseStatus !== "RJCT") {
-                        this.notify.update('Payment from ' + this.fcmPayload.payerId + ' authorised. Id: ' + x.endToEndId, 'info');
-                    } else {
-                        this.notify.update('Payment Authorization from ' + this.fcmPayload.payerId + ' failed. Error: ' + x.responseDesc, 'error');
-                    }
+                    const res = x;
+                    this.notify.update('Payment from ' + this.fcmPayload.payerId + ' authorised.', 'info');
+                    // if (x.responseStatus !== "RJCT") {
+                    //     this.notify.update('Payment from ' + this.fcmPayload.payerId + ' authorised. Id: ' + x.endToEndId, 'info');
+                    // } else {
+                    //     this.notify.update('Payment Authorization from ' + this.fcmPayload.payerId + ' failed. Error: ' + x.responseDesc, 'error');
+                    // }
+                    authorised = false;
+                    return this.router.navigateByUrl('/history');
 
                 });
 
@@ -214,6 +218,8 @@ export class PayAuthPage implements OnInit {
 
     changeAuth() {
         this.authorised = !this.authorised;
+        this.notify.update('Authorising payment....', 'info');
+        this.doPay(null);
     }
 
     async presentAlertConfirm() {

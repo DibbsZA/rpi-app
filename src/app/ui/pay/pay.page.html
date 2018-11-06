@@ -139,6 +139,6 @@
 
         </ng-container>
 
-        <app-pin *ngIf="ShowPin" [pspUrl]="myPSP.apiUrl" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
+        <app-pin *ngIf="ShowPin" pagetitle="Enter your secret Pin" (change)="eventCapture($event)"></app-pin>
     </form>
 </ion-content>

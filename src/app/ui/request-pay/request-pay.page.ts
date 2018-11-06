@@ -265,11 +265,12 @@ export class RequestPayPage implements OnInit {
             this.pspApiSvc.psp_paymentRequest(this.myPsp, txn)
                 .subscribe(
                     x => {
-                        if (x.responseStatus !== "RJCT") {
-                            this.notify.update('Payment Requested from ' + this.pay.payerId + '. Id: ' + x.endToEndId, 'info');
-                        } else {
-                            this.notify.update('Payment Request from ' + this.pay.payerId + ' failed. Id: ' + x.endToEndId, 'error');
-                        }
+                        this.notify.update('Payment Requested from ' + this.pay.payerId + '.', 'info');
+                        // if (x.responseStatus !== "RJCT") {
+                        //     this.notify.update('Payment Requested from ' + this.pay.payerId + '. Id: ' + x.endToEndId, 'info');
+                        // } else {
+                        //     this.notify.update('Payment Request from ' + this.pay.payerId + ' failed. Id: ' + x.endToEndId, 'error');
+                        // }
 
 
                     });
