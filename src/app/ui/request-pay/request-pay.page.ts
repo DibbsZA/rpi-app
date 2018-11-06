@@ -65,7 +65,7 @@ export class RequestPayPage implements OnInit {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log("Req2PayPage: Can't read the PSP name from localstorage!!!!!");
@@ -85,7 +85,7 @@ export class RequestPayPage implements OnInit {
                     return;
                 }
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                if (this.userO.queryLimit == null) {
+                if (this.userO.queryLimit === null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
 
@@ -132,7 +132,7 @@ export class RequestPayPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.accountRef == this.userO.accountRef) {
+                                    if (element.accountRef === this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payeeAccountRef: element.accountRef });
                                     }
@@ -147,7 +147,7 @@ export class RequestPayPage implements OnInit {
                             x => {
                                 this.pay = x;
                                 console.log(x);
-                                if (x.payerPSP != null) {
+                                if (x.payerPSP !== null) {
 
                                     this.payerPspLable = '@' + x.payerPSP;
 
@@ -161,7 +161,7 @@ export class RequestPayPage implements OnInit {
     }
 
     formatAmount(val) {
-        if (val != null) {
+        if (val !== null) {
             const amt_text: string = val;
             if (amt_text.length > 0) {
                 // tslint:disable-next-line:radix
@@ -233,7 +233,7 @@ export class RequestPayPage implements OnInit {
 
         this.pay.clientKey = this.userO.clientKey;
 
-        if (this.pay.payerId != '') {
+        if (this.pay.payerId !== '') {
             this.pay.payerId = this.pay.payerId.split('@').shift().trim().toUpperCase() + '@' + this.payForm.get('payerPSP').value;
         }
 
@@ -259,12 +259,12 @@ export class RequestPayPage implements OnInit {
         // this.myPSP = await this.dataSvc.getProcessor(txnMsg.payerPSP);
         // console.log(this.myPSP);
 
-        if (txn.payerId != '' || txn.payerMobileNo != '' || txn.payerEmail != '') {
+        if (txn.payerId !== '' || txn.payerMobileNo !== '' || txn.payerEmail !== '') {
 
             this.pspApiSvc.psp_paymentRequest(this.myPsp, txn)
                 .subscribe(
                     x => {
-                        if (x.responseStatus != "RJCT") {
+                        if (x.responseStatus !== "RJCT") {
                             this.notify.update('Payment Requested from ' + this.pay.payerId + '. Id: ' + x.endToEndId, 'info');
                         } else {
                             this.notify.update('Payment Request from ' + this.pay.payerId + ' failed. Id: ' + x.endToEndId, 'error');

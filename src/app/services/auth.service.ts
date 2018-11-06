@@ -37,45 +37,6 @@ export class AuthService {
 
                     return of(user);
 
-                    // let ls = localStorage.getItem('myPSP');
-
-                    // if (ls != undefined && ls != null) {
-                    //     this.myPsp = ls;
-
-                    //     this.userProfile = {
-                    //         clientKey: user.uid,
-                    //         email: user.email,
-                    //         name: '',
-                    //         surname: '',
-                    //         nickname: '',
-                    //         mobileNo: '',
-                    //         telegramId: '',
-                    //         zapId: '',
-                    //         pspId: ls
-                    //     }
-
-                    //     userSvc.getUserData(user.uid, this.myPsp)
-                    //         .subscribe(
-                    //             x => {
-                    //                 console.log('Auth: getUserData -> x = ' + JSON.stringify(x));
-
-                    //                 this.userProfile = x;
-                    //                 this.userProfile.pspId = ls;
-                    //                 return of(this.userProfile);
-                    //             },
-                    //             e => {
-
-                    //                 console.log('Auth: getUserData -> e = ' + JSON.stringify(e));
-                    //                 return of(this.userProfile);
-                    //             }
-                    //         );
-                    // } else {
-                    //     console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
-                    //     return of(null);
-                    // }
-
-
-                    // return this.afs.doc<FirebaseUser>(`users/${user.uid}`).valueChanges();
                 } else {
                     console.log("AuthSvc: User Not Logged in!!!!!");
                     return of(null);
@@ -90,7 +51,7 @@ export class AuthService {
 
     //// Email/Password Auth ////
     async emailSignUp(email: string, password: string, pspId: string) {
-        if (this.userProfile != null) {
+        if (this.userProfile !== null) {
 
             if (this.userProfile.queryLimit === undefined) {
                 const newUser: UserProfile = {

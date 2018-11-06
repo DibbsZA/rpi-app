@@ -32,19 +32,19 @@ export class HomePage implements OnInit {
 
     ngOnInit(): void {
 
-        if (localStorage.getItem('myPSP') != undefined) {
+        if (localStorage.getItem('myPSP') !== undefined) {
             this.myPsp = localStorage.getItem('myPSP');
 
             if (this.user !== null) {
                 this.user.subscribe(
                     async x => {
                         console.log(x);
-                        if (x != null) {
+                        if (x !== null) {
 
 
                             this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
 
-                            if (this.userO.queryLimit != undefined) {
+                            if (this.userO.queryLimit !== undefined) {
                                 return this.afterSignIn();
                             } else {
                                 this.notify.update('Please update your profile first!!!.', 'info');

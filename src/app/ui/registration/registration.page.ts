@@ -30,7 +30,7 @@ export class RegistrationPage implements OnInit {
 
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
 
         } else {

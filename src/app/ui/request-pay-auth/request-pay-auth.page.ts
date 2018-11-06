@@ -72,7 +72,7 @@ export class RequestPayAuthPage implements OnInit {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log("RequestPayAuth: Can't read the PSP name from localstorage!!!!!");
@@ -103,7 +103,7 @@ export class RequestPayAuthPage implements OnInit {
         this.user.subscribe(
             async x => {
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                if (this.userO.queryLimit == null) {
+                if (this.userO.queryLimit === null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
 
@@ -151,7 +151,7 @@ export class RequestPayAuthPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.accountRef == this.userO.accountRef) {
+                                    if (element.accountRef === this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
@@ -177,7 +177,7 @@ export class RequestPayAuthPage implements OnInit {
     }
 
     formatAmount(val) {
-        if (val != null) {
+        if (val !== null) {
             if (val.length > 0) {
                 const amt_text: string = val;
                 // tslint:disable-next-line:radix
@@ -206,7 +206,7 @@ export class RequestPayAuthPage implements OnInit {
         this.pspApiSvc.psp_paymentRequestResponse(this.myPSP, this.pay)
             .subscribe(
                 x => {
-                    if (x.responseStatus != "RJCT") {
+                    if (x.responseStatus !== "RJCT") {
                         this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' authorised. Id: ' + x.endToEndId, 'info');
                     } else {
                         this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' failed. Error: ' + x.responseDesc, 'error');

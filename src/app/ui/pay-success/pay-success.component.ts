@@ -55,7 +55,7 @@ export class PaySuccessComponent implements OnInit {
     ngOnInit() {
 
         let ls = localStorage.getItem('myPSP');
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             this.notify.update('No PSP record? Try loggin in again.', 'error');
@@ -82,7 +82,7 @@ export class PaySuccessComponent implements OnInit {
             async x => {
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
 
-                if (this.userO.queryLimit != undefined) {
+                if (this.userO.queryLimit !== undefined) {
 
 
 
@@ -91,7 +91,7 @@ export class PaySuccessComponent implements OnInit {
                     this.router.navigate(['/profile']);
                 }
 
-                if (this.userO.pspId == null) {
+                if (this.userO.pspId === null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
 

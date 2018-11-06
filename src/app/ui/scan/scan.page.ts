@@ -57,7 +57,7 @@ export class ScanPage implements OnInit {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log("ScanPage: Can't read the PSP name from localstorage!!!!!");
@@ -76,7 +76,7 @@ export class ScanPage implements OnInit {
                     return;
                 }
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                if (this.userO.queryLimit == null) {
+                if (this.userO.queryLimit === null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
 
@@ -124,7 +124,7 @@ export class ScanPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.accountRef == this.userO.accountRef) {
+                                    if (element.accountRef === this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.payForm.patchValue({ payerAccountRef: element.accountRef });
                                     }
@@ -139,7 +139,7 @@ export class ScanPage implements OnInit {
                             console.log(x);
 
 
-                            if (x.payeePSP != null) {
+                            if (x.payeePSP !== null) {
 
                                 this.payeePspLable = '@' + x.payeePSP;
 
@@ -196,7 +196,7 @@ export class ScanPage implements OnInit {
 
 
     formatAmount(val) {
-        if (val != null) {
+        if (val !== null) {
             const amt_text: string = val;
             if (amt_text.length > 0) {
                 // tslint:disable-next-line:radix
@@ -224,7 +224,7 @@ export class ScanPage implements OnInit {
         this.pay = this.payForm.value;
         this.pay.clientKey = this.userO.clientKey;
 
-        if (this.pay.payeeId != '') {
+        if (this.pay.payeeId !== '') {
             this.pay.payeeId = this.pay.payeeId.split('@').shift().trim().toUpperCase() + '@' + this.payForm.get('payeePSP').value;
         }
 
@@ -242,11 +242,11 @@ export class ScanPage implements OnInit {
         console.log(this.pay);
 
 
-        if (this.pay.payeeId != '' || this.pay.payeeMobileNo != '' || this.pay.payeeEmail != '') {
+        if (this.pay.payeeId !== '' || this.pay.payeeMobileNo !== '' || this.pay.payeeEmail !== '') {
             this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
                 .subscribe(
                     x => {
-                        if (x.responseStatus != "RJCT") {
+                        if (x.responseStatus !== "RJCT") {
                             this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
                         } else {
                             this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');

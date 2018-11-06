@@ -60,7 +60,7 @@ export class PayPage implements OnInit {
         this.user = this.auth.user;
         const ls = localStorage.getItem('myPSP');
 
-        if (ls !== undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log('PayPage: Can\'t read the PSP name from localstorage!!!!!');
@@ -80,7 +80,7 @@ export class PayPage implements OnInit {
                 }
 
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                if (this.userO.queryLimit == null) {
+                if (this.userO.queryLimit === null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
                 } else {
@@ -143,7 +143,7 @@ export class PayPage implements OnInit {
                             console.log(x);
 
 
-                            if (x.payeePSP != null) {
+                            if (x.payeePSP !== null) {
 
                                 this.payeePspLable = '@' + x.payeePSP;
 
@@ -157,7 +157,7 @@ export class PayPage implements OnInit {
     }
 
     formatAmount(val) {
-        if (val != null) {
+        if (val !== null) {
             const amt_text: string = val;
             if (amt_text.length > 0) {
                 // tslint:disable-next-line:radix

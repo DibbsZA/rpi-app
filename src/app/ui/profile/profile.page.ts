@@ -35,7 +35,7 @@ export class ProfilePage implements OnInit {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log("ProfilePage: Can't read the PSP name from localstorage!!!!!");
@@ -51,7 +51,7 @@ export class ProfilePage implements OnInit {
                 console.log('profile: user -> x = ' + JSON.stringify(x));
                 if (x !== null) {
                     this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                    if (this.userO.queryLimit == null) {
+                    if (this.userO.queryLimit === null) {
                         this.notify.update('Please update your profile first!!!.', 'info');
                         this.router.navigate(['/profile']);
                     }
@@ -60,7 +60,7 @@ export class ProfilePage implements OnInit {
                     this.accounts = this.userSvc.getUserAccounts(x.uid, this.myPsp);
                     this.dirtyUser = this.userO;
 
-                    if (this.dirtyUser.zapId != null && this.dirtyUser.zapId != '') {
+                    if (this.dirtyUser.zapId !== null && this.dirtyUser.zapId !== '') {
                         // this.payerPspLable = '@' + this.dirtyUser.zapId.split('@').pop();
                         this.dirtyUser.pspId = this.dirtyUser.zapId.split('@').pop();
                     }

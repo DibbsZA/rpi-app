@@ -28,7 +28,7 @@ export class AccountEditComponent implements OnInit {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");

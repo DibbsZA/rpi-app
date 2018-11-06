@@ -68,7 +68,7 @@ export class PayAuthPage implements OnInit {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
 
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
@@ -103,7 +103,7 @@ export class PayAuthPage implements OnInit {
             async x => {
                 this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
                 this.userO.pspId = this.myPsp;
-                if (this.userO.zapId == null || this.userO.zapId == '') {
+                if (this.userO.zapId === null || this.userO.zapId === '') {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
                 } else {
@@ -136,7 +136,7 @@ export class PayAuthPage implements OnInit {
                             tap(x => {
                                 x.forEach(element => {
                                     this.accounts.push(element);
-                                    if (element.accountRef == this.userO.accountRef) {
+                                    if (element.accountRef === this.userO.accountRef) {
                                         this.defaultAccount = element;
                                         this.pay.payeeAccountRef = element.accountRef;
                                         this.doPay(null);
@@ -183,7 +183,7 @@ export class PayAuthPage implements OnInit {
         this.pspApiSvc.psp_paymentInstructionResponse(this.myPSP, this.pay)
             .subscribe(
                 x => {
-                    if (x.responseStatus != "RJCT") {
+                    if (x.responseStatus !== "RJCT") {
                         this.notify.update('Payment from ' + this.fcmPayload.payerId + ' authorised. Id: ' + x.endToEndId, 'info');
                     } else {
                         this.notify.update('Payment Authorization from ' + this.fcmPayload.payerId + ' failed. Error: ' + x.responseDesc, 'error');

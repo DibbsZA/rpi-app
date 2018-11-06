@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
             x => {
 
                 console.log('AuthGuard: CanActivate -> x = ' + JSON.stringify(x));
-                if (x == null) {
+                if (x === null) {
                     loggedIn = false;
                     this.router.navigate(['/']);
                 }

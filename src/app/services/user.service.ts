@@ -34,7 +34,7 @@ export class UserService {
         return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: clientKey } }).toPromise()
             .then(
                 r => {
-                    if (r != null) {
+                    if (r !== null) {
                         let u = r;
                         return u;
                     }
@@ -55,22 +55,22 @@ export class UserService {
             nickname: ''
         };
 
-        if (user.name != undefined) {
+        if (user.name !== undefined) {
             data.name = user.name.trimRight();
         };
-        if (user.surname != undefined) {
+        if (user.surname !== undefined) {
             data.surname = user.surname.trimRight();
         };
-        if (user.nickname != undefined) {
+        if (user.nickname !== undefined) {
             data.nickname = user.nickname.trimRight();
         };
-        if (user.mobileNo != undefined) {
+        if (user.mobileNo !== undefined) {
             data.mobileNo = user.mobileNo.trimRight();
         };
-        if (user.zapId != undefined) {
+        if (user.zapId !== undefined) {
             data.zapId = user.zapId.trimRight().toUpperCase();
         };
-        if (user.telegramId != undefined) {
+        if (user.telegramId !== undefined) {
             data.telegramId = user.telegramId.trimRight();
         };
         data.queryLimit = 10;
@@ -89,22 +89,22 @@ export class UserService {
             email: user.email
         };
 
-        if (user.name != undefined) {
+        if (user.name !== undefined) {
             data.name = user.name.trimRight();
         };
-        if (user.surname != undefined) {
+        if (user.surname !== undefined) {
             data.surname = user.surname.trimRight();
         };
-        if (user.nickname != undefined) {
+        if (user.nickname !== undefined) {
             data.nickname = user.nickname.trimRight();
         };
-        if (user.mobileNo != undefined) {
+        if (user.mobileNo !== undefined) {
             data.mobileNo = user.mobileNo.trimRight();
         };
-        if (user.zapId != undefined) {
+        if (user.zapId !== undefined) {
             data.zapId = user.zapId.trimRight().toUpperCase();
         };
-        if (user.telegramId != undefined) {
+        if (user.telegramId !== undefined) {
             data.telegramId = user.telegramId.trimRight();
         };
         data.queryLimit = 10;

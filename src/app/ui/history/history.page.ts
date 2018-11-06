@@ -48,7 +48,7 @@ export class HistoryPage implements OnInit {
         this.processors = this.dataSvc.getProcessors();
 
         let ls = localStorage.getItem('myPSP');
-        if (ls != undefined && ls != null) {
+        if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
             this.notify.update('No PSP record? Try loggin in again.', 'error');
@@ -59,7 +59,7 @@ export class HistoryPage implements OnInit {
             async x => {
                 if (x !== null) {
                     this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                    if (this.userO.queryLimit == null) {
+                    if (this.userO.queryLimit === null) {
                         this.notify.update('Please update your profile first!!!.', 'info');
                         this.router.navigate(['/profile']);
                     }
@@ -99,7 +99,7 @@ export class HistoryPage implements OnInit {
         // this.history = this.txnSvc.getUserTxnHistory(this.zapId);
         this.pspSvc.admin_TxnHistory(this.myPSP, this.userO.clientKey).subscribe(
             x => {
-                if (x.responseStatus != '') {
+                if (x.responseStatus !== '') {
                     return;
                 }
 
