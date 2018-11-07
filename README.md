@@ -1,3 +1,3 @@
-# ZAP Mobile v 1.3.1
+# ZAP Mobile v 1.3.2
 
-With QR Codes!!!!
+With MobileNo & Email Proxy
