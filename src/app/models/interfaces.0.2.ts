@@ -79,18 +79,25 @@ export interface Transaction {
     responseStatus?: string | null;
     responseCode?: string | null;
     responseDesc?: string | null;
+    dummy1?: string;
+    dummy2?: string;
+    dummy3?: string;
+    dummy4?: string;
 }
 
 export interface QrcodeSpec {
 
     endToEndId: string;
-    originatingDate?: string;
     payerId?: string | null;
+    dummy1?: string | null;
     payerName?: string | null;
     payeeId: string | null;
+    dummy2?: string | null;
     payeeName?: string | null;
+    dummy3?: string | null;
     userRef?: string | null;
     amount?: number | null;
+    originatingDate?: string;
 }
 
 export interface FirebaseUser {

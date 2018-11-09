@@ -98,7 +98,7 @@ export class ScanPage implements OnInit {
                         payerAccountRef: null,
                         consentKey: null,
                         payeeId: null,
-                        amount: null,
+                        amount: '0',
                         originatingDate: '',
                         payeeMobileNo: '',
                         payeeEmail: ''
@@ -113,8 +113,8 @@ export class ScanPage implements OnInit {
                         payeeMobileNo: [''],
                         payeeEmail: [''],
                         payeePSP: [''],
-                        amountdisplay: [null],
-                        amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
+                        amountdisplay: ['0.00'],
+                        amount: [0, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
                     });
 
@@ -167,8 +167,8 @@ export class ScanPage implements OnInit {
             //Decode barcode data
             const decodedQr = this.qrSvc.decodeQR(barcodeData.text);
             this.pay.payeeId = decodedQr.payeeId;
-            this.pay.payeeMobileNo = decodedQr.payeeMobileNo;
-            this.pay.payeeEmail = decodedQr.payeeEmail;
+            // this.pay.payeeMobileNo = decodedQr.payeeMobileNo;
+            // this.pay.payeeEmail = decodedQr.payeeEmail;
             this.pay.amount = decodedQr.amount.toString();
             this.pay.userRef = decodedQr.userRef;
 

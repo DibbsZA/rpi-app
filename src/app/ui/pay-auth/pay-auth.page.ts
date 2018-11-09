@@ -92,7 +92,7 @@ export class PayAuthPage implements OnInit {
 
                     this.fcmPayload = JSON.parse(queryParams.msg);
                 }
-                this.notify.update(JSON.stringify(this.fcmPayload), 'note');
+                // this.notify.update(JSON.stringify(this.fcmPayload), 'note');
                 // console.log(this.fcmPayload);
             }
         });
@@ -191,7 +191,7 @@ export class PayAuthPage implements OnInit {
                     //     this.notify.update('Payment Authorization from ' + this.fcmPayload.payerId + ' failed. Error: ' + x.responseDesc, 'error');
                     // }
                     authorised = false;
-                    return this.router.navigateByUrl('/history');
+                    return this.router.navigateByUrl('/about');
 
                 });
 
@@ -222,7 +222,7 @@ export class PayAuthPage implements OnInit {
         this.doPay(null);
     }
 
-    async presentAlertConfirm() {
+    async decline(data) {
         const alert = await this.alertController.create({
             header: 'Confirm!',
             message: '<strong>Don\'t you want to get the payment?</strong>',
@@ -232,12 +232,23 @@ export class PayAuthPage implements OnInit {
                     role: 'cancel',
                     cssClass: 'secondary',
                     handler: () => {
-                        console.log('Confirm Cancel: blah');
+                        console.log('Confirm reconsider: blah');
                     }
                 }, {
                     text: 'Decline',
                     handler: () => {
                         console.log('Confirm decline');
+
+
+                        this.pay.responseStatus = ResponseStatus.RJCT;
+                        this.pspApiSvc.psp_paymentInstructionResponse(this.myPsp, this.pay)
+                            .subscribe(
+                                x => {
+                                    const res = x;
+                                    this.notify.update('Payment from ' + this.fcmPayload.payerId + ' declined.', 'info');
+                                    this.authorised = false;
+                                    return this.router.navigateByUrl('/about');
+                                });
                     }
                 }
             ]

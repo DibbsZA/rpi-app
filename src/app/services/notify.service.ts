@@ -29,7 +29,7 @@ export class NotifyService {
 
     }
 
-    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'paysuccess' | 'action') {
+    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'paysuccess' | 'payfailed' | 'action') {
 
         const msg: Msg = { content, style };
         const msgContent: Transaction = content;
@@ -55,7 +55,15 @@ export class NotifyService {
             msg.content = '<ion-img src="/assets/icons/success-1.png" style="width: 50%;"></ion-img>';
 
             this.presentAlert(msg);
-            this.router.navigateByUrl('/history');
+            this.router.navigateByUrl('/about');
+
+        } else if (msg.style === 'payfailed') {
+
+            msg.style = 'Oh no!';
+            msg.content = '<ion-img src="/assets/icons/txnFailed1.jpg" style="width: 50%;"></ion-img><br>' + stringyfied;
+
+            this.presentAlert(msg);
+            this.router.navigateByUrl('/about');
 
         } else {
             this.presentToast(msg.content);

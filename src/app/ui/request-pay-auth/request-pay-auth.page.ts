@@ -196,11 +196,7 @@ export class RequestPayAuthPage implements OnInit {
             .subscribe(
                 x => {
                     this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' authorised.', 'info');
-                    // if (x.responseStatus !== "RJCT") {
-                    //     this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' authorised. Id: ' + x.endToEndId, 'info');
-                    // } else {
-                    //     this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
-                    // }
+                    return this.router.navigateByUrl('/about');
 
                 });
 
@@ -210,7 +206,7 @@ export class RequestPayAuthPage implements OnInit {
         this.authorised = !this.authorised;
     }
 
-    async presentAlertConfirm() {
+    async decline() {
         const alert = await this.alertController.create({
             header: 'Confirm!',
             message: '<strong>Don\'t send the payment?</strong>!!!',
@@ -227,7 +223,13 @@ export class RequestPayAuthPage implements OnInit {
                     text: 'Don\'t Pay',
                     handler: () => {
                         console.log('Confirm decline');
-                        return true;
+                        this.pay.responseStatus = ResponseStatus.RJCT;
+                        this.pspApiSvc.psp_paymentRequestResponse(this.myPsp, this.pay)
+                            .subscribe(
+                                x => {
+                                    this.notify.update('Payment to ' + this.fcmPayload.payeeId + ' rejected.', 'info');
+                                    return this.router.navigateByUrl('/about');
+                                });
                     }
                 }
             ]

@@ -130,22 +130,13 @@ export class UserService {
 
     }
 
-    // FIXME: Need to determine default account from above list which is probably already in memory
-
-    // public getUserDefaultAccount(userId) {
-
-    //     const apiEndpoint = options.pspApiUrl + '/getClientAccounts';
-    //     return this.httpClient.get<AccountDetail>(apiEndpoint, { params: { clientKey: userId } });
-
-    //     // const colRef = this.afs.collection<Account>('accounts', ref => ref
-    //     //     .where('uid', '==', userId)
-    //     //     .where('default', '==', true));
-
-    //     // return colRef.valueChanges();
-    // }
-
     public addClientAccount(account: AccountDetail, pspId) {
-        const apiEndpoint = options.pspApiUrl + pspId + '/addClientAccount';
+        let apiEndpoint = ''
+        if (pspId === 'ABSA') {
+            apiEndpoint = options.pspApiUrl + pspId + '/addClientAccount';
+        } else {
+            apiEndpoint = options.pspApiUrl + pspId + '/addClientAccounts';
+        }
 
         return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
 

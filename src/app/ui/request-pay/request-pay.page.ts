@@ -266,13 +266,7 @@ export class RequestPayPage implements OnInit {
                 .subscribe(
                     x => {
                         this.notify.update('Payment Requested from ' + this.pay.payerId + '.', 'info');
-                        // if (x.responseStatus !== "RJCT") {
-                        //     this.notify.update('Payment Requested from ' + this.pay.payerId + '. Id: ' + x.endToEndId, 'info');
-                        // } else {
-                        //     this.notify.update('Payment Request from ' + this.pay.payerId + ' failed. Id: ' + x.endToEndId, 'error');
-                        // }
-
-
+                        return this.router.navigateByUrl('/about');
                     });
         } else {
             this.notify.update('A valid requestor data field must be supplied. \n Z@P Id, Mobile No or Email address', 'error');

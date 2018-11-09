@@ -70,7 +70,7 @@ export class PayPage implements OnInit {
 
     ngOnInit() {
 
-        this.payeePspLable = '@psp';
+        this.payeePspLable = '';
         this.processors = this.dataSvc.getProcessors();
 
         this.user.subscribe(
@@ -143,7 +143,7 @@ export class PayPage implements OnInit {
                             console.log(x);
 
 
-                            if (x.payeePSP !== null) {
+                            if (x.payeePSP !== null && x.payeePSP !== undefined) {
 
                                 this.payeePspLable = '@' + x.payeePSP;
 
@@ -252,18 +252,7 @@ export class PayPage implements OnInit {
                 .subscribe(
                     x => {
                         this.notify.update('Payment to ' + this.pay.payeeId + ' submitted', 'info');
-                        return this.router.navigateByUrl('/history');
-                        // if (x !== null) {
-                        //     if (x.responseStatus !== 'RJCT') {
-                        //         this.notify.update('Payment to ' + this.pay.payeeId + ' submitted. Id: ' + x.endToEndId, 'info');
-                        //     } else {
-                        //         this.notify.update('Payment to ' + this.pay.payeeId + ' failed. Error: ' + x.responseDesc, 'error');
-                        //     }
-                        // } else {
-                        //     this.notify.update('Nor response on Payment Initiation!!', 'error');
-                        // }
-
-
+                        return this.router.navigateByUrl('/about');
 
                     });
         } else {

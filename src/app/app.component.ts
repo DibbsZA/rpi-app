@@ -26,7 +26,6 @@ export class AppComponent implements OnInit {
         { title: 'Pay', url: '/payment/pay', icon: 'cash', icon2: 'arrow-round-forward', loggedin: true },
         { title: 'Request Payment', url: '/payment/requestpay', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
         { title: 'Scan', url: '/payment/scan', icon: 'qr-scanner', loggedin: true },
-        { title: 'History', url: '/history', icon: 'paper', loggedin: true },
         { title: 'Profile', url: '/profile', icon: 'contact', loggedin: true },
         { title: 'About', url: '/about', icon: 'information-circle-outline' }
     ];
@@ -76,11 +75,11 @@ export class AppComponent implements OnInit {
                                         const encoded = encodeURIComponent(stringyfied);
                                         this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
                                     } else if (data.paymentType === 'PS') {
-                                        this.router.navigate(['/history']);
+                                        this.router.navigate(['/about']);
                                         if (data.responseStatus === 'ACCP') {
                                             this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
                                         } else {
-                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'error');
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'payfailed');
                                         }
 
                                         // }

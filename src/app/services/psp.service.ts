@@ -104,10 +104,4 @@ export class PspService {
             .pipe(catchError(this.errorHandler.handleError));
     }
 
-
-    public admin_TxnHistory(pspId, clientKey: string) {
-        const apiEndpoint = options.pspApiUrl + pspId + '/txnHistory';
-
-        return this.httpClient.get<Transaction[]>(apiEndpoint, { params: { clientKey: clientKey } });
-    }
 }

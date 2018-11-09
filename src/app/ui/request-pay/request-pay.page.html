@@ -12,21 +12,13 @@
 <ion-content padding>
     <ng-template #loading>
         Loading Form...
-        <!-- <ion-img src="/assets/img/down-arrow-gif-8.gif" style="width: 100%"></ion-img> -->
     </ng-template>
     <form [formGroup]="payForm" *ngIf="userO" [hidden]="success" (ngSubmit)="this.doPayRequest()">
         <ng-container>
             <ion-card>
-                <ion-card-header>
-                    <ion-card-subtitle>Payment details</ion-card-subtitle>
-                </ion-card-header>
                 <ion-card-content>
                     <ion-list lines="none">
-                        <!-- <ion-item> -->
-                        <!-- <ion-label>My PSP</ion-label> -->
                         <ion-input type="text" readonly formControlName="payeePSP" hidden></ion-input>
-                        <!-- {{userO.pspId}} -->
-                        <!-- </ion-item> -->
                         <ion-item>
                             <ion-label>
                                 Amount
@@ -37,47 +29,8 @@
                             <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.amount.valid && payForm.controls.amountdisplay.dirty"
                                 (click)="whatError('amount')">!</ion-badge>
                         </ion-item>
-                        <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
-                            <ion-label>My Reference</ion-label>
-                            <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"></ion-input>
-                        </ion-item>
-                        <!-- <ion-item> -->
-                        <!-- <ion-label>My ID</ion-label> -->
-                        <ion-input type="text" hidden readonly formControlName="payeeId"></ion-input>
-                        <!-- {{payeePspLable}} -->
-                        <!-- </ion-item> -->
-                        <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
-                            <ion-label>
-                                Into Account?
-                            </ion-label>
-                            <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
-                        </ion-item>
-                        <ion-input hidden type="text" formControlName="payeeAccountRef"></ion-input>
-                        <ion-item *ngIf="!useDefaultAccount">
-                            <ion-label>
-                                Into Account?
-                            </ion-label>
-                            <ion-select required="true" formControlName="payeeAccountRef" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountRef">
-                                    {{acc.accountAlias}}
-                                </ion-select-option>
-                            </ion-select>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeAccountRef.valid"
-                                (click)="whatError('payeeAccountRef')">!</ion-badge>
-                        </ion-item>
-                    </ion-list>
-                </ion-card-content>
-            </ion-card>
-            <div class="center">
-                <ion-img src="/assets/img/down-arrow-gif-8.gif" style="height: 40px"></ion-img>
-            </div>
 
-            <ion-card>
-                <ion-card-header>
-                    <ion-card-subtitle>Request payment from</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
+                    </ion-list>
                     <ion-segment (ionChange)="segmentChanged($event)" [value]="recipient" color="primary">
                         <ion-segment-button value="zap">
                             Z@P Id
@@ -90,39 +43,77 @@
                         </ion-segment-button>
                     </ion-segment>
                     <ion-list lines="none" [hidden]="recipientZAP">
-                        <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerPSP.valid" (click)="whatError('payerPSP')">!</ion-badge>
-                            <ion-label>Sender's PSP</ion-label>
-                            <ion-select placeholder="Select PSP" formControlName="payerPSP">
-                                <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
-                            </ion-select>
-                        </ion-item>
-                        <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payerId.valid" (click)="whatError('payerId')">!</ion-badge>
-                            <ion-label>ZAP Id:</ion-label>
-                            <ion-input formControlName="payerId" type="text" placeholder="Z@p Handle" #zapid></ion-input>
-                            {{payerPspLable}}
-                        </ion-item>
+                        <ion-grid fixed>
+                            <ion-row>
+                                <ion-col>
+                                    <ion-input size="5" class="gridMiddle" formControlName="payerId" type="text"
+                                        placeholder="Z@pId" #zapid></ion-input>
+                                </ion-col>
+                                <ion-col size="1" class="gridMiddle">@</ion-col>
+                                <ion-col>
+                                    <ion-select size="5" class="gridMiddle" placeholder="Select" formControlName="payerPSP">
+                                        <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id">{{psp.id}}</ion-select-option>
+                                    </ion-select>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
                     </ion-list>
                     <ion-list lines="none" [hidden]="recipientMobile">
-                        <ion-item>
-                            <!-- <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeMobileNo.valid"                                (click)="whatError('payeeMobileNo')">!</ion-badge> -->
-                            <ion-label>Mobile No:</ion-label>
-                            <ion-input formControlName="payerMobileNo" type="tel" inputmode="tel" placeholder="27xxxxxxxxx"></ion-input>
-                            <!-- <ion-icon slot="end" name="search" (click)="selectContact()"></ion-icon> -->
-                        </ion-item>
+                        <ion-grid fixed>
+                            <ion-row>
+                                <ion-col>
+                                    <ion-input class="gridMiddle" formControlName="payerMobileNo" type="tel" inputmode="tel"
+                                        placeholder="2700 000 0000" #zapid></ion-input>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+
                     </ion-list>
                     <ion-list lines="none" [hidden]="recipientEmail">
-                        <ion-item>
-                            <!-- <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeEmail.valid" (click)="whatError('payeeEmail')">!</ion-badge> -->
-                            <ion-label>Email Address:</ion-label>
-                            <ion-input formControlName="payerEmail" type="text" placeholder="Email"></ion-input>
-                        </ion-item>
+                        <ion-grid fixed>
+                            <ion-row>
+                                <ion-col>
+                                    <ion-input class="gridMiddle" formControlName="payerEmail" type="text" placeholder="Requestee Email"
+                                        #zapid></ion-input>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
                     </ion-list>
-
+                </ion-card-content>
+            </ion-card>
+            <div class="center">
+                <ion-img src="/assets/img/down-arrow-gif-8.gif" style="height: 40px"></ion-img>
+            </div>
+            <ion-card>
+                <ion-card-content>
+                    <ion-item>
+                        <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.userRef.valid && payForm.controls.userRef.dirty">!</ion-badge>
+                        <ion-label>My Reference</ion-label>
+                        <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"></ion-input>
+                    </ion-item>
+                    <ion-input type="text" hidden readonly formControlName="payeeId"></ion-input>
+                    <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
+                        <ion-label>
+                            Into Account?
+                        </ion-label>
+                        <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
+                    </ion-item>
+                    <ion-input hidden type="text" formControlName="payeeAccountRef"></ion-input>
+                    <ion-item *ngIf="!useDefaultAccount">
+                        <ion-label>
+                            Into Account?
+                        </ion-label>
+                        <ion-select required="true" formControlName="payeeAccountRef" placeholder="Select Acct">
+                            <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountRef">
+                                {{acc.accountAlias}}
+                            </ion-select-option>
+                        </ion-select>
+                        <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeAccountRef.valid" (click)="whatError('payeeAccountRef')">!</ion-badge>
+                    </ion-item>
 
                 </ion-card-content>
             </ion-card>
+
             <ion-grid fixed>
                 <ion-row>
                     <ion-col size="8">

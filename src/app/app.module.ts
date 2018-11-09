@@ -23,17 +23,25 @@ import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
-import { PaymentModule } from './ui/payment.module';
 
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
 import { FcmService } from './services/fcm.service';
 import { QrcodeService } from './services/qrcode.service';
-import { HistoryPage } from './ui/history/history.page';
 import { ProfilePage } from './ui/profile/profile.page';
 import { RegistrationPage } from './ui/registration/registration.page';
 import { HomePage } from './ui/home/home.page';
 import { AboutPage } from './ui/about/about.page';
+import { PayPage } from './ui/pay/pay.page';
+import { PayAuthPage } from './ui/pay-auth/pay-auth.page';
+import { RequestPayPage } from './ui/request-pay/request-pay.page';
+import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
+import { PinComponent } from './ui/pin/pin.component';
+import { ZapcurrencyPipe } from './pipes/zapcurrency.pipe';
+import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
+import { ScanPage } from './ui/scan/scan.page';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 // import { Contacts } from '@ionic-native/contacts/ngx';
 
@@ -48,8 +56,15 @@ registerLocaleData(localeZa, 'en-ZA');
         RegistrationPage,
         AboutPage,
         UserProfileComponent,
-        HistoryPage,
         ProfilePage,
+        PayPage,
+        PayAuthPage,
+        RequestPayPage,
+        RequestPayAuthPage,
+        PinComponent,
+        ZapcurrencyPipe,
+        PaySuccessComponent,
+        ScanPage,
     ],
     entryComponents: [
 
@@ -64,7 +79,7 @@ registerLocaleData(localeZa, 'en-ZA');
         AngularFirestoreModule,
         AngularFireAuthModule,
         HttpClientModule,
-        PaymentModule,
+        ReactiveFormsModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
         // ServiceWorkerModule.register('firebase-messaging-sw.js', { enabled: environment.production }),
@@ -78,6 +93,7 @@ registerLocaleData(localeZa, 'en-ZA');
         AuthService,
         FcmService,
         QrcodeService,
+        BarcodeScanner,
         // Contacts,
     ],
     bootstrap: [AppComponent]

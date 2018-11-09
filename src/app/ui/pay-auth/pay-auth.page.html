@@ -20,8 +20,7 @@
                 <ion-grid>
                     <ion-row>
                         <ion-col>
-                            <ion-button type="button" onclick="confirm('Are you sure you don\'t want the money?')"
-                                expand="block" color="danger">
+                            <ion-button type="button" (click)="decline()" expand="block" color="danger">
                                 <ion-icon slot="end" name="trash"></ion-icon>
                                 Decline!!
                             </ion-button>

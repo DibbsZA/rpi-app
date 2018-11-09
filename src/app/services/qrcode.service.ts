@@ -32,9 +32,12 @@ export class QrcodeService {
 
         let serial = data.endToEndId;
         serial += '|' + data.payerId;
+        serial += '|' + data.dummy1;
         serial += '|' + data.payerName;
         serial += '|' + data.payeeId;
+        serial += '|' + data.dummy2;
         serial += '|' + data.payeeName;
+        serial += '|' + data.dummy3;
         serial += '|' + data.userRef;
         serial += '|' + data.amount.toString();
         serial += '|' + data.originatingDate;
@@ -52,9 +55,12 @@ export class QrcodeService {
         let decoded: Transaction = {
             endToEndId: dataArray.shift(),
             payerId: dataArray.shift(),
+            dummy1: dataArray.shift(),
             payerName: dataArray.shift(),
             payeeId: dataArray.shift(),
+            dummy2: dataArray.shift(),
             payeeName: dataArray.shift(),
+            dummy3: dataArray.shift(),
             userRef: dataArray.shift(),
             amount: parseInt(dataArray.shift()),
             originatingDate: dataArray.shift()
