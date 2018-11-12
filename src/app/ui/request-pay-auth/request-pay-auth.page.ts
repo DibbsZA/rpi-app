@@ -70,12 +70,12 @@ export class RequestPayAuthPage implements OnInit {
         public alertController: AlertController,
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
+        const ls = localStorage.getItem('myPSP');
 
         if (ls !== undefined && ls !== null) {
             this.myPsp = ls;
         } else {
-            console.log("RequestPayAuth: Can't read the PSP name from localstorage!!!!!");
+            console.log('RequestPayAuth: Can\'t read the PSP name from localstorage!!!!!');
             return;
         }
     }
@@ -92,7 +92,7 @@ export class RequestPayAuthPage implements OnInit {
 
                     this.fcmPayload = JSON.parse(queryParams.msg);
                 }
-                this.notify.update(JSON.stringify(this.fcmPayload), 'note');
+                // this.notify.update(JSON.stringify(this.fcmPayload), 'note');
                 // console.log(this.fcmPayload);
             }
         });
@@ -110,17 +110,8 @@ export class RequestPayAuthPage implements OnInit {
 
                 } else {
                     this.userO.pspId = this.myPsp;
-                    // this.payerPspLable = '@ ' + this.userO.pspId;
 
-                    // this.dataSvc.getProcessor(this.userO.pspId)
-                    //     .subscribe(
-                    //         // tslint:disable-next-line:no-shadowed-variable
-                    //         x => { this.myPSP = x; }
-                    //     );
-
-                    // let _payerId: string = this.fcmPayload.payerId;
                     let _payeeId: string = this.fcmPayload.payeeId;
-                    // _payerId = _payerId.split('@').shift();
                     _payeeId = _payeeId.split('@').shift();
 
                     this.pay = {
@@ -141,6 +132,7 @@ export class RequestPayAuthPage implements OnInit {
                         payeeName: [this.fcmPayload.payeeName],
                         payeeId: [_payeeId, [Validators.required]],
                         payeePSP: [this.fcmPayload.payeeId.split('@').pop()],
+                        // tslint:disable-next-line:radix
                         amount: [parseInt(this.fcmPayload.amount)],
                         userRef: [this.fcmPayload.userRef],
                         originatingDate: [this.fcmPayload.originatingDate]
@@ -188,7 +180,7 @@ export class RequestPayAuthPage implements OnInit {
         this.pay = this.payForm.value;
         this.pay.clientKey = this.userO.clientKey;
         this.pay.consentKey = secret;
-        this.pay.responseStatus = ResponseStatus.ACPT
+        this.pay.responseStatus = ResponseStatus.ACPT;
 
         console.log(this.pay);
 
