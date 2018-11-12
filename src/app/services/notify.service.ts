@@ -60,7 +60,7 @@ export class NotifyService {
         } else if (msg.style === 'payfailed') {
 
             msg.style = 'Oh no!';
-            msg.content = '<ion-img src="/assets/icons/txnFailed1.jpg" style="width: 50%;"></ion-img><br>' + stringyfied;
+            msg.content = '<ion-img src="/assets/icons/txnFailed1.jpg" style="width: 90%;"></ion-img>';
 
             this.presentAlert(msg);
             this.router.navigateByUrl('/about');
