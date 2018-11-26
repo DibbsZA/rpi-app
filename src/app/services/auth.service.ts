@@ -51,7 +51,7 @@ export class AuthService {
 
     //// Email/Password Auth ////
     async emailSignUp(email: string, password: string, pspId: string) {
-        if (this.userProfile !== null) {
+        if (this.userProfile !== null && this.userProfile !== undefined) {
 
             if (this.userProfile.queryLimit === undefined) {
                 const newUser: UserProfile = {

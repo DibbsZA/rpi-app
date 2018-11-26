@@ -44,7 +44,7 @@ export class UserService {
     }
 
     public registerUser(user: UserProfile, pspId) {
-        localStorage.setItem('myPSP', JSON.stringify(pspId));
+        localStorage.setItem('myPSP', pspId);
         const apiEndpoint = options.pspApiUrl + pspId + '/addClient';
 
         let data: UserProfile = {
@@ -107,6 +107,11 @@ export class UserService {
         if (user.telegramId !== undefined) {
             data.telegramId = user.telegramId.trimRight();
         };
+        if (user.photoUrl !== undefined) {
+            data.photoUrl = user.photoUrl.trimRight();
+        } else {
+            data.photoUrl = '/assets/img/sun-dog.png';
+        };
         data.queryLimit = 10;
         // data.preAuth = false;
 
@@ -132,7 +137,7 @@ export class UserService {
 
     public addClientAccount(account: AccountDetail, pspId) {
         let apiEndpoint = ''
-        if (pspId === 'ABSA') {
+        if (pspId === 'BANKC' || pspId === 'BANKD') {
             apiEndpoint = options.pspApiUrl + pspId + '/addClientAccount';
         } else {
             apiEndpoint = options.pspApiUrl + pspId + '/addClientAccounts';

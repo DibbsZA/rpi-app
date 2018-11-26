@@ -135,6 +135,7 @@ export interface Processor {
     name: string;
     sponsor: string;
     apiUrl?: string;
+    active?: boolean;
 }
 
 export enum ChannelCode {
