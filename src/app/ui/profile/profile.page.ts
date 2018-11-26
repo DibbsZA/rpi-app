@@ -6,6 +6,36 @@ import { UserProfile, AccountDetail, Processor } from '../../models/interfaces.0
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 import { UserService } from '../../services/user.service';
+import { ThemeService } from '../../services/theme.service';
+
+
+const themes = {
+    autumn: {
+        primary: '#ffce00',
+        secondary: '#4D9078',
+        tertiary: '#B4436C',
+        light: '#FDE8DF',
+        medium: '#FCD0A2',
+        dark: '#111111'
+    },
+    night: {
+        primary: '#2B59C3',
+        secondary: '#FFC43D',
+        tertiary: '#1B9AAA',
+        light: '#F8FFE5',
+        medium: '#EF476F',
+        dark: '#000000'
+    },
+    neon: {
+        primary: '#39BFBD',
+        secondary: '#4CE0B3',
+        tertiary: '#FF5E79',
+        light: '#F4EDF2',
+        medium: '#B682A5',
+        dark: '#34162A'
+    }
+};
+
 
 @Component({
     selector: 'app-profile',
@@ -31,6 +61,7 @@ export class ProfilePage implements OnInit {
         private router: Router,
         private notify: NotifyService,
         private userSvc: UserService,
+        private themeSvc: ThemeService,
     ) {
         this.user = this.auth.user;
         let ls = localStorage.getItem('myPSP');
@@ -77,6 +108,10 @@ export class ProfilePage implements OnInit {
             return false;
         }
         return true;
+    }
+
+    changeTheme(name) {
+        this.themeSvc.setTheme(themes[name]);
     }
 
     doRefresh(event) {

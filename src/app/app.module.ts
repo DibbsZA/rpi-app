@@ -42,6 +42,7 @@ import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
 import { ScanPage } from './ui/scan/scan.page';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { IonicStorageModule } from '@ionic/storage';
 
 // import { Contacts } from '@ionic-native/contacts/ngx';
 
@@ -74,6 +75,7 @@ registerLocaleData(localeZa, 'en-ZA');
         IonicModule.forRoot({
             backButtonText: ''
         }),
+        IonicStorageModule.forRoot(),
         AppRoutingModule,
         AngularFireModule.initializeApp(firebaseConfig),
         AngularFirestoreModule,
