@@ -8,6 +8,7 @@ import { options } from '../../config';
 })
 export class AboutPage implements OnInit {
     appVersion: string;
+    appCodeName: string;
 
     constructor(
 
@@ -16,6 +17,7 @@ export class AboutPage implements OnInit {
     ngOnInit() {
 
         this.appVersion = options.version;
+        this.appCodeName = options.codeName;
     }
 
 }
