@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, RouteReuseStrategy, Routes } from '@angular/router';
+import { RouteReuseStrategy } from '@angular/router';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
@@ -17,20 +17,34 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
-import { ProfilePageModule } from './ui/profile/profile.module';
-import { PspSvcService } from './core/psp-svc.service';
-import { AuthSvcService } from './core/auth-svc.service';
+import { PspService } from './services/psp.service';
+import { AuthService } from './services/auth.service';
 import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
-import { PaymentModule } from './ui/payment.module';
 
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
-import { FcmService } from './core/fcm.service';
-import { QrcodeService } from './core/qrcode.service';
-// import { ZapcurrencyPipe } from './core/zapcurrency.pipe';
+import { FcmService } from './services/fcm.service';
+import { QrcodeService } from './services/qrcode.service';
+import { ProfilePage } from './ui/profile/profile.page';
+import { RegistrationPage } from './ui/registration/registration.page';
+import { HomePage } from './ui/home/home.page';
+import { AboutPage } from './ui/about/about.page';
+import { PayPage } from './ui/pay/pay.page';
+import { PayAuthPage } from './ui/pay-auth/pay-auth.page';
+import { RequestPayPage } from './ui/request-pay/request-pay.page';
+import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
+import { PinComponent } from './ui/pin/pin.component';
+import { ZapcurrencyPipe } from './pipes/zapcurrency.pipe';
+import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
+import { ScanPage } from './ui/scan/scan.page';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { IonicStorageModule } from '@ionic/storage';
+
+// import { Contacts } from '@ionic-native/contacts/ngx';
 
 // the second parameter 'fr' is optional
 registerLocaleData(localeZa, 'en-ZA');
@@ -39,10 +53,19 @@ registerLocaleData(localeZa, 'en-ZA');
 @NgModule({
     declarations: [
         AppComponent,
+        HomePage,
+        RegistrationPage,
+        AboutPage,
         UserProfileComponent,
-        // FcmHandlerComponent,
-        // ZapcurrencyPipe,
-        // HoldableDirective,
+        ProfilePage,
+        PayPage,
+        PayAuthPage,
+        RequestPayPage,
+        RequestPayAuthPage,
+        PinComponent,
+        ZapcurrencyPipe,
+        PaySuccessComponent,
+        ScanPage,
     ],
     entryComponents: [
 
@@ -52,13 +75,13 @@ registerLocaleData(localeZa, 'en-ZA');
         IonicModule.forRoot({
             backButtonText: ''
         }),
+        IonicStorageModule.forRoot(),
         AppRoutingModule,
         AngularFireModule.initializeApp(firebaseConfig),
         AngularFirestoreModule,
         AngularFireAuthModule,
         HttpClientModule,
-        ProfilePageModule,
-        PaymentModule,
+        ReactiveFormsModule,
         AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
         // ServiceWorkerModule.register('firebase-messaging-sw.js', { enabled: environment.production }),
@@ -68,14 +91,13 @@ registerLocaleData(localeZa, 'en-ZA');
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         Firebase,
-        PspSvcService,
-        AuthSvcService,
+        PspService,
+        AuthService,
         FcmService,
         QrcodeService,
+        BarcodeScanner,
+        // Contacts,
     ],
-    // exports: [
-    //     ZapcurrencyPipe
-    // ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iAccount } from '../../models/interfaces';
-import { UserServiceService } from '../../core/user-service.service';
+import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { AuthSvcService } from '../../core/auth-svc.service';
+import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
-import { NotifyService } from '../../core/notify.service';
+import { NotifyService } from '../../services/notify.service';
+import { UserProfile, AccountDetail } from '../../models/interfaces.0.2';
 
 @Component({
     selector: 'app-account-edit',
@@ -13,17 +13,27 @@ import { NotifyService } from '../../core/notify.service';
 })
 export class AccountEditComponent implements OnInit {
 
-    user: Observable<iUser>;
-    userO: iUser;
-    newAccount: iAccount;
+    user: Observable<firebase.User>;
+    userProfile: Observable<UserProfile>;
+    userO: firebase.User;
+    newAccount: AccountDetail;
+    myPsp: string = null;
 
     constructor(
-        private auth: AuthSvcService,
-        private userSvc: UserServiceService,
+        private auth: AuthService,
+        private userSvc: UserService,
         private notify: NotifyService,
         private router: Router,
     ) {
         this.user = this.auth.user;
+        let ls = localStorage.getItem('myPSP');
+
+        if (ls !== undefined && ls !== null) {
+            this.myPsp = ls;
+        } else {
+            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
+            return;
+        }
     }
 
     ngOnInit() {
@@ -34,15 +44,15 @@ export class AccountEditComponent implements OnInit {
         );
     }
 
-    save(accountAlias, accountNo, nominated) {
+    save(accountAlias: string, accountNo: string, nominated: boolean) {
         this.newAccount = {
-            accountAlias: accountAlias,
-            accountNo: accountNo,
-            uid: this.userO.uid,
+            accountAlias: accountAlias.trim(),
+            accountNo: accountNo.trim(),
+            clientKey: this.userO.uid,
             default: nominated
         };
         // this.userO.accounts.push(this.newAccount);
-        this.userSvc.addUserAccount(this.newAccount)
+        this.userSvc.addClientAccount(this.newAccount, this.myPsp)
             .then(r => {
                 this.notify.update('Account Added.', 'success');
                 return this.router.navigateByUrl('/profile');

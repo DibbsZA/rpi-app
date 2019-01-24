@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { msgPSPPayment, qrCodeSpec } from '../models/messages';
+import { Transaction, QrcodeSpec } from '../models/interfaces.0.2';
 
 @Injectable({
     providedIn: 'root'
 })
 export class QrcodeService {
 
-    constructor(
-    ) {
-    }
+    // constructor() { }
 
     /**
      * encodeQR
@@ -27,25 +25,22 @@ export class QrcodeService {
         return deserialised;
     }
 
-    private serialise(data: qrCodeSpec): string {
+    private serialise(data: QrcodeSpec): string {
         /**
         * Data will be serialized in the order below
         */
 
-        let serial = data.uniqueRef;
+        let serial = data.endToEndId;
         serial += '|' + data.payerId;
-        serial += '|' + data.payerPSP;
+        serial += '|' + data.dummy1;
         serial += '|' + data.payerName;
-        serial += '|' + data.payerAccountNo;
-        serial += '|' + data.consentKey;
         serial += '|' + data.payeeId;
-        serial += '|' + data.payeePSP;
+        serial += '|' + data.dummy2;
         serial += '|' + data.payeeName;
-        serial += '|' + data.payeeAccountNo;
+        serial += '|' + data.dummy3;
         serial += '|' + data.userRef;
         serial += '|' + data.amount.toString();
         serial += '|' + data.originatingDate;
-        serial += '|' + data.mpiHash;
 
         console.log(serial);
 
@@ -53,25 +48,22 @@ export class QrcodeService {
     };
 
 
-    private deserialise(qrdata: string): msgPSPPayment {
+    private deserialise(qrdata: string): Transaction {
 
         let dataArray = qrdata.split('|');
 
-        let decoded: msgPSPPayment = {
-            uniqueRef: dataArray.shift(),
+        let decoded: Transaction = {
+            endToEndId: dataArray.shift(),
             payerId: dataArray.shift(),
-            payerPSP: dataArray.shift(),
+            dummy1: dataArray.shift(),
             payerName: dataArray.shift(),
-            payerAccountNo: dataArray.shift(),
-            consentKey: dataArray.shift(),
             payeeId: dataArray.shift(),
-            payeePSP: dataArray.shift(),
+            dummy2: dataArray.shift(),
             payeeName: dataArray.shift(),
-            payeeAccountNo: dataArray.shift(),
+            dummy3: dataArray.shift(),
             userRef: dataArray.shift(),
             amount: parseInt(dataArray.shift()),
-            originatingDate: dataArray.shift(),
-            mpiHash: dataArray.shift()
+            originatingDate: dataArray.shift()
         }
 
         console.log(decoded);
@@ -79,25 +71,19 @@ export class QrcodeService {
         return decoded;
     };
 
-    private converter(msgData: any): qrCodeSpec {
+    private converter(msgData: any): QrcodeSpec {
 
         let payload = msgData;
 
-        let qrData: qrCodeSpec = {
-            uniqueRef: '',
+        let qrData: QrcodeSpec = {
+            endToEndId: '',
             payerId: payload.payerId || '',
-            payerPSP: payload.payerPSP || '',
             payerName: payload.payerName || '',
-            payerAccountNo: payload.payerAccountNo || '',
-            consentKey: payload.consentKey || '',
             payeeId: payload.payeeId || '',
-            payeePSP: payload.payeePSP || '',
             payeeName: payload.payeeName || '',
-            payeeAccountNo: payload.payeeAccountNo || '',
             userRef: payload.userRef || '',
             amount: payload.amount || 0,
-            originatingDate: payload.originatingDate || '',
-            mpiHash: payload.mpiHash || ''
+            originatingDate: payload.originatingDate || ''
         }
 
         return qrData;

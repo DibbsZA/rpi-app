@@ -103,19 +103,13 @@ export interface msgPSPPayment {
 
 export interface qrCodeSpec {
 
-    uniqueRef: string | null;
+    endToEndId: string | null;
+    originatingDate?: string | null;
     payerId?: string | null;
-    payerPSP?: string | null;
     payerName?: string | null;
-    payerAccountNo?: string | null;
-    consentKey?: string | null;
     payeeId: string | null;
-    payeePSP: string | null;
     payeeName?: string | null;
-    payeeAccountNo?: string | null;
     userRef?: string | null;
     amount?: number | null;
-    originatingDate?: string | null;
-    mpiHash?: string | null;
 }
 

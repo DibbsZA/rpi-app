@@ -1,19 +1,32 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AuthGuard } from './core/auth.guard';
-import { CanDeactivateGuard } from './core/can-deactivate-guard';
+import { AuthGuard } from './guards/auth.guard';
+import { CanDeactivateGuard } from './guards/can-deactivate-guard';
+import { ProfilePage } from './ui/profile/profile.page';
+import { RegistrationPage } from './ui/registration/registration.page';
+import { HomePage } from './ui/home/home.page';
+import { AboutPage } from './ui/about/about.page';
+import { PayPage } from './ui/pay/pay.page';
+import { PayAuthPage } from './ui/pay-auth/pay-auth.page';
+import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
+import { RequestPayPage } from './ui/request-pay/request-pay.page';
+import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
+import { ScanPage } from './ui/scan/scan.page';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', loadChildren: './ui/home/home.module#HomePageModule', canLoad: [] },
-    { path: 'registration', loadChildren: './ui/registration/registration.module#RegistrationPageModule', canLoad: [] },
-    { path: 'about', loadChildren: './ui/about/about.module#AboutPageModule', canLoad: [] },
-    { path: 'profile', loadChildren: './ui/profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
+    { path: 'home', component: HomePage, canLoad: [] },
+    { path: 'registration', component: RegistrationPage, canLoad: [] },
+    { path: 'about', component: AboutPage, canLoad: [] },
+    { path: 'profile', component: ProfilePage, canActivate: [AuthGuard] },
     { path: 'account', loadChildren: './ui/account/account.module#AccountPageModule', canActivate: [AuthGuard] },
-    { path: 'history', loadChildren: './ui/history/history.module#HistoryPageModule', canActivate: [AuthGuard] },
-    { path: 'txn-detail/:id', loadChildren: './ui/txn-detail/txn-detail.module#TxnDetailPageModule', canActivate: [AuthGuard] },
-    { path: 'payment', loadChildren: './ui/payment.module#PaymentModule', canActivate: [AuthGuard] },
-    { path: 'show-qr/:id', loadChildren: './ui/show-qr/show-qr.module#ShowQrPageModule', canActivate: [AuthGuard] }
+    // { path: 'payment', loadChildren: './ui/payment.module#PaymentModule', canActivate: [AuthGuard] }
+    { path: 'payment/pay', component: PayPage, canActivate: [AuthGuard] },
+    { path: 'payment/payauth', component: PayAuthPage, canActivate: [AuthGuard] },
+    { path: 'payment/success', component: PaySuccessComponent, canActivate: [AuthGuard] },
+    { path: 'payment/requestpay', component: RequestPayPage, canActivate: [AuthGuard] },
+    { path: 'payment/requestpayauth', component: RequestPayAuthPage, canActivate: [AuthGuard] },
+    { path: 'payment/scan', component: ScanPage, canActivate: [AuthGuard] }
 
 ];
 

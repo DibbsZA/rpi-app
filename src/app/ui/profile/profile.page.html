@@ -14,40 +14,50 @@
         <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
         </ion-refresher-content>
     </ion-refresher>
-    <ng-container *ngIf="userO | async as user">
+    <ng-container *ngIf="userO">
         <ion-card>
             <ion-card-content>
                 <div (click)="editProfile()" class="profile">
-                    <img [src]="user.photoURL" class="imgAvatar">
+                    <img [src]="userO.photoUrl" class="imgAvatar">
+                    <ion-input type="text" hidden #photoUrl [value]="userO.photoUrl" readonly></ion-input>
                 </div>
                 <ion-list lines="none">
                     <ion-item>
-                        <ion-input type="text" placeholder="User Name" #name [value]="user.displayName" [readonly]="!editMode"></ion-input>
+                        <ion-input type="text" placeholder="First Name" #name [value]="userO.name" [readonly]="!editMode"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-input type="text" placeholder="Last Name" #surname [value]="userO.surname" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>E-Mail</ion-label>
-                        <ion-input type="email" placeholder="Email" [value]="user.email" readonly></ion-input>
+                        <ion-input type="email" placeholder="Email" #email [value]="userO.email" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>My PSP</ion-label>
-                        <ion-input type="text" placeholder="PSP Name" [value]="user.pspId" readonly *ngIf="!editMode"></ion-input>
+                        <ion-input type="text" placeholder="PSP Name" [value]="userO.pspId" readonly *ngIf="!editMode"></ion-input>
                         <ion-select slot="end" #pspid placeholder="Select PSP" expand='full' [hidden]="!editMode"
                             (ionChange)="payerPspSelect(pspid.value)">
-                            <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="user.pspId">{{psp.id}}</ion-select-option>
+                            <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="userO.pspId">{{psp.id}}</ion-select-option>
                         </ion-select>
                     </ion-item>
                     <ion-item>
                         <ion-label>ZAP Id:</ion-label>
-                        <ion-input type="text" placeholder="name" #zapid [value]="user.zapId" [readonly]="!editMode"></ion-input>
+                        <ion-input type="text" placeholder="name" #zapid [value]="userO.zapId" [readonly]="!editMode"></ion-input>
                         <!-- {{payerPspLable}} -->
                     </ion-item>
                     <ion-item>
                         <ion-label>Nickname</ion-label>
-                        <ion-input type="text" placeholder="Nickname?" #nick [value]="user.nickname" [readonly]="!editMode"></ion-input>
+                        <ion-input type="text" placeholder="Nickname?" #nick [value]="userO.nickname" [readonly]="!editMode"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Mobile No</ion-label>
+                        <ion-input type="text" placeholder="Mobile No (27xxxxxxxxx)" #mobileNo [value]="userO.mobileNo"
+                            [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
                         <ion-label>Telegram ID</ion-label>
-                        <ion-input type="text" placeholder="Telegram ID" #nick [value]="user.telegramId" readonly></ion-input>
+                        <ion-input type="text" placeholder="Telegram ID" #telegramId [value]="userO.telegramId"
+                            readonly></ion-input>
                     </ion-item>
                 </ion-list>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="!editMode">
@@ -56,7 +66,7 @@
                     </ion-fab-button>
                 </ion-fab>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="editMode">
-                    <ion-fab-button color="danger" (click)="saveProfile(name.value, pspid.value, zapid.value, nick.value)">
+                    <ion-fab-button color="danger" (click)="saveProfile(name.value, surname.value, email.value, pspid.value, zapid.value, nick.value, mobileNo.value, telegramId.value, photoUrl.value)">
                         <ion-icon name="save"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
@@ -68,7 +78,7 @@
                     <ion-item-divider>
                         <ion-label>Accounts <span class="tiny">( checked = default )</span></ion-label>
                     </ion-item-divider>
-                    <ion-item-sliding *ngFor="let acc of accounts | async ">
+                    <ion-item-sliding *ngFor="let acc of accounts | async">
                         <ion-item>
                             <ion-label>{{acc.accountAlias}}</ion-label>
                             {{acc.accountNo}} &nbsp;
@@ -96,5 +106,10 @@
                 <!-- <progress color="warning" class="progress" [value]="progress" max="100"></progress> -->
             </ion-card-content>
         </ion-card>
+        <ion-button expand="block" color="medium" (click)="changeTheme('autumn')">Peach</ion-button>
+        <ion-button expand="block" color="medium" (click)="changeTheme('night')">Apple</ion-button>
+        <ion-button expand="block" color="medium" (click)="changeTheme('neon')">Lilac</ion-button>
+        <ion-button expand="block" color="medium" (click)="changeTheme('')">Default</ion-button>
+
     </ng-container>
 </ion-content>

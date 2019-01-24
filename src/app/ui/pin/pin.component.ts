@@ -26,7 +26,7 @@ export class PinComponent implements OnInit {
 
     ngOnInit() {
         this.data = {
-            'pspUrl': this.pspUrl,
+            // 'pspUrl': this.pspUrl,
             'pin': this.pin
         }
     }

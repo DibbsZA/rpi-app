@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { msgPaymentAuth, msgPSPPayment } from '../models/messages';
+import { Transaction } from '../models/interfaces.0.2';
 
 /// Notify users about errors and other helpful stuff
 export interface Msg {
@@ -29,10 +29,10 @@ export class NotifyService {
 
     }
 
-    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'paysuccess' | 'action') {
+    update(content: any, style: 'note' | 'error' | 'info' | 'success' | 'paysuccess' | 'payfailed' | 'action') {
 
         const msg: Msg = { content, style };
-        const msgContent: msgPSPPayment = content;
+        const msgContent: Transaction = content;
         const stringyfied = JSON.stringify(msgContent);
         const encoded = encodeURIComponent(stringyfied);
 
@@ -55,7 +55,15 @@ export class NotifyService {
             msg.content = '<ion-img src="/assets/icons/success-1.png" style="width: 50%;"></ion-img>';
 
             this.presentAlert(msg);
-            this.router.navigateByUrl('/history');
+            this.router.navigateByUrl('/about');
+
+        } else if (msg.style === 'payfailed') {
+
+            msg.style = 'Oh no!';
+            msg.content = '<ion-img src="/assets/icons/txnFailed1.jpg" style="width: 90%;"></ion-img>';
+
+            this.presentAlert(msg);
+            this.router.navigateByUrl('/about');
 
         } else {
             this.presentToast(msg.content);

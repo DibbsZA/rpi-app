@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content padding>
-    <ng-container *ngIf="user | async; else loading">
+    <ng-container *ngIf="userO; else loading">
         <ion-card *ngIf="!authorised">
             <ion-card-header>
                 <ion-card-subtitle>Do you want to recieve this payment?</ion-card-subtitle>
@@ -20,8 +20,7 @@
                 <ion-grid>
                     <ion-row>
                         <ion-col>
-                            <ion-button type="button" onclick="confirm('Are you sure you don\'t want the money?')"
-                                expand="block" color="danger">
+                            <ion-button type="button" (click)="decline()" expand="block" color="danger">
                                 <ion-icon slot="end" name="trash"></ion-icon>
                                 Decline!!
                             </ion-button>
@@ -38,94 +37,13 @@
 
             </ion-card-content>
         </ion-card>
-        <form *ngIf="authorised" [formGroup]="payForm" [hidden]="success" (ngSubmit)="doPay(authorised)">
-            <ion-card>
-                <ion-card-header>
-                    <ion-card-subtitle>Incomming payment details</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
-                    <ion-list lines="none">
-                        <!-- <ion-item> -->
-                        <!-- <ion-label>Payer PSP</ion-label> -->
-                        <ion-input type="text" readonly formControlName="payerPSP" hidden></ion-input>
-                        <!-- </ion-item> -->
-                        <ion-item>
-                            <ion-label>From</ion-label>
-                            <ion-input type="text" readonly formControlName="payerId"></ion-input>
-                            @ {{fcmPayload.payerPSP}}
-                        </ion-item>
-                        <ion-item>
-                            <ion-label>Description</ion-label>
-                            <ion-input formControlName="userRef" type="text" placeholder="Payment reference" required="true"
-                                readonly="true"></ion-input>
-                        </ion-item>
-                        <ion-item>
-                            <ion-label>
-                                Amount
-                            </ion-label>
-                            <ion-input class="largeAmount" type="text" placeholder="R0.00" [value]="fcmPayload.amount | zapcurrency"
-                                readonly="true"></ion-input>
-                        </ion-item>
-                        <ion-input formControlName="amount" type="number" required="true" hidden></ion-input>
-                    </ion-list>
-                </ion-card-content>
-            </ion-card>
-            <div class="center">
-                <ion-img src="/assets/img/down-arrow-gif-8.gif" style="height: 40px"></ion-img>
-            </div>
-            <ion-card>
-                <ion-card-header>
-                    <ion-card-subtitle>Into which Account?</ion-card-subtitle>
-                </ion-card-header>
-                <ion-card-content>
-                    <ion-list lines="none">
-                        <ion-item>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeId.valid" (click)="whatError('payeeId')">!</ion-badge>
-                            <ion-label>ZAP Id:</ion-label>
-                            <ion-input formControlName="payeeId" type="text" placeholder="Recipient's Z@p Id" #zapid></ion-input>
-                            {{payeePspLable}}
-                        </ion-item>
-                        <!-- <ion-item> -->
-                        <!-- <ion-label>Recipient PSP</ion-label> -->
-                        <ion-input type="text" readonly formControlName="payeePSP" hidden></ion-input>
-                        <!-- </ion-item> -->
-                        <ion-item *ngIf="useDefaultAccount" (click)="overideAccount()">
-                            <ion-label>
-                                Into Account?
-                            </ion-label>
-                            <ng-container *ngIf="defaultAccount">{{defaultAccount.accountAlias}}</ng-container>
-                        </ion-item>
-                        <ion-input hidden type="text" formControlName="payeeAccountNo"></ion-input>
-                        <ion-item *ngIf="!useDefaultAccount">
-                            <ion-label>
-                                Into Account?
-                            </ion-label>
-                            <ion-select required="true" formControlName="payeeAccountNo" placeholder="Select Acct">
-                                <ion-select-option *ngFor="let acc of accounts" [value]="acc.accountNo">
-                                    {{acc.accountAlias}}
-                                </ion-select-option>
-                            </ion-select>
-                            <ion-badge slot="start" color="danger" *ngIf="!payForm.controls.payeeAccountNo.valid"
-                                (click)="whatError('payeeAccountNo')">!</ion-badge>
-                        </ion-item>
-                    </ion-list>
-                </ion-card-content>
-            </ion-card>
 
-            <ion-button type="submit" [disabled]="!payForm.valid" expand="block" color="success">
-                <ion-icon slot="start" name="cash"></ion-icon>
-                Recieve your Z@P!
-            </ion-button>
-            <div *ngIf="!payForm.valid">
-                <span class="errorMsg">Form incomplete or invalid. Tap the red badge to see why.</span>
-            </div>
-            <!-- <label *ngIf="myPSP" class="errorMsg"> {{myPSP.apiUrl}} </label> -->
+        <label *ngIf="apiUrl" class="errorMsg">{{apiUrl}}{{myPsp}}</label>
 
-        </form>
+        <!-- <pre class="jsonData"> -->
 
-        <!-- <pre class="jsonData">
-{{ fcmPayload | json }}
-</pre> -->
+        <!-- {{ fcmPayload | json }} -->
+        <!-- </pre> -->
     </ng-container>
     <ng-template #loading>
         Loading Form...

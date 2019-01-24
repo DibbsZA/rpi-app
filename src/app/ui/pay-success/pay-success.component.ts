@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser, iProcessor, iTransaction } from '../../models/interfaces';
-import { AuthSvcService } from '../../core/auth-svc.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { DataServiceService } from '../../core/data-service.service';
-import { msgPSPPayment, msgConfirmation } from '../../models/messages';
-// import { sha256, sha224, Message } from 'js-sha256';
 
 import { FormGroup } from '@angular/forms';
-import { NotifyService } from '../../core/notify.service';
-// import { TxnSvcService } from '../../core/txn-svc.service';
-// import { PspSvcService } from '../../core/psp-svc.service';
+import { NotifyService } from '../../services/notify.service';
 import { ActivatedRoute } from '@angular/router';
+import { Transaction, Processor, UserProfile } from '../../models/interfaces.0.2';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
     selector: 'app-pay-success',
@@ -19,15 +15,16 @@ import { ActivatedRoute } from '@angular/router';
     styleUrls: ['./pay-success.component.scss']
 })
 export class PaySuccessComponent implements OnInit {
-    processors: Observable<iProcessor[]>;
-    myPSP: iProcessor;
-    user: Observable<iUser>;
-    userO: iUser;
-    pay: msgPSPPayment;
+    processors: Observable<Processor[]>;
+    myPSP: Processor;
+    user: Observable<firebase.User>;
+    userO: UserProfile;
+    pay: Transaction;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
 
+    myPsp: any;
 
     payAmount: string;
     Pin: String = '';
@@ -37,25 +34,18 @@ export class PaySuccessComponent implements OnInit {
 
     // FIXME: Mock data for testing
     fcmPayload: any = {
-        uniqueRef: '4c49eb1a5441',
+        endToEndId: '4c49eb1a5441_PSPNAME',
         payeeId: 'USER4@UBNK',
-        payeePSP: 'UBNK',
-        payeeAccountNo: '',
         payerName: 'User Three',
         payerId: 'USER3@STDB',
-        payerPSP: 'STDB',
         userRef: 'REF',
         amount: '12300',
-        mpiHash: '4a18aefba736a9b4bf66435e1e51162df68d6a8bc13749031e4d7ad4',
         originatingDate: '2018-09-30 16:04:49.649000'
     };
     constructor(
-        private auth: AuthSvcService,
-        private dataSvc: DataServiceService,
-        // private fb: FormBuilder,
+        private auth: AuthService,
+        private userSvc: UserService,
         public notify: NotifyService,
-        // private txnSvc: TxnSvcService,
-        // private pspApiSvc: PspSvcService,
         private router: Router,
         private activeRoute: ActivatedRoute
     ) {
@@ -63,7 +53,15 @@ export class PaySuccessComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.payeePspLable = '@psp';
+
+        let ls = localStorage.getItem('myPSP');
+        if (ls !== undefined && ls !== null) {
+            this.myPsp = ls;
+        } else {
+            this.notify.update('No PSP record? Try loggin in again.', 'error');
+            return;
+        }
+
 
         this.activeRoute.queryParams.subscribe(queryParams => {
             if (queryParams.msg !== undefined) {
@@ -81,63 +79,21 @@ export class PaySuccessComponent implements OnInit {
 
 
         this.user.subscribe(
-            x => {
-                this.userO = x;
-                if (this.userO.pspId == null) {
+            async x => {
+                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+
+                if (this.userO.queryLimit !== undefined) {
+
+
+
+                } else {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
-                } else {
-                    this.payerPspLable = '@' + this.fcmPayload.pspId;
+                }
 
-                    // this.dataSvc.getProcessor(this.userO.pspId)
-                    //     .subscribe(
-                    //         x => { this.myPSP = x }
-                    //     );
-
-                    let _payerId: string = this.fcmPayload.payerId;
-                    let _payeeId: string = this.fcmPayload.payeeId;
-                    _payerId = _payerId.split('@').shift();
-                    _payeeId = _payeeId.split('@').shift();
-
-                    this.pay = {
-                        uniqueRef: this.fcmPayload.uniqueRef,
-                        userRef: this.fcmPayload.userRef,
-                        payerId: _payerId,
-                        payerName: this.fcmPayload.payerName,
-                        payerPSP: this.fcmPayload.pspId,
-                        payeeId: _payeeId,
-                        payeePSP: this.fcmPayload.payeePSP,
-                        // payeeAccountNo: null,
-                        amount: this.fcmPayload.amount,
-                        originatingDate: this.fcmPayload.originatingDate,
-                        responseCode: this.fcmPayload.responseCode,
-                        responseDesc: this.fcmPayload.responseDesc,
-                    };
-
-                    // this.payForm = this.fb.group({
-                    //     uniqueRef: [this.fcmPayload.uniqueRef, Validators.required],
-                    //     payerId: [_payerId],
-                    //     payeeAccountNo: ['', [Validators.required]],
-                    //     payerPSP: [this.fcmPayload.payerPSP],
-                    //     payerName: [this.fcmPayload.payerName],
-                    //     payeeId: [_payeeId, [Validators.required]],
-                    //     payeePSP: [this.fcmPayload.payeePSP, [Validators.required]],
-                    //     amount: [this.fcmPayload.amount, [Validators.required, Validators.min(100), Validators.max(100000)]],
-                    //     userRef: [this.fcmPayload.userRef, [Validators.required]],
-                    //     originatingDate: [this.fcmPayload.originatingDate],
-                    //     responseCode: ['APPROVED'],
-                    //     responseDesc: ['Thanks!!']
-                    // });
-
-                    // this.payForm.valueChanges
-                    //     .subscribe(x => {
-                    //         console.log(x);
-                    //         if (x.payeePSP != null) {
-
-                    //             this.payeePspLable = '@' + x.payeePSP;
-
-                    //         }
-                    //     });
+                if (this.userO.pspId === null) {
+                    this.notify.update('Please update your profile first!!!.', 'info');
+                    this.router.navigate(['/profile']);
 
                 }
 

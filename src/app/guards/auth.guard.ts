@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { iUser } from '../models/interfaces';
-import { AuthSvcService } from './auth-svc.service';
+import { AuthService } from '../services/auth.service';
+import { UserProfile } from '../models/interfaces.0.2';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    user: Observable<iUser | null>;
+    user: Observable<any | null>;
     // loggedIn: boolean = true;
 
     constructor(
-        public auth: AuthSvcService,
+        public auth: AuthService,
         private router: Router
     ) {
         this.user = this.auth.user;
@@ -28,7 +28,8 @@ export class AuthGuard implements CanActivate {
         this.user.subscribe(
             x => {
 
-                if (x == null) {
+                console.log('AuthGuard: CanActivate -> x = ' + JSON.stringify(x));
+                if (x === null) {
                     loggedIn = false;
                     this.router.navigate(['/']);
                 }
