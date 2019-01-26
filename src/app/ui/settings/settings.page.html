@@ -54,8 +54,10 @@
         <ion-card-content>
             Due to the use of self-signed certificates in the POC, please connecto to this url with the phone browser
             and accept the security warnings.<br>
-            Then quit and restart this app before registering an account.<br>
-            <span (click)="openBrowser(pspApiUrl)">{{pspApiUrl}}</span>
+            Then quit and restart this app before registering an account.<br><br>
+            <span (click)="openBrowser(pspApiUrl)">
+                <stron>{{pspApiUrl}}</stron>
+            </span>
         </ion-card-content>
     </ion-card>
 </ion-content>
