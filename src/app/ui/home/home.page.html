@@ -15,38 +15,29 @@
         </ion-refresher-content>
     </ion-refresher>
 
-
     <div *ngIf="!(auth.user | async)">
-
         <ion-card>
-
             <ion-card-content>
-                <ion-list lines='none'>
-
+                <form [formGroup]="loginForm" (ngSubmit)="login(eml.value,pwd.value)">
                     <ion-item>
-                        <ion-label position='floating'>Email Address</ion-label>
-                        <ion-input type="text" #eml [value]="" autocomplete="on" autofocus="true"></ion-input>
+                        <ion-label position="floating">E-Mail</ion-label>
+                        <ion-input formControlName="email" #eml type="text"></ion-input>
                     </ion-item>
-
                     <ion-item>
-                        <ion-label position='floating'>Password</ion-label>
-                        <ion-input type="password" #pwd [value]=""></ion-input>
+                        <ion-label position="floating">Password</ion-label>
+                        <ion-input formControlName="password" #pwd type="password"></ion-input>
                     </ion-item>
-
-                </ion-list>
-
-                <ion-button ion-button type="submit" (click)="login(eml.value,pwd.value)" expand='full'>Login</ion-button>
-                <!-- <ion-button ion-button type="submit" expand='full'></ion-button> --><br>
-                <span (click)="register()">Register an account</span>
-
+                    <ion-item>
+                        <ion-label>You will be login to </ion-label>{{ myPsp }}
+                    </ion-item>
+                    <ion-button block color="primary" type="submit" [disabled]="loginForm.invalid" expand='full'>
+                        Login
+                    </ion-button>
+                </form>
+                <br>
+                <span (click)="register()">Register a new account</span>
             </ion-card-content>
         </ion-card>
 
     </div>
-
-    <!-- <ng-template #alreadyLoggedIn>
-        <p class="text-success">
-            You are logged in <i class="fa fa-thumbs-up"></i>
-        </p>
-    </ng-template> -->
 </ion-content>

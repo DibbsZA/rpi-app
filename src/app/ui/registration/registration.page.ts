@@ -53,7 +53,7 @@ export class RegistrationPage implements OnInit {
 
         if (this.myPsp !== undefined && this.myPsp !== null) {
 
-            if (this.pspApiUrl != undefined && this.pspApiUrl != null) {
+            if (this.pspApiUrl !== undefined && this.pspApiUrl != null) {
                 this.auth.emailSignUp(email, pwd, this.myPsp)
                     .then((res) => {
                         console.log(res);
@@ -61,15 +61,14 @@ export class RegistrationPage implements OnInit {
                             this.notify.update('Please update your profile next!!!.', 'info');
                             this.router.navigate(['/profile']);
 
-                        }
-                        else {
+                        } else {
                             this.notify.update('Register failed', 'error');
                         }
 
                     })
                     .catch((err) => {
-                        console.log(err)
-                    })
+                        console.log(err);
+                    });
             } else {
                 this.notify.update('You first need to configure your Network Settings.', 'note');
                 this.router.navigate(['/settings']);
@@ -78,7 +77,7 @@ export class RegistrationPage implements OnInit {
 
 
         } else {
-            console.log("AuthSvc: Can't read the PSP name from app storage!!!!!");
+            console.log('AuthSvc: Can\'t read the PSP name from app storage!!!!!');
         }
 
     }

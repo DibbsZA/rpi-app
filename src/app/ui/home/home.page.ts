@@ -8,8 +8,7 @@ import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
 import { DataService } from '../../services/data.service';
 import { LoadingController } from '@ionic/angular';
-
-
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-home',
@@ -23,6 +22,7 @@ export class HomePage implements OnInit {
     pspApiUrl: String;
     userO: UserProfile;
     loading: HTMLIonLoadingElement;
+    loginForm: FormGroup;
 
     // client = {} as iUser;
 
@@ -33,9 +33,15 @@ export class HomePage implements OnInit {
         public userSvc: UserService,
         public pspService: PspService,
         public dataSvc: DataService,
-        public loadingController: LoadingController
+        public loadingController: LoadingController,
+        private formBuilder: FormBuilder,
     ) {
         this.user = this.auth.user;
+
+        this.loginForm = this.formBuilder.group({
+            email: ['', Validators.required],
+            password: ['', Validators.required],
+        });
     }
 
     ngOnInit(): void {
@@ -48,7 +54,7 @@ export class HomePage implements OnInit {
                     .subscribe(api => {
                         this.pspApiUrl = api;
                         this.checkAuth();
-                    })
+                    });
             });
 
     }
@@ -64,7 +70,7 @@ export class HomePage implements OnInit {
     }
 
     checkAuth() {
-        if (this.pspApiUrl != undefined && this.pspApiUrl != null) {
+        if (this.pspApiUrl !== undefined && this.pspApiUrl != null) {
 
             if (this.user !== null) {
                 this.user.subscribe(
@@ -104,7 +110,7 @@ export class HomePage implements OnInit {
 
         // this.dataSvc.saveKey('myPSP', this.myPsp);
 
-        if (this.pspApiUrl != undefined && this.pspApiUrl != null) {
+        if (this.pspApiUrl !== undefined && this.pspApiUrl != null) {
             return this.auth.emailLogin(email, pwd, this.myPsp)
                 .then(result => {
                     console.log(result);
@@ -129,7 +135,7 @@ export class HomePage implements OnInit {
     private async afterSignIn() {
         // Do after login stuff here, such router redirects, toast messages, etc.
 
-        if (this.pspApiUrl != undefined && this.pspApiUrl != null) {
+        if (this.pspApiUrl !== undefined && this.pspApiUrl != null) {
             this.notify.update('You are logged in. Let\'s start...', 'success');
             return this.router.navigate(['/about']);
         }
