@@ -13,7 +13,6 @@ import { PspService } from '../../services/psp.service';
 import { Processor, UserProfile, AccountDetail, PaymentRequestInitiation, ChannelCode } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
-import { options } from "../../config";
 
 @Component({
     selector: 'app-request-pay',
@@ -35,7 +34,7 @@ export class RequestPayPage implements OnInit {
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
 
-    apiUrl: string = options.pspApiUrl;
+    apiUrl: string = this.pspApiSvc.pspApiUrl;
 
     payAmount: string;
     Pin: String = '';
@@ -46,9 +45,6 @@ export class RequestPayPage implements OnInit {
     recipientMobile: boolean = true;
     recipientEmail: boolean = true;
     recipient: string = 'zap';
-    // selectedContact: Contact;
-    // firstNumber: string;
-    // selectedContactNumbers: IContactField[];
 
     constructor(
         private auth: AuthService,
@@ -63,14 +59,11 @@ export class RequestPayPage implements OnInit {
         // private contact: Contacts
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+            });
 
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log("Req2PayPage: Can't read the PSP name from localstorage!!!!!");
-            return;
-        }
     }
 
     ngOnInit() {

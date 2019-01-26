@@ -16,7 +16,6 @@ export const firebaseConfig = {
 };
 
 export const options = {
-    pspApiUrl: 'https://cloud-dev.bankservafrica.com/PSP/v0.2.0/',
-    version: 'v1.3.5',
-    codeName: 'Bank Demo'
+    version: 'v1.4.0',
+    codeName: 'RPI Classic'
 };

@@ -133,8 +133,9 @@ export interface AccountDetail {
 export interface Processor {
     id: string;
     name: string;
-    sponsor: string;
-    apiUrl?: string;
+    uriBSV?: string;
+    uriGCC?: string;
+    uriHP?: string;
     active?: boolean;
 }
 

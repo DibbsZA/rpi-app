@@ -15,8 +15,8 @@
         </ion-refresher-content>
     </ion-refresher>
 
+
     <div *ngIf="!(auth.user | async)">
-        <!-- <h3>Anonymous Login</h3> -->
 
         <ion-card>
 
@@ -32,20 +32,12 @@
                         <ion-label position='floating'>Password</ion-label>
                         <ion-input type="password" #pwd [value]=""></ion-input>
                     </ion-item>
-                    <ion-item>
-                        <ion-label position='stacked'>Who is your PSP?</ion-label>
-                        <ion-select placeholder="Select Bank" #pspId>
-                            <ion-select-option value="BANKA">BANKA</ion-select-option>
-                            <ion-select-option value="BANKB">BANKB</ion-select-option>
-                            <ion-select-option value="BANKC">BANKC</ion-select-option>
-                            <ion-select-option value="BANKD">BANKD</ion-select-option>
-                        </ion-select>
-                    </ion-item>
+
                 </ion-list>
 
-                <ion-button ion-button type="submit" (click)="login(eml.value,pwd.value,pspId.value)" expand='full'>Login</ion-button>
-                <!-- <ion-button ion-button type="submit" expand='full'></ion-button> -->
-                <ion-anchor (click)="register()" color="primary">Register an account</ion-anchor>
+                <ion-button ion-button type="submit" (click)="login(eml.value,pwd.value)" expand='full'>Login</ion-button>
+                <!-- <ion-button ion-button type="submit" expand='full'></ion-button> --><br>
+                <span (click)="register()">Register an account</span>
 
             </ion-card-content>
         </ion-card>

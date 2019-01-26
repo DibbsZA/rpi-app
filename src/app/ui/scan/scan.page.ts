@@ -32,7 +32,7 @@ export class ScanPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
-    apiUrl: string = options.pspApiUrl;
+    apiUrl: string = this.pspApiSvc.pspApiUrl;
 
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
@@ -42,6 +42,7 @@ export class ScanPage implements OnInit {
     ShowPin: Boolean = false;
     scanComplete = false;
     myPsp: string;
+    pspApiUrl: any;
 
     constructor(
         private barcodeScanner: BarcodeScanner,
@@ -55,14 +56,10 @@ export class ScanPage implements OnInit {
         private qrSvc: QrcodeService,
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
 
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log("ScanPage: Can't read the PSP name from localstorage!!!!!");
-            return;
-        }
+        dataSvc.myPsp.subscribe(v => {
+            this.myPsp = v;
+        });
     }
 
     ngOnInit() {
@@ -262,18 +259,18 @@ export class ScanPage implements OnInit {
 
     }
 
+    // FIXME: Fix this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     eventCapture(event) {
         this.ShowPin = false;
 
-        this.myPSP.apiUrl = event.pspUrl;
+        this.pspApiUrl = event.pspUrl;
         this.Pin = event.pin;
 
         const m: Message = event.pin;
         const hashSecret = sha256.hmac(this.pay.clientKey, m);
         this.doPay(hashSecret);
-        // .then(r => {
-        // return this.router.navigate(['history']);
-        // });
+
     }
 
     showPin() {

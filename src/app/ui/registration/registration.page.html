@@ -11,30 +11,37 @@
 <ion-content padding>
     <ion-card>
         <ion-card-content>
-            <ion-list lines='none'>
+            <form [formGroup]="registerForm" (ngSubmit)="register(eml.value,pwd.value)">
+                <ion-item>
+                    <ion-label position="floating">E-Mail</ion-label>
+                    <ion-input formControlName="email" #eml type="text"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label position="floating">Password</ion-label>
+                    <ion-input formControlName="password" #pwd type="password"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label>You will be registering with </ion-label>{{ myPsp }}
+                </ion-item>
+                <ion-button block color="primary" type="submit" [disabled]="registerForm.invalid" expand='full'>
+                    Register
+                </ion-button>
+            </form>
+            <!-- <ion-list lines='none'>
                 <ion-item>
                     <ion-label position='stacked'>Email Address</ion-label>
-                    <ion-input type="text" #eml [value]="" placeholder="Enter email address"></ion-input>
+                    <ion-input type="text"  [value]="" placeholder="Enter email address"></ion-input>
                 </ion-item>
                 <ion-item>
                     <ion-label position='floating'>Password</ion-label>
-                    <ion-input type="password" #pwd [value]=""></ion-input>
-                </ion-item>
-                <ion-item>
-                    <ion-label position='stacked'>Bank to register with</ion-label>
-                    <ion-select placeholder="Select Bank" #pspId>
-                        <ion-select-option value="BANKA">BANKA</ion-select-option>
-                        <ion-select-option value="BANKB">BANKB</ion-select-option>
-                        <ion-select-option value="BANKC">BANKC</ion-select-option>
-                        <ion-select-option value="BANKD">BANKD</ion-select-option>
-                    </ion-select>
+                    <ion-input type="password"  [value]=""></ion-input>
                 </ion-item>
             </ion-list>
 
-            <ion-button ion-button type="submit" (click)="register(eml.value,pwd.value,pspId.value)" expand='full'>Register
+            <ion-button ion-button type="submit" (click)="register(eml.value,pwd.value)">Register
                 <ion-icon slot="end" name="log-in"></ion-icon>
-            </ion-button>
-            <!-- <ion-button ion-button type="submit" (click)="loginPage()" expand='full'>Login</ion-button> -->
+            </ion-button> -->
+
 
         </ion-card-content>
     </ion-card>

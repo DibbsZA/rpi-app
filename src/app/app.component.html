@@ -11,7 +11,7 @@
                     <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
                     </ion-refresher-content>
                 </ion-refresher>
-                <app-user-profile></app-user-profile>
+                <!-- <app-user-profile *ngIf="loggedin"></app-user-profile> -->
                 <ion-list>
                     <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages">
                         <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">

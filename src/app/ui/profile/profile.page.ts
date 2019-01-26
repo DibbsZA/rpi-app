@@ -56,49 +56,55 @@ export class ProfilePage implements OnInit {
     myPsp: string = null;
 
     constructor(
-        public auth: AuthService,
-        private dataSvc: DataService,
         private router: Router,
+        public dataSvc: DataService,
+        public auth: AuthService,
         private notify: NotifyService,
         private userSvc: UserService,
         private themeSvc: ThemeService,
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
 
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log("ProfilePage: Can't read the PSP name from localstorage!!!!!");
-            return;
-        }
+
     }
 
     ngOnInit() {
 
-        this.processors = this.dataSvc.getProcessors();
-        this.user.subscribe(
-            async x => {
-                console.log('profile: user -> x = ' + JSON.stringify(x));
-                if (x !== null) {
-                    this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                    if (this.userO.queryLimit === null) {
-                        this.notify.update('Please update your profile first!!!.', 'info');
-                        this.router.navigate(['/profile']);
-                    }
-                    this.userO.pspId = this.myPsp;
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
 
-                    this.accounts = this.userSvc.getUserAccounts(x.uid, this.myPsp);
-                    this.dirtyUser = this.userO;
+                if (this.myPsp !== undefined && this.myPsp !== null) {
+                    console.log('MyPSP = ', this.myPsp)
+                    this.processors = this.dataSvc.getProcessors();
+                    this.user.subscribe(
+                        async x => {
+                            console.log('profile: user -> x = ' + JSON.stringify(x));
+                            if (x !== null) {
+                                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                                if (this.userO.queryLimit === null) {
+                                    this.notify.update('Please update your profile first!!!.', 'info');
+                                    this.router.navigate(['/profile']);
+                                }
+                                this.userO.pspId = this.myPsp;
 
-                    if (this.dirtyUser.zapId !== null && this.dirtyUser.zapId !== '') {
-                        // this.payerPspLable = '@' + this.dirtyUser.zapId.split('@').pop();
-                        this.dirtyUser.pspId = this.dirtyUser.zapId.split('@').pop();
-                    }
+                                this.accounts = this.userSvc.getUserAccounts(x.uid, this.myPsp);
+                                this.dirtyUser = this.userO;
+
+                                if (this.dirtyUser.zapId !== null && this.dirtyUser.zapId !== '') {
+                                    // this.payerPspLable = '@' + this.dirtyUser.zapId.split('@').pop();
+                                    this.dirtyUser.pspId = this.dirtyUser.zapId.split('@').pop();
+                                }
+                            }
+
+                        }
+                    );
+                } else {
+                    console.log("ProfilePage: Can't read the PSP name from localstorage!!!!!");
+                    this.router.navigate(['/home']);
                 }
+            });
 
-            }
-        );
     }
 
     canDeactivate(): Observable<boolean> | boolean {

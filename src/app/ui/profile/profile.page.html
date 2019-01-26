@@ -34,11 +34,10 @@
                     </ion-item>
                     <ion-item>
                         <ion-label>My PSP</ion-label>
-                        <ion-input type="text" placeholder="PSP Name" [value]="userO.pspId" readonly *ngIf="!editMode"></ion-input>
-                        <ion-select slot="end" #pspid placeholder="Select PSP" expand='full' [hidden]="!editMode"
-                            (ionChange)="payerPspSelect(pspid.value)">
+                        <ion-input type="text" placeholder="PSP Name" #pspId [value]="userO.pspId" readonly></ion-input>
+                        <!-- <ion-select slot="end" #pspid placeholder="Select PSP" expand='full' [hidden]="!editMode" >
                             <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="userO.pspId">{{psp.id}}</ion-select-option>
-                        </ion-select>
+                        </ion-select> -->
                     </ion-item>
                     <ion-item>
                         <ion-label>ZAP Id:</ion-label>

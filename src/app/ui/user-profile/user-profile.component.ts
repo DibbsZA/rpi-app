@@ -8,6 +8,7 @@ import { UserProfile } from '../../models/interfaces.0.2';
 import { UserService } from '../../services/user.service';
 import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
     selector: 'app-user-profile',
@@ -29,41 +30,49 @@ export class UserProfileComponent implements OnInit {
         public menu: MenuController,
         private fcmSvc: FcmService,
         private notify: NotifyService,
+        public dataSvc: DataService
     ) {
 
-        this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+                if (this.myPsp !== undefined && this.myPsp !== null) {
+                    this.user = this.auth.user;
+                } else {
+                    console.log("AuthSvc: Can't read the PSP name from app storage!!!!!");
+                    return;
+                }
+            });
 
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
-            return;
-        }
+
     }
 
     ngOnInit() {
 
-        this.user.subscribe(
-            async x => {
-                if (x === null) {
-                    return;
-                }
-                this.userObservable = this.userSvc.observeUsers(x.uid, this.myPsp);
-                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
-                if (this.userO.queryLimit === null) {
-                    this.notify.update('Please update your profile first!!!.', 'info');
-                    this.router.navigate(['/profile']);
+        if (this.user != undefined) {
 
-                } else {
-                    this.userO.pspId = this.myPsp;
+            this.user.subscribe(
+                async x => {
+                    if (x === null) {
+                        return this.router.navigateByUrl('/home');
+                    }
+                    this.userObservable = this.userSvc.observeUsers(x.uid, this.myPsp);
+                    this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                    if (this.userO.queryLimit === null) {
+                        this.notify.update('Please update your profile first!!!.', 'info');
+                        this.router.navigate(['/profile']);
 
-                    this.fcmSvc.firebaseNative.getToken()
-                        .then(t => {
-                            this.token = t;
-                        });
-                }
-            });
+                    } else {
+                        this.userO.pspId = this.myPsp;
+
+                        this.fcmSvc.firebaseNative.getToken()
+                            .then(t => {
+                                this.token = t;
+                            });
+                    }
+                });
+        }
+
     }
 
     openProfileEdit() {

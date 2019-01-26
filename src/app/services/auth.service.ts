@@ -12,6 +12,7 @@ import { Platform } from '@ionic/angular';
 import { FcmService } from './fcm.service';
 import { UserService } from './user.service';
 import { UserProfile, FirebaseUser } from '../models/interfaces.0.2';
+import { DataService } from './data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,7 @@ export class AuthService {
 
     user: Observable<firebase.User | null>;
     userProfile: UserProfile;
-    myPsp: string = null;
+    myPsp: string;
 
     constructor(
         private afAuth: AngularFireAuth,
@@ -28,6 +29,7 @@ export class AuthService {
         private fcm: FcmService,
         private notify: NotifyService,
         private userSvc: UserService,
+        public dataSvc: DataService,
         public platform: Platform
     ) {
         this.user = this.afAuth.authState.pipe(
@@ -43,6 +45,11 @@ export class AuthService {
                 }
             })
         );
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+                console.log('Auth Service: myPsp = ', psp);
+            });
     }
 
     async getCurrentUser(): Promise<any> {
@@ -76,7 +83,8 @@ export class AuthService {
                 .createUserWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
                 .then(credential => {
                     this.notify.update('<b>Hey there, welcome to Z@P!</b> <br><br>Please remember to update your Profile.', 'note');
-                    // localStorage.setItem('myPSP', pspId);
+
+                    // this.dataSvc.saveKey('MyPSP', pspId);
                     const newUser: UserProfile = {
                         clientKey: credential.user.uid,
                         email: credential.user.email,
@@ -100,7 +108,7 @@ export class AuthService {
         return this.afAuth.auth
             .signInWithEmailAndPassword(email.toLowerCase().trim(), password.trim())
             .then(credential => {
-                // localStorage.setItem('myPSP', pspId);
+                // this.dataSvc.saveKey('MyPSP', pspId);
                 this.notify.update('Welcome back to Z@P!', 'success');
 
                 return credential;
@@ -121,11 +129,12 @@ export class AuthService {
         }
     }
 
-    signOut(token) {
-        localStorage.removeItem('myPSP');
+    async signOut(token) {
+        await this.dataSvc.deleteKey('MyPSP');
+        await this.dataSvc.deleteKey('PspApiUrl');
         this.notify.update('Deleting token: ' + token, 'info');
-        this.fcm.unregister();
-        this.afs.doc(`devices/${token}`).delete();
+        await this.fcm.unregister();
+        await this.afs.doc(`devices/${token}`).delete();
 
 
         this.afAuth.auth.signOut().then(() => {

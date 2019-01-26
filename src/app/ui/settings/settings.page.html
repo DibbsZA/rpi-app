@@ -1,0 +1,61 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-menu-button color="dark"></ion-menu-button>
+        </ion-buttons>
+        <ion-title>
+            App Settings
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-card>
+        <ion-card-header>
+            <ion-card-title>Service Connection</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-radio-group name="hosting" #hosting (ionChange)="radioChoice(hosting.value)">
+                <ion-item>
+                    <ion-label>BSV Development</ion-label>
+                    <ion-radio value="uriBSV" checked></ion-radio>
+                </ion-item>
+                <ion-item>
+                    <ion-label>BSV Loan Kit</ion-label>
+                    <ion-radio value="uriHP"></ion-radio>
+                </ion-item>
+                <ion-item>
+                    <ion-label>Google Cloud</ion-label>
+                    <ion-radio value="uriGCC"></ion-radio>
+                </ion-item>
+            </ion-radio-group>
+        </ion-card-content>
+    </ion-card>
+    <ion-card>
+        <ion-card-header>
+            <ion-card-title>Bank Settings</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-select interface="popover" placeholder="Select your bank" okText="Okay" cancelText="Dismiss" #pspId
+                (ionChange)="onChange(pspId.value)">
+                <ion-select-option *ngFor="let psp of processors | async" [value]="psp">{{ psp.name }}</ion-select-option>
+            </ion-select>
+        </ion-card-content>
+    </ion-card>
+
+    <ion-button *ngIf="savedPSP && savedAPI" (click)="saveClick()">
+        Save and return
+    </ion-button>
+
+    <ion-card>
+        <ion-card-header>
+            <ion-card-subtitle>Network workaround</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+            Due to the use of self-signed certificates in the POC, please connecto to this url with the phone browser
+            and accept the security warnings.<br>
+            Then quit and restart this app before registering an account.<br>
+            <span (click)="openBrowser(pspApiUrl)">{{pspApiUrl}}</span>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

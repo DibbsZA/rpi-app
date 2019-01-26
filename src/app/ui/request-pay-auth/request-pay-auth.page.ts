@@ -34,7 +34,7 @@ export class RequestPayAuthPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
-    apiUrl: string = options.pspApiUrl;
+    apiUrl: string = this.pspApiSvc.pspApiUrl;
 
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
@@ -70,14 +70,10 @@ export class RequestPayAuthPage implements OnInit {
         public alertController: AlertController,
     ) {
         this.user = this.auth.user;
-        const ls = localStorage.getItem('myPSP');
-
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log('RequestPayAuth: Can\'t read the PSP name from localstorage!!!!!');
-            return;
-        }
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+            });
     }
 
     ngOnInit() {

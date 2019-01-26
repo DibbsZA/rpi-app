@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Transaction, Processor, UserProfile } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { DataService } from '../../services/data.service';
 
 @Component({
     selector: 'app-pay-success',
@@ -47,56 +48,51 @@ export class PaySuccessComponent implements OnInit {
         private userSvc: UserService,
         public notify: NotifyService,
         private router: Router,
-        private activeRoute: ActivatedRoute
+        private activeRoute: ActivatedRoute,
+        public dataSvc: DataService
     ) {
         this.user = this.auth.user;
     }
 
     ngOnInit() {
 
-        let ls = localStorage.getItem('myPSP');
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            this.notify.update('No PSP record? Try loggin in again.', 'error');
-            return;
-        }
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+
+                this.activeRoute.queryParams.subscribe(queryParams => {
+                    if (queryParams.msg !== undefined) {
+                        let msg: string = queryParams.msg;
+                        if (msg.startsWith('%')) {
+                            msg = decodeURIComponent(msg);
+                            this.fcmPayload = JSON.parse(msg);
+                        } else {
+
+                            this.fcmPayload = JSON.parse(queryParams.msg);
+                        }
+                        console.log(this.fcmPayload);
+                    }
+                });
 
 
-        this.activeRoute.queryParams.subscribe(queryParams => {
-            if (queryParams.msg !== undefined) {
-                let msg: string = queryParams.msg;
-                if (msg.startsWith('%')) {
-                    msg = decodeURIComponent(msg);
-                    this.fcmPayload = JSON.parse(msg);
-                } else {
+                this.user.subscribe(
+                    async x => {
+                        this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
 
-                    this.fcmPayload = JSON.parse(queryParams.msg);
-                }
-                console.log(this.fcmPayload);
-            }
-        });
+                        if (this.userO.queryLimit !== undefined) {
 
+                        } else {
+                            this.notify.update('Please update your profile first!!!.', 'info');
+                            this.router.navigate(['/profile']);
+                        }
 
-        this.user.subscribe(
-            async x => {
-                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                        if (this.userO.pspId === null) {
+                            this.notify.update('Please update your profile first!!!.', 'info');
+                            this.router.navigate(['/profile']);
 
-                if (this.userO.queryLimit !== undefined) {
+                        }
 
-
-
-                } else {
-                    this.notify.update('Please update your profile first!!!.', 'info');
-                    this.router.navigate(['/profile']);
-                }
-
-                if (this.userO.pspId === null) {
-                    this.notify.update('Please update your profile first!!!.', 'info');
-                    this.router.navigate(['/profile']);
-
-                }
-
+                    });
             });
 
     }

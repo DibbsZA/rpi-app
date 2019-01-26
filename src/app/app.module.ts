@@ -19,7 +19,6 @@ import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { PspService } from './services/psp.service';
 import { AuthService } from './services/auth.service';
-import { AccountPageModule } from './ui/account/account.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
@@ -43,6 +42,8 @@ import { ScanPage } from './ui/scan/scan.page';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { IonicStorageModule } from '@ionic/storage';
+import { DataService } from './services/data.service';
+import { SettingsPage } from './ui/settings/settings.page';
 
 // import { Contacts } from '@ionic-native/contacts/ngx';
 
@@ -66,6 +67,7 @@ registerLocaleData(localeZa, 'en-ZA');
         ZapcurrencyPipe,
         PaySuccessComponent,
         ScanPage,
+        SettingsPage
     ],
     entryComponents: [
 
@@ -82,7 +84,6 @@ registerLocaleData(localeZa, 'en-ZA');
         AngularFireAuthModule,
         HttpClientModule,
         ReactiveFormsModule,
-        AccountPageModule,
         ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
         // ServiceWorkerModule.register('firebase-messaging-sw.js', { enabled: environment.production }),
     ],
@@ -91,6 +92,7 @@ registerLocaleData(localeZa, 'en-ZA');
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         Firebase,
+        DataService,
         PspService,
         AuthService,
         FcmService,

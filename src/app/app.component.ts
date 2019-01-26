@@ -113,4 +113,8 @@ export class AppComponent implements OnInit {
     close() {
         this.menu.close();
     }
+
+    logout() {
+        this.auth.signOut(this.fcm.getCurrentToken());
+    }
 }

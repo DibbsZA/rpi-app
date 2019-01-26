@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
 import { UserProfile, AccountDetail } from '../../models/interfaces.0.2';
+import { DataService } from '../../services/data.service';
 
 @Component({
     selector: 'app-account-edit',
@@ -24,19 +25,19 @@ export class AccountEditComponent implements OnInit {
         private userSvc: UserService,
         private notify: NotifyService,
         private router: Router,
+        public dataSvc: DataService
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
 
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
-            return;
-        }
+
     }
 
     ngOnInit() {
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+            });
+
         this.user.subscribe(
             x => {
                 this.userO = x;

@@ -4,32 +4,38 @@ import { UserProfile, AccountDetail } from '../models/interfaces.0.2';
 // import { AngularFirestore } from '@angular/fire/firestore';
 import { NotifyService } from './notify.service';
 import { HttpClient } from '@angular/common/http';
-import { options } from "../config";
+import { DataService } from './data.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
 
+    pspApiUrl: any;
 
     constructor(
         public notify: NotifyService,
         private httpClient: HttpClient,
+        public dataSvc: DataService,
     ) {
-
+        this.dataSvc.pspApiUrl
+            .subscribe(uri => {
+                this.pspApiUrl = uri;
+                console.log('UserService: pspApiUrl = ', uri);
+            })
     }
 
 
     public observeUsers(clientKey, pspId) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/queryClient';
+        const apiEndpoint = this.pspApiUrl + pspId + '/queryClient';
         return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: clientKey } });
 
     }
 
     public getUserData(clientKey, pspId) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/queryClient';
+        const apiEndpoint = this.pspApiUrl + '/queryClient';
 
         return this.httpClient.get<UserProfile>(apiEndpoint, { params: { clientKey: clientKey } }).toPromise()
             .then(
@@ -45,7 +51,7 @@ export class UserService {
 
     public registerUser(user: UserProfile, pspId) {
         localStorage.setItem('myPSP', pspId);
-        const apiEndpoint = options.pspApiUrl + pspId + '/addClient';
+        const apiEndpoint = this.pspApiUrl + '/addClient';
 
         let data: UserProfile = {
             clientKey: user.clientKey,
@@ -82,7 +88,7 @@ export class UserService {
 
     public updateUserData(user: UserProfile, pspId) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/updateClient';
+        const apiEndpoint = this.pspApiUrl + '/updateClient';
 
         let data: UserProfile = {
             clientKey: user.clientKey,
@@ -130,7 +136,7 @@ export class UserService {
     // }
 
     public getUserAccounts(clientKey, pspId) {
-        const apiEndpoint = options.pspApiUrl + pspId + '/getClientAccounts';
+        const apiEndpoint = this.pspApiUrl + '/getClientAccounts';
         return this.httpClient.get<AccountDetail[]>(apiEndpoint, { params: { clientKey: clientKey } });
 
     }
@@ -138,9 +144,9 @@ export class UserService {
     public addClientAccount(account: AccountDetail, pspId) {
         let apiEndpoint = ''
         if (pspId === 'BANKC' || pspId === 'BANKD') {
-            apiEndpoint = options.pspApiUrl + pspId + '/addClientAccount';
+            apiEndpoint = this.pspApiUrl + '/addClientAccount';
         } else {
-            apiEndpoint = options.pspApiUrl + pspId + '/addClientAccounts';
+            apiEndpoint = this.pspApiUrl + '/addClientAccounts';
         }
 
         return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
@@ -148,7 +154,7 @@ export class UserService {
     }
 
     public deleteClientAccount(account: AccountDetail, pspId) {
-        const apiEndpoint = options.pspApiUrl + pspId + '/deleteClientAccount';
+        const apiEndpoint = this.pspApiUrl + '/deleteClientAccount';
 
         return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
 

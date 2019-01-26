@@ -14,15 +14,9 @@ export class PinComponent implements OnInit {
     pin: string = "";
     data: any;
 
-    // @Output() change: EventEmitter<string> = new EventEmitter<string>();
     @Output() change: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor(
-
-    ) {
-
-
-    }
+    constructor() { }
 
     ngOnInit() {
         this.data = {

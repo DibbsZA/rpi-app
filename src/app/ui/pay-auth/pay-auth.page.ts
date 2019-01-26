@@ -31,7 +31,7 @@ export class PayAuthPage implements OnInit {
     payeePspLable: string;
     payForm: FormGroup;
 
-    apiUrl: string = options.pspApiUrl;
+    apiUrl: string = this.pspApiSvc.pspApiUrl;
 
     useDefaultAccount = true;
     defaultAccount: AccountDetail;
@@ -53,6 +53,7 @@ export class PayAuthPage implements OnInit {
         paymentType: ''
     };
     myPsp: string = null;
+    pspApiUrl: any;
 
     constructor(
         private auth: AuthService,
@@ -66,15 +67,11 @@ export class PayAuthPage implements OnInit {
         public alertController: AlertController
     ) {
         this.user = this.auth.user;
-        let ls = localStorage.getItem('myPSP');
 
-        if (ls !== undefined && ls !== null) {
-            this.myPsp = ls;
-        } else {
-            console.log("AuthSvc: Can't read the PSP name from localstorage!!!!!");
-            return;
-        }
-
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+            });
 
     }
 
@@ -146,12 +143,6 @@ export class PayAuthPage implements OnInit {
                         )
                         .subscribe();
 
-                    // this.payForm.valueChanges
-                    //     // tslint:disable-next-line:no-shadowed-variable
-                    //     .subscribe(x => {
-                    //         console.log(x);
-                    //     });
-
                 }
 
             });
@@ -171,25 +162,13 @@ export class PayAuthPage implements OnInit {
     }
 
     public doPay(authorised) {
-        // if (!authorised) {
-        //     return;
-        // }
-        // this.pay = this.payForm.value;
-
-        // if (this.myPSP === null) {
-        //     console.log('no result for PSP lookup yet');
-        // }
 
         this.pspApiSvc.psp_paymentInstructionResponse(this.myPsp, this.pay)
             .subscribe(
                 x => {
                     const res = x;
                     this.notify.update('Payment from ' + this.fcmPayload.payerId + ' authorised.', 'info');
-                    // if (x.responseStatus !== "RJCT") {
-                    //     this.notify.update('Payment from ' + this.fcmPayload.payerId + ' authorised. Id: ' + x.endToEndId, 'info');
-                    // } else {
-                    //     this.notify.update('Payment Authorization from ' + this.fcmPayload.payerId + ' failed. Error: ' + x.responseDesc, 'error');
-                    // }
+
                     authorised = false;
                     return this.router.navigateByUrl('/about');
 
@@ -197,19 +176,18 @@ export class PayAuthPage implements OnInit {
 
     }
 
+    // FIXME: redo this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     eventCapture(event) {
         this.ShowPin = false;
 
-        this.myPSP.apiUrl = event.pspUrl;
+        this.pspApiUrl = event.pspUrl;
         this.Pin = event.pin;
 
         const m: Message = event.pin;
         const hashSecret = sha256.hmac(this.pay.clientKey, m);
         this.doPay(hashSecret);
-        // .then(r => {
-        // return this.router.navigate(['history']);
-        // });
+
     }
 
     showPin() {

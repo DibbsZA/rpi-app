@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
-import { options } from "../config";
-import { map, catchError } from "rxjs/operators";
+import { catchError } from "rxjs/operators";
 
-import { PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse, Transaction } from '../models/interfaces.0.2';
+import { PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse } from '../models/interfaces.0.2';
 import { ErrorhandlerService } from './errorhandler.service';
+import { Router } from '@angular/router';
+import { DataService } from './data.service';
 
 
 
@@ -20,18 +20,23 @@ import { ErrorhandlerService } from './errorhandler.service';
 })
 export class PspService {
 
-    // msgPayment: Transaction;
+    pspApiUrl: string;
 
     constructor(
+        public router: Router,
         public httpClient: HttpClient,
         public errorHandler: ErrorhandlerService,
+        public dataSvc: DataService
     ) {
-
+        this.dataSvc.pspApiUrl
+            .subscribe(uri => {
+                this.pspApiUrl = uri;
+            });
     }
 
     public psp_paymentInitiation(pspId, msgPayment: PaymentInitiation) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/paymentInitiation';
+        const apiEndpoint = this.pspApiUrl + '/paymentInitiation';
 
         const body: PaymentInitiation = {
             "channel": ChannelCode.App,
@@ -54,7 +59,7 @@ export class PspService {
 
     public psp_paymentInstructionResponse(pspId, msgPayment: PaymentInstructionResponse) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/paymentInstructionResponse';
+        const apiEndpoint = this.pspApiUrl + '/paymentInstructionResponse';
         const body: PaymentInstructionResponse = {
             "endToEndId": msgPayment.endToEndId,
             "originatingDate": msgPayment.originatingDate,
@@ -69,7 +74,7 @@ export class PspService {
 
     public psp_paymentRequest(pspId, msgPayment: PaymentRequestInitiation) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/paymentRequestInitiation';
+        const apiEndpoint = this.pspApiUrl + '/paymentRequestInitiation';
 
         const body: PaymentRequestInitiation = {
             "originatingDate": msgPayment.originatingDate,
@@ -90,7 +95,7 @@ export class PspService {
 
     public psp_paymentRequestResponse(pspId, msgPayment: PaymentRequestResponse) {
 
-        const apiEndpoint = options.pspApiUrl + pspId + '/paymentRequestResponse';
+        const apiEndpoint = this.pspApiUrl + '/paymentRequestResponse';
         const body: PaymentRequestResponse = {
             "endToEndId": msgPayment.endToEndId,
             "originatingDate": msgPayment.originatingDate,
