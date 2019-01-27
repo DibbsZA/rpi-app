@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
 import { UserProfile, AccountDetail } from '../../models/interfaces.0.2';
 import { DataService } from '../../services/data.service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
     selector: 'app-account-edit',
@@ -25,7 +26,8 @@ export class AccountEditComponent implements OnInit {
         private userSvc: UserService,
         private notify: NotifyService,
         private router: Router,
-        public dataSvc: DataService
+        public dataSvc: DataService,
+        public modalController: ModalController
     ) {
         this.user = this.auth.user;
 
@@ -56,7 +58,8 @@ export class AccountEditComponent implements OnInit {
         this.userSvc.addClientAccount(this.newAccount, this.myPsp)
             .then(r => {
                 this.notify.update('Account Added.', 'success');
-                return this.router.navigateByUrl('/profile');
+                // return this.router.navigateByUrl('/profile');
+                this.modalController.dismiss();
             });
     }
 }
