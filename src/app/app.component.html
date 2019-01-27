@@ -13,13 +13,20 @@
                 </ion-refresher>
                 <!-- <app-user-profile *ngIf="loggedin"></app-user-profile> -->
                 <ion-list>
-                    <ion-menu-toggle auto-hide="true" *ngFor="let p of appPages">
-                        <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
-                            <ion-icon slot="start" [name]="p.icon"></ion-icon>
-                            <ion-label>
-                                {{p.title}}
-                            </ion-label>
-                            <ion-icon slot="end" [name]="p.icon2"></ion-icon>
+                    <ion-menu-toggle auto-hide="true">
+                        <ng-container *ngFor="let p of appPages">
+                            <ion-item *ngIf="p.loggedin" [routerDirection]="'root'" [routerLink]="[p.url]">
+                                <ion-icon slot="start" [name]="p.icon"></ion-icon>
+                                <ion-label>
+                                    {{p.title}}
+                                </ion-label>
+                                <ion-icon slot="end" [name]="p.icon2"></ion-icon>
+                            </ion-item>
+                        </ng-container>
+
+                        <ion-item *ngIf="loggedin" (click)="logout()">
+                            <ion-icon slot="start" name="log-out"></ion-icon>
+                            <ion-label>Logout</ion-label>
                         </ion-item>
 
                     </ion-menu-toggle>

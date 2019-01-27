@@ -132,6 +132,7 @@ export class AuthService {
     async signOut(token) {
         await this.dataSvc.deleteKey('MyPSP');
         await this.dataSvc.deleteKey('PspApiUrl');
+        await this.dataSvc.deleteKey('theme');
         this.notify.update('Deleting token: ' + token, 'info');
         await this.fcm.unregister();
         await this.afs.doc(`devices/${token}`).delete();

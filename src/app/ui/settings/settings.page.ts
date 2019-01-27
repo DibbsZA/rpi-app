@@ -30,19 +30,19 @@ export class SettingsPage implements OnInit {
     ngOnInit() {
 
         this.dataSvc.loadPSP().subscribe(r => {
-            console.log('loadPsp ', r)
-            if (r != undefined && r != null) {
+            console.log('loadPsp ', r);
+            if (r !== undefined && r != null) {
                 this.savedPSP = true;
                 this.myPSP = r;
             }
-        })
+        });
         this.dataSvc.loadUrl().subscribe(r => {
-            console.log('loadUrl ', r)
-            if (r != undefined && r != null) {
+            console.log('loadUrl ', r);
+            if (r !== undefined && r != null) {
                 this.savedAPI = true;
                 this.pspApiUrl = r;
             }
-        })
+        });
 
     }
 
@@ -85,6 +85,7 @@ export class SettingsPage implements OnInit {
     }
     saveClick() {
         this._location.back();
+        navigator['app'].exitApp();
     }
     openBrowser(link) {
         window.open(link, '_system', 'location=yes');

@@ -1,7 +1,7 @@
 {
-  "name": "ZAPMobile",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
+    "name": "zapmobile",
+    "integrations": {
+        "cordova": {}
+    },
+    "type": "angular"
 }

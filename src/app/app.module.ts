@@ -15,18 +15,23 @@ import { Firebase } from '@ionic-native/firebase/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 
 import { PspService } from './services/psp.service';
 import { AuthService } from './services/auth.service';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { registerLocaleData } from '@angular/common';
 import localeZa from '@angular/common/locales/en-ZA';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { FcmService } from './services/fcm.service';
 import { QrcodeService } from './services/qrcode.service';
+import { DataService } from './services/data.service';
+
+import { UserProfileComponent } from './ui/user-profile/user-profile.component';
 import { ProfilePage } from './ui/profile/profile.page';
 import { RegistrationPage } from './ui/registration/registration.page';
 import { HomePage } from './ui/home/home.page';
@@ -35,15 +40,14 @@ import { PayPage } from './ui/pay/pay.page';
 import { PayAuthPage } from './ui/pay-auth/pay-auth.page';
 import { RequestPayPage } from './ui/request-pay/request-pay.page';
 import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
-import { PinComponent } from './ui/pin/pin.component';
-import { ZapcurrencyPipe } from './pipes/zapcurrency.pipe';
-import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
-import { ScanPage } from './ui/scan/scan.page';
-import { ReactiveFormsModule } from '@angular/forms';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { IonicStorageModule } from '@ionic/storage';
-import { DataService } from './services/data.service';
 import { SettingsPage } from './ui/settings/settings.page';
+import { ScanPage } from './ui/scan/scan.page';
+
+import { PinComponent } from './ui/pin/pin.component';
+import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
+
+import { ZapcurrencyPipe } from './pipes/zapcurrency.pipe';
+import { AccountEditComponent } from './ui/account-edit/account-edit.component';
 
 // import { Contacts } from '@ionic-native/contacts/ngx';
 
@@ -67,16 +71,15 @@ registerLocaleData(localeZa, 'en-ZA');
         ZapcurrencyPipe,
         PaySuccessComponent,
         ScanPage,
-        SettingsPage
+        SettingsPage,
+        AccountEditComponent
     ],
     entryComponents: [
 
     ],
     imports: [
         BrowserModule,
-        IonicModule.forRoot({
-            backButtonText: ''
-        }),
+        IonicModule.forRoot({ backButtonText: '' }),
         IonicStorageModule.forRoot(),
         AppRoutingModule,
         AngularFireModule.initializeApp(firebaseConfig),

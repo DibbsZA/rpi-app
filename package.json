@@ -1,6 +1,6 @@
 {
-    "name": "ZAPMobile",
-    "version": "1.4.0",
+    "name": "zapmobile",
+    "version": "1.4.1",
     "author": "BankservAfrica Ltd.",
     "homepage": "https://www.bankservafrica.com/",
     "scripts": {

@@ -17,14 +17,14 @@ export class ThemeService {
     }
 
     // Override all global variables with a new theme
-    setTheme(theme) {
+    setTheme(theme: any) {
         const cssText = CSSTextGenerator(theme);
         this.setGlobalCSS(cssText);
         this.storage.set('theme', cssText);
     }
 
     // Define a single CSS variable
-    setVariable(name, value) {
+    setVariable(name: string, value: string) {
         this.document.documentElement.style.setProperty(name, value);
     }
 
@@ -44,7 +44,7 @@ const defaults = {
     success: '#10dc60',
     warning: '#ffce00',
     danger: '#f04141',
-    dark: '#222428',
+    dark: '#000000',
     medium: '#989aa2',
     light: '#f4f5f8'
 };
