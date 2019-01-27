@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 import { UserService } from '../../services/user.service';
 import { ThemeService } from '../../services/theme.service';
+import { ModalController } from '@ionic/angular';
+import { AccountEditComponent } from '../account-edit/account-edit.component';
 
 
 const themes = {
@@ -16,7 +18,7 @@ const themes = {
         tertiary: '#B4436C',
         light: '#FDE8DF',
         medium: '#FCD0A2',
-        dark: '#111111'
+        dark: '#000000'
     },
     night: {
         primary: '#2B59C3',
@@ -33,6 +35,15 @@ const themes = {
         light: '#F4EDF2',
         medium: '#B682A5',
         dark: '#34162A'
+    },
+    default: {
+        primary: '#3880ff',
+        secondary: '#0cd1e8',
+        tertiary: '#7044ff',
+        success: '#10dc60',
+        dark: '#000000',
+        medium: '#989aa2',
+        light: '#f4f5f8'
     }
 };
 
@@ -62,6 +73,7 @@ export class ProfilePage implements OnInit {
         private notify: NotifyService,
         private userSvc: UserService,
         private themeSvc: ThemeService,
+        public modalController: ModalController
     ) {
         this.user = this.auth.user;
 
@@ -75,7 +87,7 @@ export class ProfilePage implements OnInit {
                 this.myPsp = psp;
 
                 if (this.myPsp !== undefined && this.myPsp !== null) {
-                    console.log('MyPSP = ', this.myPsp)
+                    console.log('MyPSP = ', this.myPsp);
                     this.processors = this.dataSvc.getProcessors();
                     this.user.subscribe(
                         async x => {
@@ -100,7 +112,7 @@ export class ProfilePage implements OnInit {
                         }
                     );
                 } else {
-                    console.log("ProfilePage: Can't read the PSP name from localstorage!!!!!");
+                    console.log('ProfilePage: Can\'t read the PSP name from localstorage!!!!!');
                     this.router.navigate(['/home']);
                 }
             });
@@ -136,11 +148,12 @@ export class ProfilePage implements OnInit {
 
     }
 
-    saveProfile(name: string, surname: string, email, pspId: string, zapId: string, nickname: string, mobileNo: string, telegramId: string, photoUrl) {
+    saveProfile(name: string, surname: string, email: string, pspId: string, zapId: string,
+        nickname: string, mobileNo: string, telegramId: string, photoUrl: string) {
         this.editMode = false;
         this.dirtyUser.name = name.trim();
         this.dirtyUser.surname = surname.trim();
-        this.dirtyUser.email = email.trim()
+        this.dirtyUser.email = email.trim();
         this.dirtyUser.nickname = nickname.trim();
         this.dirtyUser.zapId = zapId.toUpperCase();
         this.dirtyUser.mobileNo = mobileNo.trim();
@@ -155,7 +168,8 @@ export class ProfilePage implements OnInit {
     }
 
     addAccount() {
-        this.router.navigate(['/account']);
+        // this.router.navigate(['/account']);
+        this.presentModal();
     }
 
     deleteAccount(acc) {
@@ -164,18 +178,15 @@ export class ProfilePage implements OnInit {
         console.log(acc);
         this.userSvc.deleteClientAccount(acc, this.myPsp);
 
-        // this.userSvc.updateUserData(this.dirtyUser)
-        // .then(r => {
-        //     this.notify.update("User Account Deleted", "info");
-        // });
-
     }
 
-    // private payerPspSelect(psp) {
-    //     if (psp !== undefined && psp !== null) {
+    async presentModal() {
+        const modal = await this.modalController.create({
+            component: AccountEditComponent,
+            componentProps: {}
+        });
 
-    //         this.payerPspLable = '@' + psp;
-    //     }
-    // }
+        await modal.present();
 
+    }
 }

@@ -18,14 +18,16 @@
         <ion-card>
             <ion-card-content>
                 <div (click)="editProfile()" class="profile">
-                    <img [src]="userO.photoUrl" class="imgAvatar">
-                    <ion-input type="text" hidden #photoUrl [value]="userO.photoUrl" readonly></ion-input>
+                    <!-- <img [src]="userO.photoUrl" class="imgAvatar"> -->
+                    <ion-input type="text" hidden #photourl [value]="userO.photoUrl" readonly></ion-input>
                 </div>
                 <ion-list lines="none">
                     <ion-item>
+                        <ion-label>First Name</ion-label>
                         <ion-input type="text" placeholder="First Name" #name [value]="userO.name" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
+                        <ion-label>Last Name</ion-label>
                         <ion-input type="text" placeholder="Last Name" #surname [value]="userO.surname" [readonly]="!editMode"></ion-input>
                     </ion-item>
                     <ion-item>
@@ -34,7 +36,7 @@
                     </ion-item>
                     <ion-item>
                         <ion-label>My PSP</ion-label>
-                        <ion-input type="text" placeholder="PSP Name" #pspId [value]="userO.pspId" readonly></ion-input>
+                        <ion-input type="text" placeholder="PSP Name" #pspid [value]="userO.pspId" readonly></ion-input>
                         <!-- <ion-select slot="end" #pspid placeholder="Select PSP" expand='full' [hidden]="!editMode" >
                             <ion-select-option *ngFor="let psp of processors | async" [value]="psp.id" [selected]="userO.pspId">{{psp.id}}</ion-select-option>
                         </ion-select> -->
@@ -50,22 +52,19 @@
                     </ion-item>
                     <ion-item>
                         <ion-label>Mobile No</ion-label>
-                        <ion-input type="text" placeholder="Mobile No (27xxxxxxxxx)" #mobileNo [value]="userO.mobileNo"
+                        <ion-input type="text" placeholder="Mobile No (27xxxxxxxxx)" #mobileno [value]="userO.mobileNo"
                             [readonly]="!editMode"></ion-input>
                     </ion-item>
-                    <ion-item>
-                        <ion-label>Telegram ID</ion-label>
-                        <ion-input type="text" placeholder="Telegram ID" #telegramId [value]="userO.telegramId"
-                            readonly></ion-input>
-                    </ion-item>
+                    <ion-input type="text" hidden placeholder="Telegram ID" #telegramid [value]="userO.telegramId"
+                        readonly></ion-input>
                 </ion-list>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="!editMode">
-                    <ion-fab-button (click)="editProfile()">
+                    <ion-fab-button small (click)="editProfile()">
                         <ion-icon name="create"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
                 <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="editMode">
-                    <ion-fab-button color="danger" (click)="saveProfile(name.value, surname.value, email.value, pspid.value, zapid.value, nick.value, mobileNo.value, telegramId.value, photoUrl.value)">
+                    <ion-fab-button small color="danger" (click)="saveProfile(name.value, surname.value, email.value, pspid.value, zapid.value, nick.value, mobileno.value, telegramid.value, photourl.value)">
                         <ion-icon name="save"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
@@ -75,18 +74,19 @@
             <ion-card-content>
                 <ion-list lines="none">
                     <ion-item-divider>
-                        <ion-label>Accounts <span class="tiny">( checked = default )</span></ion-label>
+                        <ion-label>Accounts</span></ion-label>
                     </ion-item-divider>
-                    <ion-item-sliding *ngFor="let acc of accounts | async">
-                        <ion-item>
-                            <ion-label>{{acc.accountAlias}}</ion-label>
-                            {{acc.accountNo}} &nbsp;
-                            <ion-toggle slot="end" [checked]="acc.default"></ion-toggle>
-                        </ion-item>
-                        <ion-item-options side="start">
+                    <!-- <ion-item-sliding> -->
+                    <ion-item *ngFor="let acc of accounts | async">
+                        <ion-label>{{acc.accountAlias}}</ion-label>
+                        <span>{{ acc.balance | zapcurrency}}</span>
+                        <span slot="end">{{acc.accountNo}}</span>
+                        <!-- <ion-toggle slot="end" ></ion-toggle> -->
+                    </ion-item>
+                    <!-- <ion-item-options side="start">
                             <ion-item-option color="danger" (click)="deleteAccount(acc)">Delete</ion-item-option>
-                        </ion-item-options>
-                    </ion-item-sliding>
+                        </ion-item-options> -->
+                    <!-- </ion-item-sliding> -->
                     <!-- <ion-item *ngFor="let acc of user.accounts ">
                         <ion-label>{{acc.accountAlias}}</ion-label>
                         {{acc.accountNo}}
@@ -100,15 +100,14 @@
                         <ion-icon name="add"></ion-icon>
                     </ion-fab-button>
                 </ion-fab>
-                <span class="tiny">Swipe account right to delete.</span>
-                <!-- <span class="tiny">Hold account icon to delete.</span> -->
-                <!-- <progress color="warning" class="progress" [value]="progress" max="100"></progress> -->
+                <!-- <span class="tiny">Swipe account right to delete.</span> -->
             </ion-card-content>
         </ion-card>
-        <ion-button expand="block" color="medium" (click)="changeTheme('autumn')">Peach</ion-button>
-        <ion-button expand="block" color="medium" (click)="changeTheme('night')">Apple</ion-button>
-        <ion-button expand="block" color="medium" (click)="changeTheme('neon')">Lilac</ion-button>
-        <ion-button expand="block" color="medium" (click)="changeTheme('')">Default</ion-button>
+        Color themes<br>
+        <ion-button color="secondary" (click)="changeTheme('autumn')">Autumn</ion-button>
+        <ion-button color="tertiary" (click)="changeTheme('night')">Night</ion-button>
+        <ion-button color="medium" (click)="changeTheme('neon')">Neon</ion-button>
+        <ion-button color="primary" (click)="changeTheme('default')">Default</ion-button>
 
     </ng-container>
 </ion-content>
