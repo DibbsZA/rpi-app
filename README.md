@@ -1,3 +1,3 @@
-# ZAP Mobile v 1.4.0
+# ZAP Mobile NXT v 2.0.0
 
-With Dynamic Hosting Environments
+Using new API

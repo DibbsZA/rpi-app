@@ -56,6 +56,37 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393591030275:android:a3d21e2efbb1194d",
+        "android_client_info": {
+          "package_name": "com.bankservafrica.zapmobile2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393591030275-o80564tbaqu0616m7mrreeoe92lf1vr6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA64LzR17e0Bg1RNwoaeQ5hylzihXoYUJk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"

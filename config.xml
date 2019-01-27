@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.bankservafrica.zapmobile" version="1.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Z@P</name>
-    <description>Z@P Instant Payments</description>
+<widget id="com.bankservafrica.zapmobile2" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>NXT Z@P</name>
+    <description>NXT Z@P Instant Payments</description>
     <author email="garyd@bankservafrica.com" href="http://www.bankservafrica.com/">BankservAfrica RPI Team</author>
     <content src="index.html" />
     <access origin="*" />

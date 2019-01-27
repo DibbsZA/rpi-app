@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
 
     public appPages = [
         { title: 'Pay', url: '/payment/pay', icon: 'cash', icon2: 'arrow-round-forward', loggedin: true },
-        { title: 'Request Payment', url: '/payment/requestpay', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
+        // { title: 'Request Payment', url: '/payment/requestpay', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
         { title: 'Scan', url: '/payment/scan', icon: 'qr-scanner', loggedin: true },
         { title: 'Profile', url: '/profile', icon: 'contact', loggedin: true },
         { title: 'About', url: '/about', icon: 'information-circle-outline', loggedin: true },
