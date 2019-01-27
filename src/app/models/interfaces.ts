@@ -38,6 +38,7 @@ export interface iAccount {
     uid?: string;
     id?: string;
     default?: boolean;
+    balance?: string;
 }
 
 // tslint:disable-next-line:class-name
