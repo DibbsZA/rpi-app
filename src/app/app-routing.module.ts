@@ -13,6 +13,7 @@ import { RequestPayPage } from './ui/request-pay/request-pay.page';
 import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
 import { ScanPage } from './ui/scan/scan.page';
 import { SettingsPage } from './ui/settings/settings.page';
+import { AccountEditComponent } from './ui/account-edit/account-edit.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -26,7 +27,8 @@ const routes: Routes = [
     { path: 'payment/requestpay', component: RequestPayPage, canActivate: [AuthGuard] },
     { path: 'payment/requestpayauth', component: RequestPayAuthPage, canActivate: [AuthGuard] },
     { path: 'payment/scan', component: ScanPage, canActivate: [AuthGuard] },
-    { path: 'settings', component: SettingsPage, canLoad: [] }
+    { path: 'settings', component: SettingsPage, canLoad: [] },
+    { path: 'account', component: AccountEditComponent, canActivate: [AuthGuard] },
 
 
 ];
