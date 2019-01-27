@@ -7,9 +7,17 @@ import { formatCurrency } from '@angular/common';
 export class ZapcurrencyPipe implements PipeTransform {
 
     transform(value: any, args?: any): any {
-        let _number: number = parseInt(value);
-        _number = _number / 100;
-        let _result: string = formatCurrency(_number, 'en', 'R ');
+        let _result = '';
+        let _number = 0;
+        if (value !== undefined) {
+            // tslint:disable-next-line:radix
+            _number = parseInt(value);
+            _number = _number / 100;
+            _result = formatCurrency(_number, 'en', 'R ');
+        } else {
+            _result = formatCurrency(_number, 'en', 'R ');
+        }
+
         return _result;
     }
 
