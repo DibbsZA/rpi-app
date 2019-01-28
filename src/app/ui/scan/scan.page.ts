@@ -57,9 +57,10 @@ export class ScanPage implements OnInit {
     ) {
         this.user = this.auth.user;
 
-        dataSvc.myPsp.subscribe(v => {
-            this.myPsp = v;
-        });
+        this.dataSvc.myPsp
+            .subscribe(psp => {
+                this.myPsp = psp;
+            });
     }
 
     ngOnInit() {
@@ -95,7 +96,7 @@ export class ScanPage implements OnInit {
                         payerAccountRef: null,
                         consentKey: null,
                         payeeId: null,
-                        amount: '0',
+                        amount: null,
                         originatingDate: '',
                         payeeMobileNo: '',
                         payeeEmail: ''
@@ -110,8 +111,8 @@ export class ScanPage implements OnInit {
                         payeeMobileNo: [''],
                         payeeEmail: [''],
                         payeePSP: [''],
-                        amountdisplay: ['0.00'],
-                        amount: [0, [Validators.required, Validators.min(100), Validators.max(100000)]],
+                        amountdisplay: [null],
+                        amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
                     });
 
@@ -160,8 +161,9 @@ export class ScanPage implements OnInit {
                 return;
             }
             // hold existing this.pay values
+            // tslint:disable-next-line:prefer-const
             let _pay = this.pay;
-            //Decode barcode data
+            // Decode barcode data
             const decodedQr = this.qrSvc.decodeQR(barcodeData.text);
             this.pay.payeeId = decodedQr.payeeId;
             // this.pay.payeeMobileNo = decodedQr.payeeMobileNo;
@@ -182,7 +184,7 @@ export class ScanPage implements OnInit {
                 // payerPSP: this.pay.payerPSP,
                 userRef: this.pay.userRef,
                 amount: this.pay.amount
-            })
+            });
             this.formatAmount(this.pay.amount);
 
         }).catch(err => {

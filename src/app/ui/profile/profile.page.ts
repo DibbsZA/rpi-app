@@ -18,7 +18,7 @@ const themes = {
         tertiary: '#B4436C',
         light: '#FDE8DF',
         medium: '#FCD0A2',
-        dark: '#000000'
+        dark: '#333'
     },
     night: {
         primary: '#2B59C3',
@@ -26,7 +26,7 @@ const themes = {
         tertiary: '#1B9AAA',
         light: '#F8FFE5',
         medium: '#EF476F',
-        dark: '#000000'
+        dark: '#333'
     },
     neon: {
         primary: '#39BFBD',
@@ -41,7 +41,7 @@ const themes = {
         secondary: '#0cd1e8',
         tertiary: '#7044ff',
         success: '#10dc60',
-        dark: '#000000',
+        dark: '#333',
         medium: '#989aa2',
         light: '#f4f5f8'
     }

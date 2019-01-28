@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { sha256, Message } from 'js-sha256';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotifyService } from '../../services/notify.service';
@@ -9,11 +10,11 @@ import { formatNumber } from '@angular/common';
 import { tap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
+import { QrcodeService } from '../../services/qrcode.service';
 import { PaymentInitiation, Processor, UserProfile, AccountDetail, ChannelCode } from '../../models/interfaces.0.2';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
-// import { Contacts, Contact } from '@ionic-native/contacts/ngx';
-import { options } from '../../config';
+
 
 @Component({
     selector: 'app-pay',
@@ -40,6 +41,7 @@ export class PayPage implements OnInit {
     payAmount: string;
     Pin: String = '';
     ShowPin: Boolean = false;
+    scanComplete = false;
     recipientZAP = false;
     recipientMobile = true;
     recipientEmail = true;
@@ -48,6 +50,7 @@ export class PayPage implements OnInit {
     // selectedNumber: string;
 
     constructor(
+        private barcodeScanner: BarcodeScanner,
         private auth: AuthService,
         private dataSvc: DataService,
         private userSvc: UserService,
@@ -55,7 +58,7 @@ export class PayPage implements OnInit {
         public notify: NotifyService,
         private pspApiSvc: PspService,
         private router: Router,
-        // private contact: Contacts
+        private qrSvc: QrcodeService,
     ) {
         this.user = this.auth.user;
 
@@ -151,6 +154,49 @@ export class PayPage implements OnInit {
 
             });
 
+    }
+
+    scan() {
+        this.barcodeScanner.scan().then(barcodeData => {
+
+            console.log('Barcode data', barcodeData);
+
+            // this.notify.update('Barcode Data <br>' + JSON.stringify(barcodeData), 'note');
+
+            if (barcodeData.cancelled) {
+                return;
+            }
+            // hold existing this.pay values
+            // tslint:disable-next-line:prefer-const
+            let _pay = this.pay;
+            // Decode barcode data
+            const decodedQr = this.qrSvc.decodeQR(barcodeData.text);
+            this.pay.payeeId = decodedQr.payeeId;
+            // this.pay.payeeMobileNo = decodedQr.payeeMobileNo;
+            // this.pay.payeeEmail = decodedQr.payeeEmail;
+            this.pay.amount = decodedQr.amount.toString();
+            this.pay.userRef = decodedQr.userRef;
+
+            console.log(this.pay);
+
+            this.scanComplete = true;
+            // this.notify.update('Barcode Data <br>' + JSON.stringify(this.pay), 'note');
+
+            // Populate form with scanned data
+            this.payForm.patchValue({
+                payeePSP: this.pay.payeeId.split('@').pop(),
+                payeeId: this.pay.payeeId.split('@').shift(),
+                // payerId: this.pay.payerId,
+                // payerPSP: this.pay.payerPSP,
+                userRef: this.pay.userRef,
+                amount: this.pay.amount
+            });
+            this.formatAmount(this.pay.amount);
+
+        }).catch(err => {
+            this.notify.update('Barcode Data <br>' + JSON.stringify(err), 'error');
+            console.log('Error', err);
+        });
     }
 
     formatAmount(val) {

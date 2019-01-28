@@ -12,6 +12,33 @@
                     </ion-refresher-content>
                 </ion-refresher>
                 <!-- <app-user-profile *ngIf="loggedin"></app-user-profile> -->
+                <ng-container *ngIf="user | async">
+                    <ion-card color="primary">
+                        <ion-card-header>
+                            <ion-card-title class="center">{{appCodeName}}</ion-card-title>
+                            <ion-card-subtitle class="center">{{appVersion}} &copy; BankservAfrica</ion-card-subtitle>
+                        </ion-card-header>
+                        <ion-card-content class="center">
+                            {{userO.email }}
+                            <!-- <div class="profile"> -->
+                            <!-- <div (click)="openProfileEdit()">
+                                    <img class="imgAvatar" [src]="user.photoUrl">
+                                </div> -->
+                            <!-- <ion-item lines="none" (click)="tokenRefresh()">
+                                    <ion-label class="center"></ion-label>
+                                </ion-item> -->
+                            <!-- <ion-item lines="none" *ngIf="user.zapId">
+                                    <ion-label class="center">{{user.zapId}}</ion-label>
+                                </ion-item>
+                                <ion-item (click)="openProfileEdit()" *ngIf="!user.zapId">
+                                    <ion-label class="center" color="danger">Please complete your profile!</ion-label>
+                                </ion-item> -->
+                            <!-- </div> -->
+                        </ion-card-content>
+                    </ion-card>
+                </ng-container>
+
+
                 <ion-list>
                     <ion-menu-toggle auto-hide="true">
                         <ng-container *ngFor="let p of appPages">
@@ -32,6 +59,13 @@
                     </ion-menu-toggle>
                 </ion-list>
             </ion-content>
+            <ion-footer color="dark" style="font-size: small;    text-align: center;    font-style: italic;">
+                <ion-text color="danger">
+                    This application is only for demonstration purposes and functionality that may be present does not
+                    consitute final capabilities of the proposed RPI system and service.
+                </ion-text>
+
+            </ion-footer>
         </ion-menu>
         {{appVersion}}
         <ion-router-outlet main></ion-router-outlet>

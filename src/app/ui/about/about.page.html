@@ -9,12 +9,19 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content padding class="aboutPage">
+<ion-content padding color="dark" class="aboutPage">
     <div class="center">
-        <ion-img class="companyLogo" src="/assets/img/mainlogo.png" alt="BankservLogo"></ion-img><br>
-        <ion-img class="appLogo" src="/assets/img/zaapLogo.png" alt=""> </ion-img>
-        <p>&copy; BankservAfrica 2019 <br>
-            {{appVersion}} - {{appCodeName}}
+        <p>
+            <ion-img class="companyLogo" src="/assets/img/mainlogo.png" alt="BankservLogo"></ion-img>
+        </p>
+        <!-- <p>
+            <ion-img class="appLogo" src="/assets/img/zaapLogo.png" alt=""> </ion-img>
+        </p> -->
+
+        <p><span class="bigTitle">{{appCodeName}}</span> <br><br>
+            {{appVersion}}<br><br>
+            &copy; BankservAfrica 2019
+
         </p>
     </div>
     <ion-grid>
@@ -65,3 +72,9 @@
     </ion-grid>
 
 </ion-content>
+<ion-footer color="dark" style="font-size: small;    text-align: center;    font-style: italic;">
+    <ion-text color="danger">
+        This application is only for demonstration purposes and functionality that may be present does not
+        consitute final capabilities of the proposed RPI system and service.
+    </ion-text>
+</ion-footer>

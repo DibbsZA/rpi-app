@@ -10,11 +10,16 @@
 </ion-header>
 
 <ion-content padding>
+    <ng-template #loading>
+        Loading Form...
+        <ion-spinner name="crescent"></ion-spinner>
+        <!-- <ion-img src="/assets/img/down-arrow-gif-8.gif" style="width: 100%"></ion-img> -->
+    </ng-template>
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
         </ion-refresher-content>
     </ion-refresher>
-    <ng-container *ngIf="userO">
+    <ng-container *ngIf="userO; else loading">
         <ion-card>
             <ion-card-content>
                 <div (click)="editProfile()" class="profile">
