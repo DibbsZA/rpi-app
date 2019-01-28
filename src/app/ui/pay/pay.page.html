@@ -19,10 +19,10 @@
         <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingText="Refreshing...">
         </ion-refresher-content>
     </ion-refresher>
-
-    <ion-fab vertical="bottom" horizontal="center" slot="fixed" *ngIf="userO">
+    <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="userO">
         <ion-fab-button (click)="scan()">
             <ion-icon name="qr-scanner"></ion-icon>
+            Scan
         </ion-fab-button>
     </ion-fab>
     <form [formGroup]="payForm" *ngIf="userO; else loading" [hidden]="success" (ngSubmit)="this.showPin()">

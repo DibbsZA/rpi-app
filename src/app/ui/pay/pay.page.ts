@@ -294,6 +294,7 @@ export class PayPage implements OnInit {
             this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
                 .subscribe(
                     x => {
+                        this.payForm.reset();
                         this.notify.update('Payment to ' + this.pay.payeeId + ' submitted', 'info');
                         return this.router.navigateByUrl('/about');
 
