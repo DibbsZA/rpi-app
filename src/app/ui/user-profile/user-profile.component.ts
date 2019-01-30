@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { iUser } from '../../models/interfaces';
 import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { FcmService } from '../../services/fcm.service';
 import { AuthService } from '../../services/auth.service';
-import { UserProfile } from '../../models/interfaces.0.2';
+import { UserProfile } from '../../models/interfaces.0.3';
 import { UserService } from '../../services/user.service';
 import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
@@ -56,8 +55,8 @@ export class UserProfileComponent implements OnInit {
                     if (x === null) {
                         return this.router.navigateByUrl('/home');
                     }
-                    this.userObservable = this.userSvc.observeUsers(x.uid, this.myPsp);
-                    this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                    this.userObservable = this.userSvc.observeUsers(x.uid);
+                    this.userO = await this.userSvc.getUserData(x.uid);
                     if (this.userO.queryLimit === null) {
                         this.notify.update('Please update your profile first!!!.', 'info');
                         this.router.navigate(['/profile']);

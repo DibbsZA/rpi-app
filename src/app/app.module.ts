@@ -37,11 +37,7 @@ import { RegistrationPage } from './ui/registration/registration.page';
 import { HomePage } from './ui/home/home.page';
 import { AboutPage } from './ui/about/about.page';
 import { PayPage } from './ui/pay/pay.page';
-import { PayAuthPage } from './ui/pay-auth/pay-auth.page';
-import { RequestPayPage } from './ui/request-pay/request-pay.page';
-import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
 import { SettingsPage } from './ui/settings/settings.page';
-import { ScanPage } from './ui/scan/scan.page';
 
 import { PinComponent } from './ui/pin/pin.component';
 import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
@@ -64,13 +60,9 @@ registerLocaleData(localeZa, 'en-ZA');
         UserProfileComponent,
         ProfilePage,
         PayPage,
-        PayAuthPage,
-        RequestPayPage,
-        RequestPayAuthPage,
         PinComponent,
         ZapcurrencyPipe,
         PaySuccessComponent,
-        ScanPage,
         SettingsPage,
         AccountEditComponent
     ],

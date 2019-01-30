@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Storage } from "@ionic/storage";
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Processor } from '../models/interfaces.0.2';
+import { Processor } from '../models/interfaces.0.3';
 
-import { of } from 'rxjs/observable/of';
 import { fromPromise } from 'rxjs/observable/fromPromise';
-import { mergeMap, catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 
@@ -18,7 +16,8 @@ export class DataService {
     colRefProcessor: AngularFirestoreCollection<Processor>;
 
     myPsp: Observable<string>;
-    pspApiUrl: Observable<string>;
+    pspNonFinUrl: Observable<any>;
+    pspFinUrl: Observable<any>;
 
     constructor(
         private afs: AngularFirestore,
@@ -26,7 +25,8 @@ export class DataService {
     ) {
 
         this.myPsp = this.loadPSP();
-        this.pspApiUrl = this.loadUrl();
+        this.pspNonFinUrl = this.loadNonFinUrl();
+        this.pspFinUrl = this.loadFinUrl();
     }
 
     public getProcessors() {
@@ -44,8 +44,12 @@ export class DataService {
         return fromPromise(this.storage.get('MyPSP'));
     }
 
-    public loadUrl() {
-        return fromPromise(this.storage.get('PspApiUrl'));
+    public loadFinUrl() {
+        return fromPromise(this.storage.get('PspFinUrl'));
+    }
+
+    public loadNonFinUrl() {
+        return fromPromise(this.storage.get('PspNonFinUrl'));
     }
 
     public saveKey(key: string, data: string) {
@@ -57,4 +61,3 @@ export class DataService {
     }
 
 }
-

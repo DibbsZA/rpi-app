@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
-import { UserProfile } from '../../models/interfaces.0.2';
+import { UserProfile } from '../../models/interfaces.0.3';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
@@ -50,7 +50,7 @@ export class HomePage implements OnInit {
         this.dataSvc.myPsp
             .subscribe(psp => {
                 this.myPsp = psp;
-                this.dataSvc.pspApiUrl
+                this.dataSvc.pspNonFinUrl
                     .subscribe(api => {
                         this.pspApiUrl = api;
                         this.checkAuth();
@@ -78,7 +78,10 @@ export class HomePage implements OnInit {
                         console.log(x);
                         if (x !== null) {
 
-                            this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                            await this.userSvc.getUserData(x.uid)
+                                .then(u => {
+                                    this.userO = u;
+                                });
 
                             this.loading.dismiss();
 

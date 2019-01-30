@@ -11,7 +11,7 @@ import { switchMap, first } from 'rxjs/operators';
 import { Platform } from '@ionic/angular';
 import { FcmService } from './fcm.service';
 import { UserService } from './user.service';
-import { UserProfile, FirebaseUser } from '../models/interfaces.0.2';
+import { UserProfile, FirebaseUser } from '../models/interfaces.0.3';
 import { DataService } from './data.service';
 
 @Injectable({
@@ -74,7 +74,7 @@ export class AuthService {
                 };
 
                 console.log('New User: ' + JSON.stringify(newUser));
-                return this.userSvc.registerUser(newUser, pspId);
+                return this.userSvc.registerUser(newUser);
             }
 
 
@@ -98,7 +98,7 @@ export class AuthService {
                     };
 
                     console.log('New User: ' + JSON.stringify(newUser));
-                    return this.userSvc.registerUser(newUser, pspId);
+                    return this.userSvc.registerUser(newUser);
                 })
                 .catch(error => this.handleError(error));
         }

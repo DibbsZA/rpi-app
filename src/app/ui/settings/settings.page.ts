@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { Observable } from 'rxjs';
-import { Processor } from '../../models/interfaces.0.2';
+import { Processor } from '../../models/interfaces.0.3';
 import { Location } from '@angular/common';
 
 @Component({
@@ -36,8 +36,15 @@ export class SettingsPage implements OnInit {
                 this.myPSP = r;
             }
         });
-        this.dataSvc.loadUrl().subscribe(r => {
-            console.log('loadUrl ', r);
+        // this.dataSvc.loadFinUrl().subscribe(r => {
+        //     console.log('loadFinUrl ', r);
+        //     if (r !== undefined && r != null) {
+        //         this.savedAPI = true;
+        //         this.pspApiUrl = r;
+        //     }
+        // });
+        this.dataSvc.loadNonFinUrl().subscribe(r => {
+            console.log('loadNonFinUrl ', r);
             if (r !== undefined && r != null) {
                 this.savedAPI = true;
                 this.pspApiUrl = r;
@@ -64,6 +71,10 @@ export class SettingsPage implements OnInit {
 
             case 'uriHP':
                 this.pspApiUrl = psp.uriHP;
+                break;
+
+            case 'rpi2Admin':
+                this.pspApiUrl = psp.rpi2Admin;
                 break;
 
             default:

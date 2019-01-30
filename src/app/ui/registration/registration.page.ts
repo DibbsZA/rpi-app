@@ -34,7 +34,7 @@ export class RegistrationPage implements OnInit {
             .subscribe(psp => {
                 this.myPsp = psp;
             });
-        this.dataSvc.pspApiUrl
+        this.dataSvc.pspNonFinUrl
             .subscribe(uri => {
                 this.pspApiUrl = uri;
             });

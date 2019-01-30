@@ -8,10 +8,9 @@ import { AuthService } from './services/auth.service';
 import { tap } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { Transaction } from './models/interfaces.0.2';
 import { options } from './config';
 import { Firebase } from '@ionic-native/firebase/ngx';
-import { iUser } from './models/interfaces';
+import { Transaction, UserProfile, ResponseStatus } from './models/interfaces.0.3';
 
 @Component({
     selector: 'app-root',
@@ -28,13 +27,15 @@ export class AppComponent implements OnInit {
         // { title: 'Request Payment', url: '/payment/requestpay', icon: 'cash', icon2: 'arrow-round-back', loggedin: true },
         { title: 'Scan to Pay', url: '/payment/pay', icon: 'qr-scanner', loggedin: true },
         { title: 'My Profile', url: '/profile', icon: 'contact', loggedin: true },
+        { title: 'Settings', url: '/settings', icon: 'cog', loggedin: true },
         { title: 'About', url: '/about', icon: 'information-circle-outline', loggedin: true },
         { title: 'Login', url: '/home', icon: 'log-in', loggedin: false }
     ];
+
     appVersion: string;
     appCodeName: string;
     user: Observable<firebase.User>;
-    userO: iUser;
+    userO: UserProfile;
 
     constructor(
         private platform: Platform,
@@ -75,25 +76,26 @@ export class AppComponent implements OnInit {
                                     console.log(msg);
                                     // if (!msg.tap) {
                                     const data: Transaction = msg;
-                                    if (data.paymentType === 'PI') {
-                                        const stringyfied = JSON.stringify(data);
-                                        const encoded = encodeURIComponent(stringyfied);
-                                        this.router.navigate(['/payment/payauth'], { queryParams: { msg: encoded } });
-                                    } else if (data.paymentType === 'PR') {
-                                        const stringyfied = JSON.stringify(data);
-                                        const encoded = encodeURIComponent(stringyfied);
-                                        this.router.navigate(['/payment/requestpayauth'], { queryParams: { msg: encoded } });
-                                    } else if (data.paymentType === 'PS') {
-                                        this.router.navigate(['/about']);
-                                        if (data.responseStatus === 'ACCP') {
+                                    this.router.navigate(['/about']);
+                                    if (data.amount !== undefined) {
+
+                                        // Payment Recipient Detailed Message
+                                        if (ResponseStatus.ACPT === data.responseStatus) {
                                             this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
                                         } else {
                                             this.notify.update('Message: <br/>' + JSON.stringify(msg), 'payfailed');
                                         }
 
-                                        // }
                                     } else {
-                                        this.notify.update('Message: <br/>' + JSON.stringify(msg), 'note');
+
+                                        // Payment Sender Status Message
+
+                                        if (ResponseStatus.ACPT === data.responseStatus) {
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'paysuccess');
+                                        } else {
+                                            this.notify.update('Message: <br/>' + JSON.stringify(msg), 'payfailed');
+                                        }
+
                                     }
                                     this.messageSource.next(msg);
 

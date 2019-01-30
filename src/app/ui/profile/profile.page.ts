@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { NotifyService } from '../../services/notify.service';
-import { UserProfile, AccountDetail, Processor } from '../../models/interfaces.0.2';
+import { UserProfile, AccountDetail, Processor } from '../../models/interfaces.0.3';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 import { UserService } from '../../services/user.service';
@@ -93,14 +93,14 @@ export class ProfilePage implements OnInit {
                         async x => {
                             console.log('profile: user -> x = ' + JSON.stringify(x));
                             if (x !== null) {
-                                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                                this.userO = await this.userSvc.getUserData(x.uid);
                                 if (this.userO.queryLimit === null) {
                                     this.notify.update('Please update your profile first!!!.', 'info');
                                     this.router.navigate(['/profile']);
                                 }
                                 this.userO.pspId = this.myPsp;
 
-                                this.accounts = this.userSvc.getUserAccounts(x.uid, this.myPsp);
+                                this.accounts = this.userSvc.getUserAccounts(x.uid);
                                 this.dirtyUser = this.userO;
 
                                 if (this.dirtyUser.zapId !== null && this.dirtyUser.zapId !== '') {
@@ -160,7 +160,7 @@ export class ProfilePage implements OnInit {
         this.dirtyUser.telegramId = telegramId.trim();
         this.dirtyUser.photoUrl = photoUrl.trim();
 
-        this.userSvc.updateUserData(this.dirtyUser, this.myPsp)
+        this.userSvc.updateUserData(this.dirtyUser)
             .then(r => {
                 this.notify.update('Profile Updated. That\'s awesome!', 'success');
             });
@@ -170,13 +170,14 @@ export class ProfilePage implements OnInit {
     addAccount() {
         // this.router.navigate(['/account']);
         this.presentModal();
+        // TODO: reload data when closed..
     }
 
     deleteAccount(acc) {
 
         acc.clientKey = this.userO.clientKey;
         console.log(acc);
-        this.userSvc.deleteClientAccount(acc, this.myPsp);
+        this.userSvc.deleteClientAccount(acc);
 
     }
 

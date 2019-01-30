@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from "rxjs/operators";
 
-import { PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse } from '../models/interfaces.0.2';
+// import { PaymentRequestInitiation, PaymentRequestResponse, ChannelCode, PaymentInstructionResponse, PaymentInitiation, ApiResponse } from '../models/interfaces.0.2';
+import { PaymentStatusMSG, CreditTransferMSG } from '../models/interfaces.0.3';
+
 import { ErrorhandlerService } from './errorhandler.service';
 import { Router } from '@angular/router';
 import { DataService } from './data.service';
@@ -10,7 +12,7 @@ import { DataService } from './data.service';
 
 
 /**
- * Handle communicating with the PSP Payments API.
+ * Handle communicating with the PSP Payments RPI-API.
  *
  * @export
  * @class PspSvcService
@@ -28,84 +30,48 @@ export class PspService {
         public errorHandler: ErrorhandlerService,
         public dataSvc: DataService
     ) {
-        this.dataSvc.pspApiUrl
+
+        this.dataSvc.pspFinUrl
             .subscribe(uri => {
                 this.pspApiUrl = uri;
             });
+
     }
 
-    public psp_paymentInitiation(pspId, msgPayment: PaymentInitiation) {
+    public psp_creditTransfer(msgCreditTransfer: CreditTransferMSG) {
 
-        const apiEndpoint = this.pspApiUrl + '/paymentInitiation';
+        const apiEndpoint = this.pspApiUrl + '/creditTransfer';
 
-        const body: PaymentInitiation = {
-            "channel": ChannelCode.App,
-            "originatingDate": msgPayment.originatingDate,
-            "amount": msgPayment.amount.toString(),
-            "clientKey": msgPayment.clientKey,
-            "payerAccountRef": msgPayment.payerAccountRef,
-            "payerName": msgPayment.payerName,
-            "userRef": msgPayment.userRef,
-            "consentKey": msgPayment.consentKey,
-            "payeeId": msgPayment.payeeId,
-            "payeeMobileNo": msgPayment.payeeMobileNo,
-            "payeeEmail": msgPayment.payeeEmail
+        const body: CreditTransferMSG = {
+            "originatingDate": msgCreditTransfer.originatingDate,
+            "amount": msgCreditTransfer.amount.toString(),
+            "payerAccount": msgCreditTransfer.payerAccount,
+            "payeeAccount": msgCreditTransfer.payeeAccount,
+            "userRef": msgCreditTransfer.userRef,
+            "payerId": msgCreditTransfer.payerId,
+            "payeeId": msgCreditTransfer.payeeId,
+            "payerBankId": msgCreditTransfer.payerBankId,
+            "payeeBankId": msgCreditTransfer.payeeBankId,
+            "endToEndId": '',
+            "currencyCode": msgCreditTransfer.currencyCode
+
         }
 
-        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+        return this.httpClient.post<any>(apiEndpoint, body)
             .pipe(catchError(this.errorHandler.handleError));
 
     }
 
-    public psp_paymentInstructionResponse(pspId, msgPayment: PaymentInstructionResponse) {
+    public psp_paymentStatus(msgPaymentStatus: PaymentStatusMSG) {
 
-        const apiEndpoint = this.pspApiUrl + '/paymentInstructionResponse';
-        const body: PaymentInstructionResponse = {
-            "endToEndId": msgPayment.endToEndId,
-            "originatingDate": msgPayment.originatingDate,
-            "payeeAccountRef": msgPayment.payeeAccountRef.toString(),
-            "clientKey": msgPayment.clientKey,
-            "responseStatus": msgPayment.responseStatus
+        const apiEndpoint = this.pspApiUrl + '/paymentStatus';
+        const body: PaymentStatusMSG = {
+            "endToEndId": msgPaymentStatus.endToEndId,
+            "originatingDate": msgPaymentStatus.originatingDate,
+            "clientKey": msgPaymentStatus.clientKey
         }
 
-        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
-            .pipe(catchError(this.errorHandler.handleError));
-    }
-
-    public psp_paymentRequest(pspId, msgPayment: PaymentRequestInitiation) {
-
-        const apiEndpoint = this.pspApiUrl + '/paymentRequestInitiation';
-
-        const body: PaymentRequestInitiation = {
-            "originatingDate": msgPayment.originatingDate,
-            "clientKey": msgPayment.clientKey,
-            "channel": ChannelCode.App,                    // TODO: PSP should control list of ChannelCodes 
-            "payeeName": msgPayment.payeeName,
-            "payeeAccountRef": msgPayment.payeeAccountRef,
-            "payerId": msgPayment.payerId,
-            "payerMobileNo": msgPayment.payerMobileNo,
-            "payerEmail": msgPayment.payerEmail,
-            "amount": msgPayment.amount.toString(),
-            "userRef": msgPayment.userRef,
-        }
-
-        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
-            .pipe(catchError(this.errorHandler.handleError));
-    }
-
-    public psp_paymentRequestResponse(pspId, msgPayment: PaymentRequestResponse) {
-
-        const apiEndpoint = this.pspApiUrl + '/paymentRequestResponse';
-        const body: PaymentRequestResponse = {
-            "endToEndId": msgPayment.endToEndId,
-            "originatingDate": msgPayment.originatingDate,
-            "clientKey": msgPayment.clientKey,
-            "payerAccountRef": msgPayment.payerAccountRef,
-            "consentKey": msgPayment.consentKey,
-            "responseStatus": msgPayment.responseStatus
-        }
-
-        return this.httpClient.post<ApiResponse>(apiEndpoint, body)
+        return this.httpClient.post<any>(apiEndpoint, body)
             .pipe(catchError(this.errorHandler.handleError));
     }
 

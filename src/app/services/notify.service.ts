@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { Transaction } from '../models/interfaces.0.2';
+import { Transaction } from '../models/interfaces.0.3';
 
 /// Notify users about errors and other helpful stuff
 export interface Msg {

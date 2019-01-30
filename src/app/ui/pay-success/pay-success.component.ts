@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { NotifyService } from '../../services/notify.service';
 import { ActivatedRoute } from '@angular/router';
-import { Transaction, Processor, UserProfile } from '../../models/interfaces.0.2';
+import { Transaction, Processor, UserProfile } from '../../models/interfaces.0.3';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { DataService } from '../../services/data.service';
@@ -77,7 +77,7 @@ export class PaySuccessComponent implements OnInit {
 
                 this.user.subscribe(
                     async x => {
-                        this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                        this.userO = await this.userSvc.getUserData(x.uid);
 
                         if (this.userO.queryLimit !== undefined) {
 

@@ -11,7 +11,7 @@ import { tap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { PspService } from '../../services/psp.service';
 import { QrcodeService } from '../../services/qrcode.service';
-import { PaymentInitiation, Processor, UserProfile, AccountDetail, ChannelCode } from '../../models/interfaces.0.2';
+import { CreditTransferMSG, Processor, UserProfile, AccountDetail } from '../../models/interfaces.0.3';
 import { AuthService } from '../../services/auth.service';
 import { DataService } from '../../services/data.service';
 
@@ -28,7 +28,7 @@ export class PayPage implements OnInit {
     myPsp: string;
     user: Observable<firebase.User>;
     userO: UserProfile;
-    pay: PaymentInitiation;
+    pay: CreditTransferMSG;
     payerPspLable: string;
     payeePspLable: string;
     payForm: FormGroup;
@@ -79,7 +79,7 @@ export class PayPage implements OnInit {
                     return;
                 }
 
-                this.userO = await this.userSvc.getUserData(x.uid, this.myPsp);
+                this.userO = await this.userSvc.getUserData(x.uid);
                 if (this.userO.queryLimit === null) {
                     this.notify.update('Please update your profile first!!!.', 'info');
                     this.router.navigate(['/profile']);
@@ -96,33 +96,30 @@ export class PayPage implements OnInit {
 
                     this.pay = {
                         userRef: null,
-                        channel: ChannelCode.App,
                         clientKey: this.userO.clientKey,
-                        payerName: this.userO.nickname,
-                        payerAccountRef: null,
-                        consentKey: null,
-                        payeeId: this.userO.zapId,
+                        payerId: this.userO.zapId,
+                        payerBankId: this.userO.pspId,
+                        payerAccount: null,
+                        payeeId: null,
+                        payeeBankId: null,
+                        payeeAccount: null,
                         amount: null,
                         originatingDate: '',
-                        payeeMobileNo: '',
-                        payeeEmail: ''
+                        currencyCode: 'ZAR'
                     };
 
                     this.payForm = this.fb.group({
                         payerId: this.userO.zapId,
                         payerAccountRef: ['', [Validators.required]],
                         payerPSP: this.userO.pspId,
-                        consentKey: null,
                         payeeId: [''],
-                        payeeMobileNo: [''],
-                        payeeEmail: [''],
                         payeePSP: [''],
                         amountdisplay: [null],
                         amount: [null, [Validators.required, Validators.min(100), Validators.max(100000)]],
                         userRef: ['', [Validators.required]],
                     });
 
-                    this.userSvc.getUserAccounts(this.userO.clientKey, this.myPsp)
+                    this.userSvc.getUserAccounts(this.userO.clientKey)
                         .pipe(
                             // tslint:disable-next-line:no-shadowed-variable
                             tap(x => {
@@ -277,11 +274,7 @@ export class PayPage implements OnInit {
             this.pay.payeeId = this.pay.payeeId.trim().toUpperCase() + '@' + this.payForm.get('payeePSP').value;
         }
 
-        this.pay.payeeMobileNo = this.pay.payeeMobileNo.trim().replace('+', '').replace(' ', '').replace('-', '');
-        this.pay.payeeEmail = this.pay.payeeEmail.trim();
         this.pay.userRef = this.pay.userRef.trim();
-        this.pay.consentKey = secret;
-        this.pay.payerName = this.userO.nickname;
 
         this.pay.originatingDate = new Date().toISOString();
         let georgeDate = '';
@@ -290,8 +283,8 @@ export class PayPage implements OnInit {
 
         console.log(this.pay);
 
-        if (this.pay.payeeId !== '' || this.pay.payeeMobileNo !== '' || this.pay.payeeEmail !== '') {
-            this.pspApiSvc.psp_paymentInitiation(this.myPsp, this.pay)
+        if (this.pay.payeeId !== '') {
+            this.pspApiSvc.psp_creditTransfer(this.pay)
                 .subscribe(
                     x => {
                         this.payForm.reset();

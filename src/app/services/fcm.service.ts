@@ -5,7 +5,6 @@ import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import { NotifyService } from './notify.service';
 import { tap } from 'rxjs/operators';
-import { UserProfile } from '../models/interfaces.0.2';
 
 
 @Injectable({

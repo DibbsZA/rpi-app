@@ -7,11 +7,7 @@ import { RegistrationPage } from './ui/registration/registration.page';
 import { HomePage } from './ui/home/home.page';
 import { AboutPage } from './ui/about/about.page';
 import { PayPage } from './ui/pay/pay.page';
-import { PayAuthPage } from './ui/pay-auth/pay-auth.page';
 import { PaySuccessComponent } from './ui/pay-success/pay-success.component';
-import { RequestPayPage } from './ui/request-pay/request-pay.page';
-import { RequestPayAuthPage } from './ui/request-pay-auth/request-pay-auth.page';
-import { ScanPage } from './ui/scan/scan.page';
 import { SettingsPage } from './ui/settings/settings.page';
 import { AccountEditComponent } from './ui/account-edit/account-edit.component';
 
@@ -22,11 +18,7 @@ const routes: Routes = [
     { path: 'about', component: AboutPage, canLoad: [] },
     { path: 'profile', component: ProfilePage, canActivate: [AuthGuard] },
     { path: 'payment/pay', component: PayPage, canActivate: [AuthGuard] },
-    { path: 'payment/payauth', component: PayAuthPage, canActivate: [AuthGuard] },
     { path: 'payment/success', component: PaySuccessComponent, canActivate: [AuthGuard] },
-    { path: 'payment/requestpay', component: RequestPayPage, canActivate: [AuthGuard] },
-    { path: 'payment/requestpayauth', component: RequestPayAuthPage, canActivate: [AuthGuard] },
-    { path: 'payment/scan', component: ScanPage, canActivate: [AuthGuard] },
     { path: 'settings', component: SettingsPage, canLoad: [] },
     { path: 'account', component: AccountEditComponent, canActivate: [AuthGuard] },
 

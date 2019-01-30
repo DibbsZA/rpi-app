@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Transaction, QrcodeSpec } from '../models/interfaces.0.2';
+import { Transaction, QrcodeSpec } from '../models/interfaces.0.3';
 
 @Injectable({
     providedIn: 'root'
@@ -11,11 +11,11 @@ export class QrcodeService {
     /**
      * encodeQR
      */
-    public encodeQR(jsonData: any) {
-        const converted = this.converter(jsonData);
-        const serialised = this.serialise(converted);
-        return serialised;
-    }
+    // public encodeQR(jsonData: any) {
+    //     const converted = this.converter(jsonData);
+    //     const serialised = this.serialise(converted);
+    //     return serialised;
+    // }
 
     /**
      * decodeQR
@@ -25,27 +25,24 @@ export class QrcodeService {
         return deserialised;
     }
 
-    private serialise(data: QrcodeSpec): string {
-        /**
-        * Data will be serialized in the order below
-        */
+    // private serialise(data: QrcodeSpec): string {
+    //     /**
+    //     * Data will be serialized in the order below
+    //     */
 
-        let serial = data.endToEndId;
-        serial += '|' + data.payerId;
-        serial += '|' + data.dummy1;
-        serial += '|' + data.payerName;
-        serial += '|' + data.payeeId;
-        serial += '|' + data.dummy2;
-        serial += '|' + data.payeeName;
-        serial += '|' + data.dummy3;
-        serial += '|' + data.userRef;
-        serial += '|' + data.amount.toString();
-        serial += '|' + data.originatingDate;
+    //     let serial = data.payeeId;
+    //     serial += '|' + data.payerId;
+    //     serial += '|' + data.dummy2;
+    //     serial += '|' + data.payeeName;
+    //     serial += '|' + data.dummy3;
+    //     serial += '|' + data.userRef;
+    //     serial += '|' + data.amount.toString();
+    //     serial += '|' + data.originatingDate;
 
-        console.log(serial);
+    //     console.log(serial);
 
-        return serial;
-    };
+    //     return serial;
+    // };
 
 
     private deserialise(qrdata: string): Transaction {
@@ -53,16 +50,15 @@ export class QrcodeService {
         let dataArray = qrdata.split('|');
 
         let decoded: Transaction = {
+            clientKey: dataArray.shift(),
             endToEndId: dataArray.shift(),
             payerId: dataArray.shift(),
-            dummy1: dataArray.shift(),
-            payerName: dataArray.shift(),
+            payerBankId: dataArray.shift(),
             payeeId: dataArray.shift(),
-            dummy2: dataArray.shift(),
-            payeeName: dataArray.shift(),
-            dummy3: dataArray.shift(),
+            payeeBankId: dataArray.shift(),
+            payeeAccount: dataArray.shift(),
             userRef: dataArray.shift(),
-            amount: parseInt(dataArray.shift()),
+            amount: dataArray.shift(),
             originatingDate: dataArray.shift()
         }
 
@@ -76,14 +72,13 @@ export class QrcodeService {
         let payload = msgData;
 
         let qrData: QrcodeSpec = {
-            endToEndId: '',
-            payerId: payload.payerId || '',
-            payerName: payload.payerName || '',
             payeeId: payload.payeeId || '',
-            payeeName: payload.payeeName || '',
+            payeeAccount: payload.payeeAccount || '',
+            payeeBankId: payload.payeeBankId || '',
             userRef: payload.userRef || '',
-            amount: payload.amount || 0,
-            originatingDate: payload.originatingDate || ''
+            amount: payload.amount || '0',
+            originatingDate: payload.originatingDate || '',
+            supCreditorData: payload.supCreditorData || ''
         }
 
         return qrData;
