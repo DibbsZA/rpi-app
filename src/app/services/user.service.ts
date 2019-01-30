@@ -143,11 +143,11 @@ export class UserService {
 
     public addClientAccount(account: AccountDetail, pspId) {
         let apiEndpoint = ''
-        if (pspId === 'BANKC' || pspId === 'BANKD') {
-            apiEndpoint = this.pspApiUrl + '/addClientAccount';
-        } else {
-            apiEndpoint = this.pspApiUrl + '/addClientAccounts';
-        }
+        // if (pspId === 'BANKC' || pspId === 'BANKD') {
+        apiEndpoint = this.pspApiUrl + '/addClientAccount';
+        // } else {
+        // apiEndpoint = this.pspApiUrl + '/addClientAccounts';
+        // }
 
         return this.httpClient.post<Response>(apiEndpoint, account).toPromise();
 
