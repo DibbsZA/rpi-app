@@ -16,6 +16,6 @@ export const firebaseConfig = {
 };
 
 export const options = {
-    version: 'v2.0.0',
+    version: 'v2.0.1',
     codeName: 'RPI Next Gen'
 };
